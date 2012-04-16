@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{D2C6B257-E577-1522-76EA-18CCFD5B0810}") = "HiLoFilter", "HiLoFilter.vcxproj", "{A474B0FD-6933-8E6A-6534-4F71F8072E52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A474B0FD-6933-8E6A-6534-4F71F8072E52}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A474B0FD-6933-8E6A-6534-4F71F8072E52}.Debug|Win32.Build.0 = Debug|Win32
+		{A474B0FD-6933-8E6A-6534-4F71F8072E52}.Release|Win32.ActiveCfg = Release|Win32
+		{A474B0FD-6933-8E6A-6534-4F71F8072E52}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
