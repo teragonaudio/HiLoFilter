@@ -18,15 +18,17 @@
 //==============================================================================
 /**
 */
-class HiLoFilterAudioProcessorEditor  : public AudioProcessorEditor
-{
-public:
-    HiLoFilterAudioProcessorEditor (HiLoFilterAudioProcessor* ownerFilter);
-    ~HiLoFilterAudioProcessorEditor();
+class HiLoFilterAudioProcessorEditor  : public AudioProcessorEditor {
+  public:
 
-    //==============================================================================
-    // This is just a standard Juce paint method...
-    void paint (Graphics& g);
+  HiLoFilterAudioProcessorEditor(HiLoFilterAudioProcessor *ownerFilter);
+
+  ~HiLoFilterAudioProcessorEditor();
+
+  //==============================================================================
+  // This is just a standard Juce paint method...
+  void paint(Graphics& g);
+
 };
 
 

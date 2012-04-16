@@ -13,24 +13,21 @@
 
 
 //==============================================================================
-HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor (HiLoFilterAudioProcessor* ownerFilter)
-    : AudioProcessorEditor (ownerFilter)
-{
-    // This is where our plugin's editor size is set.
-    setSize (400, 300);
+HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor(HiLoFilterAudioProcessor *ownerFilter)
+: AudioProcessorEditor (ownerFilter) {
+  // This is where our plugin's editor size is set.
+  setSize(400, 300);
 }
 
-HiLoFilterAudioProcessorEditor::~HiLoFilterAudioProcessorEditor()
-{
+HiLoFilterAudioProcessorEditor::~HiLoFilterAudioProcessorEditor() {
 }
 
 //==============================================================================
-void HiLoFilterAudioProcessorEditor::paint (Graphics& g)
-{
-    g.fillAll (Colours::white);
-    g.setColour (Colours::black);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!",
-                      0, 0, getWidth(), getHeight(),
-                      Justification::centred, 1);
+void HiLoFilterAudioProcessorEditor::paint(Graphics& g) {
+  g.fillAll(Colours::white);
+  g.setColour(Colours::black);
+  g.setFont(15.0f);
+  g.drawFittedText("Hello World!",
+    0, 0, getWidth(), getHeight(),
+    Justification::centred, 1);
 }

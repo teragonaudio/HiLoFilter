@@ -22,10 +22,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PluginProcessor.cpp" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PluginProcessor.h" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../../Source/PluginProcessor.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PluginEditor.h" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Source/PluginEditor.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PluginEditor.cpp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Source/PluginEditor.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PluginProcessor.cpp" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../Source/PluginProcessor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="111" column="0" selection-start="2923" selection-end="2923" vertical-scroll-proportion="0.5513725">
+            <state line="111" column="0" selection-start="2923" selection-end="2923" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#269#297#0" expanded="true" />
               </folding>
@@ -42,6 +69,9 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/../../Source/PluginProcessor.cpp" />
+        <option value="$PROJECT_DIR$/../../Source/PluginEditor.cpp" />
+        <option value="$PROJECT_DIR$/../../Source/PluginEditor.h" />
+        <option value="$PROJECT_DIR$/../../Source/PluginProcessor.h" />
       </list>
     </option>
   </component>
@@ -220,10 +250,31 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../../Source/PluginProcessor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="0" selection-start="2923" selection-end="2923" vertical-scroll-proportion="0.5513725">
+        <state line="111" column="0" selection-start="2923" selection-end="2923" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#269#297#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Source/PluginEditor.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Source/PluginEditor.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Source/PluginProcessor.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>

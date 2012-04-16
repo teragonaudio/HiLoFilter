@@ -17,56 +17,69 @@
 //==============================================================================
 /**
 */
-class HiLoFilterAudioProcessor  : public AudioProcessor
-{
-public:
-    //==============================================================================
-    HiLoFilterAudioProcessor();
-    ~HiLoFilterAudioProcessor();
+class HiLoFilterAudioProcessor  : public AudioProcessor {
+  public:
+  //==============================================================================
+  HiLoFilterAudioProcessor();
 
-    //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
+  ~HiLoFilterAudioProcessor();
 
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+  //==============================================================================
+  void prepareToPlay(double sampleRate, int samplesPerBlock);
 
-    //==============================================================================
-    AudioProcessorEditor* createEditor();
-    bool hasEditor() const;
+  void releaseResources();
 
-    //==============================================================================
-    const String getName() const;
+  void processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
-    int getNumParameters();
+  //==============================================================================
+  AudioProcessorEditor *createEditor();
 
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
+  bool hasEditor() const;
 
-    const String getParameterName (int index);
-    const String getParameterText (int index);
+  //==============================================================================
+  const String getName() const;
 
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
+  int getNumParameters();
 
-    bool acceptsMidi() const;
-    bool producesMidi() const;
+  float getParameter(int index);
 
-    //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+  void setParameter(int index, float newValue);
 
-    //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
+  const String getParameterName(int index);
 
-private:
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
+  const String getParameterText(int index);
+
+  const String getInputChannelName(int channelIndex) const;
+
+  const String getOutputChannelName(int channelIndex) const;
+
+  bool isInputChannelStereoPair(int index) const;
+
+  bool isOutputChannelStereoPair(int index) const;
+
+  bool acceptsMidi() const;
+
+  bool producesMidi() const;
+
+  //==============================================================================
+  int getNumPrograms();
+
+  int getCurrentProgram();
+
+  void setCurrentProgram(int index);
+
+  const String getProgramName(int index);
+
+  void changeProgramName(int index, const String& newName);
+
+  //==============================================================================
+  void getStateInformation(MemoryBlock& destData);
+
+  void setStateInformation(const void *data, int sizeInBytes);
+
+  private:
+  //==============================================================================
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
 };
 
 #endif  // __PLUGINPROCESSOR_H_81C4A062__
