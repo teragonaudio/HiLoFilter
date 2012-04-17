@@ -14,6 +14,7 @@
 
 //==============================================================================
 HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
+  filterState = kHiLoFilterStateInvalid;
 }
 
 HiLoFilterAudioProcessor::~HiLoFilterAudioProcessor() {
