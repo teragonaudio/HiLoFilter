@@ -204,7 +204,7 @@ void HiLoFilterAudioProcessor::processFilter(float *channelData, const int chann
 
 //==============================================================================
 bool HiLoFilterAudioProcessor::hasEditor() const {
-  return true; // (change this to false if you choose to not supply an editor)
+  return false; // (change this to false if you choose to not supply an editor)
 }
 
 AudioProcessorEditor *HiLoFilterAudioProcessor::createEditor() {
