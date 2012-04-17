@@ -13,6 +13,22 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+typedef enum {
+  kHiLoFilterParamFilterFrequency,
+  kHiLoFilterParamFilterResonance,
+  kHiLoFilterParamHiFilterRange,
+  kHiLoFilterParamLoFilterRange,
+  kHiLoFilterParamDeadZoneSize,
+  kHiLoFilterNumParams
+} HiLoFilterParams;
+
+typedef enum {
+  kHiLoFilterStatePassthru,
+  kHiLoFilterStateLo,
+  kHiLoFilterStateHi,
+  kHiLoFilterStateInvalid,
+  kHiLoFilterStateNumStates,
+} HiLoFilterState;
 
 //==============================================================================
 /**
@@ -78,6 +94,22 @@ class HiLoFilterAudioProcessor  : public AudioProcessor {
   void setStateInformation(const void *data, int sizeInBytes);
 
   private:
+  float filterFrequency;
+  float filterResonance;
+  float hiFilterRange;
+  float loFilterRange;
+  int deadZoneSize;
+
+  float lastInput1[2], lastInput2[2], lastInput3[2];
+  float lastOutput1[2], lastOutput2[2];
+
+  float loCoeffA1, loCoeffA2;
+  float loCoeffB1, loCoeffB2;
+  float hiCoeffA1, hiCoeffA2;
+  float hiCoeffB1, hiCoeffB2;
+
+  HiLoFilterState filterState;
+
   //==============================================================================
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
 };

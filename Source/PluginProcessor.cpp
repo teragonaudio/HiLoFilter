@@ -25,22 +25,56 @@ const String HiLoFilterAudioProcessor::getName() const {
 }
 
 int HiLoFilterAudioProcessor::getNumParameters() {
-  return 0;
+  return kHiLoFilterNumParams;
 }
 
 float HiLoFilterAudioProcessor::getParameter(int index) {
-  return 0.0f;
+  switch(index) {
+    case kHiLoFilterParamFilterFrequency: return filterFrequency;
+    case kHiLoFilterParamFilterResonance: return filterResonance;
+    case kHiLoFilterParamHiFilterRange: return hiFilterRange;
+    case kHiLoFilterParamLoFilterRange: return loFilterRange;
+    case kHiLoFilterParamDeadZoneSize: return deadZoneSize;
+    default: return 0.0f;
+  }
 }
 
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
+  switch(index) {
+    case kHiLoFilterParamFilterFrequency:
+      break;
+    case kHiLoFilterParamFilterResonance:
+      break;
+    case kHiLoFilterParamHiFilterRange:
+      break;
+    case kHiLoFilterParamLoFilterRange:
+      break;
+    case kHiLoFilterParamDeadZoneSize:
+      break;
+    default: break;
+  }
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
-  return String::empty;
+  switch(index) {
+    case kHiLoFilterParamFilterFrequency: return String("Frequency");
+    case kHiLoFilterParamFilterResonance: return String("Resonance");
+    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Range");
+    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Range");
+    case kHiLoFilterParamDeadZoneSize: return String("Dead Zone Size");
+    default: return String::empty;
+  }
 }
 
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
-  return String::empty;
+  switch(index) {
+    case kHiLoFilterParamFilterFrequency: return String("Frequency");
+    case kHiLoFilterParamFilterResonance: return String("Resonance");
+    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Range");
+    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Range");
+    case kHiLoFilterParamDeadZoneSize: return String(deadZoneSize);
+    default: return String::empty;
+  }
 }
 
 const String HiLoFilterAudioProcessor::getInputChannelName(int channelIndex) const {
