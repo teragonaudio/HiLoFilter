@@ -15,6 +15,11 @@
 //==============================================================================
 HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
   filterState = kHiLoFilterStateInvalid;
+  filterPosition = (int)(kHiLoFilterPositionMax / 2);
+  filterResonance = kHiLoFilterResonanceMin;
+  hiFilterRange = kHiLoFilterRangeMin;
+  loFilterRange = kHiLoFilterRangeMax;
+  deadZoneSize = kHiLoFilterDeadZoneMin;
 }
 
 HiLoFilterAudioProcessor::~HiLoFilterAudioProcessor() {
@@ -29,36 +34,114 @@ int HiLoFilterAudioProcessor::getNumParameters() {
   return kHiLoFilterNumParams;
 }
 
+static float scaleFrequencyToParameterRange(float value, float max, float min) {
+  return (logf(value) - logf(min)) / (logf(max) - logf(min));
+}
+
 float HiLoFilterAudioProcessor::getParameter(int index) {
   switch(index) {
-    case kHiLoFilterParamFilterFrequency: return filterFrequency;
-    case kHiLoFilterParamFilterResonance: return filterResonance;
-    case kHiLoFilterParamHiFilterRange: return hiFilterRange;
-    case kHiLoFilterParamLoFilterRange: return loFilterRange;
-    case kHiLoFilterParamDeadZoneSize: return deadZoneSize;
-    default: return 0.0f;
+    case kHiLoFilterParamFilterPosition:
+      return (filterPosition / kHiLoFilterPositionMax);
+    case kHiLoFilterParamFilterResonance:
+      return (filterResonance - kHiLoFilterResonanceMin) / (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin);
+    case kHiLoFilterParamHiFilterRange:
+      return scaleFrequencyToParameterRange(hiFilterRange, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+    case kHiLoFilterParamLoFilterRange:
+      return scaleFrequencyToParameterRange(loFilterRange, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+    case kHiLoFilterParamDeadZoneSize:
+      return (deadZoneSize - kHiLoFilterDeadZoneMin) / (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin);
+    default:
+      return 0.0f;
+  }
+}
+
+static float scaleParameterRangeToFrequency(float value, float max, float min) {
+  return expf(value * (logf(max) - logf(min)) + logf(min));
+}
+
+float HiLoFilterAudioProcessor::getFilterFrequency() {
+  int loCutoff = (int)((kHiLoFilterPositionMax - deadZoneSize) / 2);
+  int hiCutoff = (int)((kHiLoFilterPositionMax + deadZoneSize) / 2);
+  if(filterPosition > hiCutoff) {
+    filterState = kHiLoFilterStateHi;
+  }
+  else if(filterPosition < loCutoff) {
+      filterState = kHiLoFilterStateLo;
+    }
+  else {
+    filterState = kHiLoFilterStatePassthru;
+  }
+
+  switch(filterState) {
+    case kHiLoFilterStateHi: {
+      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2)) / (float)loCutoff;
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, hiFilterRange);
+      return newFrequency;
+    }
+    case kHiLoFilterStateLo: {
+      float relativeFilterPosition = (float)filterPosition / (float)loCutoff;
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, loFilterRange, kHiLoFilterRangeMin);
+      return newFrequency;
+    }
+    default:
+      return 0.0f;
+  }
+}
+
+void HiLoFilterAudioProcessor::recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance) {
+  const float coeffConstant = (float)tan(M_PI * frequency / sampleRate);
+  hiCoeffA1 = 1.0f / ((1.0f + resonance * coeffConstant) + (coeffConstant * coeffConstant));
+  hiCoeffA2 = -2.0f * hiCoeffA1;
+  hiCoeffB1 = 2.0f * hiCoeffA1 * ((coeffConstant * coeffConstant) - 1.0f);
+  hiCoeffB2 = hiCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+}
+
+void HiLoFilterAudioProcessor::recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance) {
+  const float coeffConstant = (float)(1.0f / tan(frequency / sampleRate));
+  loCoeffA1 = 1.0f / (1.0f + (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+  loCoeffA2 = 2.0f * loCoeffA1;
+  loCoeffB1 = 2.0f * loCoeffA1 * (1.0f - (coeffConstant * coeffConstant));
+  loCoeffB2 = loCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+}
+
+void HiLoFilterAudioProcessor::recalculateCoefficients() {
+  switch(filterState) {
+    case kHiLoFilterStateHi:
+      recalculateHiCoefficients(getSampleRate(), getFilterFrequency(), filterResonance);
+    case kHiLoFilterStateLo:
+      recalculateLoCoefficients(getSampleRate(), getFilterFrequency(), filterResonance);
+    default:
+      break;
   }
 }
 
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
   switch(index) {
-    case kHiLoFilterParamFilterFrequency:
+    case kHiLoFilterParamFilterPosition:
+      filterPosition = (int)(kHiLoFilterPositionMax * newValue);
+      getFilterFrequency();
       break;
-    case kHiLoFilterParamFilterResonance:
+   case kHiLoFilterParamFilterResonance:
+      filterResonance = newValue * (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin) + kHiLoFilterResonanceMin;
       break;
     case kHiLoFilterParamHiFilterRange:
+      hiFilterRange = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
       break;
     case kHiLoFilterParamLoFilterRange:
+      loFilterRange = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
       break;
     case kHiLoFilterParamDeadZoneSize:
+      deadZoneSize = (int)(kHiLoFilterDeadZoneMax * newValue);
       break;
     default: break;
   }
+
+  recalculateCoefficients();
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
   switch(index) {
-    case kHiLoFilterParamFilterFrequency: return String("Frequency");
+    case kHiLoFilterParamFilterPosition: return String("Position");
     case kHiLoFilterParamFilterResonance: return String("Resonance");
     case kHiLoFilterParamHiFilterRange: return String("Hi Filter Range");
     case kHiLoFilterParamLoFilterRange: return String("Lo Filter Range");
@@ -67,14 +150,34 @@ const String HiLoFilterAudioProcessor::getParameterName(int index) {
   }
 }
 
+static const String getParameterTextForFrequency(const float frequency) {
+  String outText;
+  if(frequency > 1000) {
+    outText = String(frequency / 1000.0f, PARAM_TEXT_NUM_DECIMAL_PLACES);
+    outText.append(String(" kHz"), 4);
+  }
+  else {
+    outText = String(frequency, PARAM_TEXT_NUM_DECIMAL_PLACES);
+    outText.append(String(" Hz"), 3);
+  }
+  return outText;
+}
+
+
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
   switch(index) {
-    case kHiLoFilterParamFilterFrequency: return String("Frequency");
-    case kHiLoFilterParamFilterResonance: return String("Resonance");
-    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Range");
-    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Range");
-    case kHiLoFilterParamDeadZoneSize: return String(deadZoneSize);
-    default: return String::empty;
+    case kHiLoFilterParamFilterPosition:
+      return String(filterPosition);
+    case kHiLoFilterParamFilterResonance:
+      return String(filterResonance, PARAM_TEXT_NUM_DECIMAL_PLACES);
+    case kHiLoFilterParamHiFilterRange:
+      return getParameterTextForFrequency(hiFilterRange);
+    case kHiLoFilterParamLoFilterRange:
+      return getParameterTextForFrequency(loFilterRange);
+    case kHiLoFilterParamDeadZoneSize:
+      return String(deadZoneSize);
+    default:
+      return String::empty;
   }
 }
 
@@ -138,24 +241,7 @@ void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     lastOutput2[i] = 0.0f;
   }
 
-  recalculateHiCoefficients(sampleRate, filterFrequency, filterResonance);
-  recalculateLoCoefficients(sampleRate, filterFrequency, filterResonance);
-}
-
-void HiLoFilterAudioProcessor::recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance) {
-  const float coeffConstant = (float)tan(M_PI * frequency / sampleRate);
-  hiCoeffA1 = 1.0f / ((1.0f + resonance * coeffConstant) + (coeffConstant * coeffConstant));
-  hiCoeffA2 = -2.0f * hiCoeffA1;
-  hiCoeffB1 = 2.0f * hiCoeffA1 * ((coeffConstant * coeffConstant) - 1.0f);
-  hiCoeffB2 = hiCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
-}
-
-void HiLoFilterAudioProcessor::recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance) {
-  const float coeffConstant = (float)(1.0f / tan(frequency / sampleRate));
-  loCoeffA1 = 1.0f / (1.0f + (resonance * coeffConstant) + (coeffConstant * coeffConstant));
-  loCoeffA2 = 2.0f * loCoeffA1;
-  loCoeffB1 = 2.0f * loCoeffA1 * (1.0f - (coeffConstant * coeffConstant));
-  loCoeffB2 = loCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+  recalculateCoefficients();
 }
 
 void HiLoFilterAudioProcessor::releaseResources() {

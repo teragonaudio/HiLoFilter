@@ -14,7 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 typedef enum {
-  kHiLoFilterParamFilterFrequency,
+  kHiLoFilterParamFilterPosition,
   kHiLoFilterParamFilterResonance,
   kHiLoFilterParamHiFilterRange,
   kHiLoFilterParamLoFilterRange,
@@ -29,6 +29,16 @@ typedef enum {
   kHiLoFilterStateInvalid,
   kHiLoFilterStateNumStates,
 } HiLoFilterState;
+
+static const float kHiLoFilterPositionMax = 127.0f;
+static const float kHiLoFilterResonanceMin = 0.1f;
+static const float kHiLoFilterResonanceMax = sqrtf(2.0f);
+static const float kHiLoFilterRangeMin = 20.0f;
+static const float kHiLoFilterRangeMax = 20000.0f;
+static const int kHiLoFilterDeadZoneMin = 1;
+static const int kHiLoFilterDeadZoneMax = 10;
+
+#define PARAM_TEXT_NUM_DECIMAL_PLACES 2
 
 //==============================================================================
 /**
@@ -94,11 +104,13 @@ public:
   void setStateInformation(const void *data, int sizeInBytes);
 
 private:
+  float getFilterFrequency();
+  void recalculateCoefficients();
   void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
   void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
   void processFilter(float *channelData, const int channel, const int numSamples);
 
-  float filterFrequency;
+  int filterPosition;
   float filterResonance;
   float hiFilterRange;
   float loFilterRange;
@@ -116,6 +128,7 @@ private:
 
   //==============================================================================
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
+
 };
 
 #endif  // __PLUGINPROCESSOR_H_81C4A062__
