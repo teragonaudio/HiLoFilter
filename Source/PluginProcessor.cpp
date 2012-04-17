@@ -164,12 +164,17 @@ void HiLoFilterAudioProcessor::releaseResources() {
 }
 
 void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
-  // This is the place where you'd normally do the guts of your plugin's
-  // audio processing...
   for(int channel = 0; channel < getNumInputChannels(); ++channel) {
-    float *channelData = buffer.getSampleData(channel);
-
-    // ..do something to the data...
+    switch(filterState) {
+      case kHiLoFilterStateHi:
+      case kHiLoFilterStateLo:
+        processFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
+        break;
+      case kHiLoFilterStatePassthru:
+      case kHiLoFilterStateInvalid:
+      default:
+        break;
+    }
   }
 
   // In case we have more outputs than inputs, we'll clear any output
@@ -177,6 +182,23 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
   // guaranteed to be empty - they may contain garbage).
   for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
     buffer.clear(i, 0, buffer.getNumSamples());
+  }
+}
+
+void HiLoFilterAudioProcessor::processFilter(float *channelData, const int channel, const int numFrames) {
+  for(int i = 0; i < numFrames; ++i) {
+    lastInput3[channel] = lastInput2[channel];
+    lastInput2[channel] = lastInput1[channel];
+    lastInput1[channel] = channelData[i];
+
+    channelData[i] = (hiCoeffA1 * lastInput1[channel]) +
+      (hiCoeffA2 * lastInput2[channel]) +
+      (hiCoeffA1 * lastInput3[channel]) -
+      (hiCoeffB1 * lastOutput1[channel]) -
+      (hiCoeffB2 * lastOutput2[channel]);
+
+    lastOutput2[channel] = lastOutput1[channel];
+    lastOutput1[channel] = channelData[i];
   }
 }
 
