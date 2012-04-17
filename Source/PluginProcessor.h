@@ -34,7 +34,7 @@ typedef enum {
 /**
 */
 class HiLoFilterAudioProcessor  : public AudioProcessor {
-  public:
+public:
   //==============================================================================
   HiLoFilterAudioProcessor();
 
@@ -93,7 +93,7 @@ class HiLoFilterAudioProcessor  : public AudioProcessor {
 
   void setStateInformation(const void *data, int sizeInBytes);
 
-  private:
+private:
   void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
   void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
   void processFilter(float *channelData, const int channel, const int numSamples);
