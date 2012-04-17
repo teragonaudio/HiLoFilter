@@ -94,6 +94,9 @@ class HiLoFilterAudioProcessor  : public AudioProcessor {
   void setStateInformation(const void *data, int sizeInBytes);
 
   private:
+  void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
+  void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
+
   float filterFrequency;
   float filterResonance;
   float hiFilterRange;

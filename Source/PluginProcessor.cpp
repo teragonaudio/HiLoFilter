@@ -130,8 +130,32 @@ void HiLoFilterAudioProcessor::changeProgramName(int index, const String& newNam
 
 //==============================================================================
 void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
-  // Use this method as the place to do any pre-playback
-  // initialisation that you need..
+  for(int i = 0; i < 2; i++) {
+    lastInput1[i] = 0.0f;
+    lastInput2[i] = 0.0f;
+    lastInput3[i] = 0.0f;
+    lastOutput1[i] = 0.0f;
+    lastOutput2[i] = 0.0f;
+  }
+
+  recalculateHiCoefficients(sampleRate, filterFrequency, filterResonance);
+  recalculateLoCoefficients(sampleRate, filterFrequency, filterResonance);
+}
+
+void HiLoFilterAudioProcessor::recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance) {
+  const float coeffConstant = (float)tan(M_PI * frequency / sampleRate);
+  hiCoeffA1 = 1.0f / ((1.0f + resonance * coeffConstant) + (coeffConstant * coeffConstant));
+  hiCoeffA2 = -2.0f * hiCoeffA1;
+  hiCoeffB1 = 2.0f * hiCoeffA1 * ((coeffConstant * coeffConstant) - 1.0f);
+  hiCoeffB2 = hiCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+}
+
+void HiLoFilterAudioProcessor::recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance) {
+  const float coeffConstant = (float)(1.0f / tan(frequency / sampleRate));
+  loCoeffA1 = 1.0f / (1.0f + (resonance * coeffConstant) + (coeffConstant * coeffConstant));
+  loCoeffA2 = 2.0f * loCoeffA1;
+  loCoeffB1 = 2.0f * loCoeffA1 * (1.0f - (coeffConstant * coeffConstant));
+  loCoeffB2 = loCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
 }
 
 void HiLoFilterAudioProcessor::releaseResources() {
