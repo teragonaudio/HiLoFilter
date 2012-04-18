@@ -110,13 +110,13 @@ void HiLoFilterAudioProcessor::setFilterState(float currentFilterPosition) {
 float HiLoFilterAudioProcessor::getFilterFrequency() {
   switch(filterState) {
     case kHiLoFilterStateHi: {
-      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2)) / getLoFilterCutoffPosition();
-      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, hiFilterRange);
+      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2.0f)) / getLoFilterCutoffPosition();
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, hiFilterLimit, kHiLoFilterRangeMin);
       return newFrequency;
     }
     case kHiLoFilterStateLo: {
       float relativeFilterPosition = filterPosition / getLoFilterCutoffPosition();
-      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, loFilterRange, kHiLoFilterRangeMin);
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, loFilterLimit);
       return newFrequency;
     }
     default:
