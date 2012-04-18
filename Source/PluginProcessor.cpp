@@ -55,9 +55,9 @@ float HiLoFilterAudioProcessor::getParameter(int index) {
     case kHiLoFilterParamFilterResonance:
       return (filterResonance - kHiLoFilterResonanceMin) / (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin);
     case kHiLoFilterParamHiFilterRange:
-      return scaleFrequencyToParameterRange(hiFilterRange, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+      return scaleFrequencyToParameterRange(hiFilterLimit, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
     case kHiLoFilterParamLoFilterRange:
-      return scaleFrequencyToParameterRange(loFilterRange, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+      return scaleFrequencyToParameterRange(loFilterLimit, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
     case kHiLoFilterParamDeadZoneSize:
       return (deadZoneSize - kHiLoFilterDeadZoneMin) / (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin);
     default:
@@ -161,10 +161,10 @@ void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
       filterResonance = newValue * (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin) + kHiLoFilterResonanceMin;
       break;
     case kHiLoFilterParamHiFilterRange:
-      hiFilterRange = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+      hiFilterLimit = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
       break;
     case kHiLoFilterParamLoFilterRange:
-      loFilterRange = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
+      loFilterLimit = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
       break;
     case kHiLoFilterParamDeadZoneSize:
       deadZoneSize = newValue * (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin) + kHiLoFilterDeadZoneMin;
@@ -181,8 +181,8 @@ const String HiLoFilterAudioProcessor::getParameterName(int index) {
   switch(index) {
     case kHiLoFilterParamFilterPosition: return String("Position");
     case kHiLoFilterParamFilterResonance: return String("Resonance");
-    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Range");
-    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Range");
+    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Limit");
+    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Limit");
     case kHiLoFilterParamDeadZoneSize: return String("Dead Zone Size");
     default: return String::empty;
   }
@@ -209,9 +209,9 @@ const String HiLoFilterAudioProcessor::getParameterText(int index) {
     case kHiLoFilterParamFilterResonance:
       return String(filterResonance, PARAM_TEXT_NUM_DECIMAL_PLACES);
     case kHiLoFilterParamHiFilterRange:
-      return getParameterTextForFrequency(hiFilterRange);
+      return getParameterTextForFrequency(hiFilterLimit);
     case kHiLoFilterParamLoFilterRange:
-      return getParameterTextForFrequency(loFilterRange);
+      return getParameterTextForFrequency(loFilterLimit);
     case kHiLoFilterParamDeadZoneSize:
       return String(deadZoneSize, 0);
     default:

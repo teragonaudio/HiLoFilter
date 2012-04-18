@@ -121,8 +121,8 @@ private:
 
   float filterPosition;
   float filterResonance;
-  float hiFilterRange;
-  float loFilterRange;
+  float hiFilterLimit;
+  float loFilterLimit;
   float deadZoneSize;
 
   float lastInput1[2], lastInput2[2], lastInput3[2];
