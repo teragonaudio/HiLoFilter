@@ -74,6 +74,16 @@ necessitate writing this plugin, but in a situation where one wants only one
 such plugin on the master channel controlled by a sticky knob, these might not
 matter.
 
+Limitations
+-----------
+
+Currently HiLoFilter is only available as a 32-bit Universal Binary for Mac
+OSX. It should run as both a VST2 and AudioUnit plugin. The plugin should also
+build under Windows as a 32-bit VST2 plugin (and there are project files ready
+to do just that), but I'm too lazy too install VS2010 and test under this
+platform. If someone out there is so willing, grab the source on GitHub and
+send me a built DLL, which I would be happy to post on my website.
+
 Bugs and Feedback
 -----------------
 
