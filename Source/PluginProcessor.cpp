@@ -163,7 +163,9 @@ void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
     default: break;
   }
 
-  recalculateCoefficients();
+  if(filterState != kHiLoFilterStatePassthru) {
+    recalculateCoefficients();
+  }
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
