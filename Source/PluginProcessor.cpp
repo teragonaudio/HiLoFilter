@@ -14,7 +14,7 @@
 
 //==============================================================================
 HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
-  filterState = kHiLoFilterStateInvalid;
+  filterState = kHiLoFilterStatePassthru;
   filterPosition = kHiLoFilterPositionMax / 2.0f;
   filterResonance = kHiLoFilterResonanceDefault;
   hiFilterRange = kHiLoFilterRangeMin;
@@ -287,7 +287,6 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
         processLoFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
         break;
       case kHiLoFilterStatePassthru:
-      case kHiLoFilterStateInvalid:
       default:
         break;
     }

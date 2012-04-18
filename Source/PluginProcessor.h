@@ -26,7 +26,6 @@ typedef enum {
   kHiLoFilterStatePassthru,
   kHiLoFilterStateLo,
   kHiLoFilterStateHi,
-  kHiLoFilterStateInvalid,
   kHiLoFilterStateNumStates,
 } HiLoFilterState;
 
