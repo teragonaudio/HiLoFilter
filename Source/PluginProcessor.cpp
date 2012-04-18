@@ -66,7 +66,16 @@ float HiLoFilterAudioProcessor::getParameter(int index) {
 }
 
 static float scaleParameterRangeToFrequency(float value, float max, float min) {
-  return expf(value * (logf(max) - logf(min)) + logf(min));
+  float frequency = expf(value * (logf(max) - logf(min)) + logf(min));
+  if(frequency > max) {
+    return max;
+  }
+  else if(frequency < min) {
+    return min;
+  }
+  else {
+    return frequency;
+  }
 }
 
 float HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
