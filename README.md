@@ -97,7 +97,9 @@ Licensing
 ---------
 
 HiLoFilter is licensed under the GPL. It uses the excellent [Juce framework]
-(http://rawmaterialsoftware.com/juce], and therefore is also GPL'd.
+(http://rawmaterialsoftware.com/juce), and therefore is also GPL'd. The source
+code is available at [the HiLoFilter GitHub website]
+(http://github.com/teragonaudio/HiLoFilter).
 
 Testing Configuration
 ---------------------
