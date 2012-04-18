@@ -17,8 +17,8 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
   filterState = kHiLoFilterStatePassthru;
   filterPosition = kHiLoFilterPositionMax / 2.0f;
   filterResonance = kHiLoFilterResonanceDefault;
-  hiFilterRange = kHiLoFilterRangeMin;
-  loFilterRange = kHiLoFilterRangeMax;
+  hiFilterLimit = kHiLoFilterRangeMax;
+  loFilterLimit = kHiLoFilterRangeMin;
   deadZoneSize = kHiLoFilterDeadZoneDefault;
 }
 
