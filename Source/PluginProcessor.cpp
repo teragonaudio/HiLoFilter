@@ -253,8 +253,10 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
   for(int channel = 0; channel < getNumInputChannels(); ++channel) {
     switch(filterState) {
       case kHiLoFilterStateHi:
+        processHiFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
+        break;
       case kHiLoFilterStateLo:
-        processFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
+        processLoFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
         break;
       case kHiLoFilterStatePassthru:
       case kHiLoFilterStateInvalid:
@@ -271,7 +273,7 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
   }
 }
 
-void HiLoFilterAudioProcessor::processFilter(float *channelData, const int channel, const int numFrames) {
+void HiLoFilterAudioProcessor::processHiFilter(float *channelData, const int channel, const int numFrames) {
   for(int i = 0; i < numFrames; ++i) {
     lastInput3[channel] = lastInput2[channel];
     lastInput2[channel] = lastInput1[channel];
@@ -282,6 +284,23 @@ void HiLoFilterAudioProcessor::processFilter(float *channelData, const int chann
       (hiCoeffA1 * lastInput3[channel]) -
       (hiCoeffB1 * lastOutput1[channel]) -
       (hiCoeffB2 * lastOutput2[channel]);
+
+    lastOutput2[channel] = lastOutput1[channel];
+    lastOutput1[channel] = channelData[i];
+  }
+}
+
+void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int channel, const int numFrames) {
+  for(int i = 0; i < numFrames; ++i) {
+    lastInput3[channel] = lastInput2[channel];
+    lastInput2[channel] = lastInput1[channel];
+    lastInput1[channel] = channelData[i];
+
+    channelData[i] = (loCoeffA1 * lastInput1[channel]) +
+      (loCoeffA2 * lastInput2[channel]) +
+      (loCoeffA1 * lastInput3[channel]) -
+      (loCoeffB1 * lastOutput1[channel]) -
+      (loCoeffB2 * lastOutput2[channel]);
 
     lastOutput2[channel] = lastOutput1[channel];
     lastOutput1[channel] = channelData[i];

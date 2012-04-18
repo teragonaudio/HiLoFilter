@@ -110,7 +110,8 @@ private:
   void recalculateCoefficients();
   void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
   void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
-  void processFilter(float *channelData, const int channel, const int numSamples);
+  void processHiFilter(float *channelData, const int channel, const int numSamples);
+  void processLoFilter(float *channelData, const int channel, const int numSamples);
 
   int filterPosition;
   float filterResonance;
