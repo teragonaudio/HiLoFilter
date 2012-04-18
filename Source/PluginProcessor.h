@@ -115,6 +115,9 @@ private:
   void processLoFilter(float *channelData, const int channel, const int numSamples);
 
   void resetLastIOData();
+  float getHiFilterCutoffPosition();
+  float getLoFilterCutoffPosition();
+  void setFilterState(float currentFilterPosition);
 
 
   float filterPosition;

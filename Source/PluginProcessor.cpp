@@ -69,27 +69,44 @@ static float scaleParameterRangeToFrequency(float value, float max, float min) {
   return expf(value * (logf(max) - logf(min)) + logf(min));
 }
 
-float HiLoFilterAudioProcessor::getFilterFrequency() {
-  int loCutoff = (int)((kHiLoFilterPositionMax - deadZoneSize) / 2);
-  int hiCutoff = (int)((kHiLoFilterPositionMax + deadZoneSize) / 2);
-  if(filterPosition > hiCutoff) {
-    filterState = kHiLoFilterStateHi;
+float HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
+  return (kHiLoFilterPositionMax + deadZoneSize) / 2.0f;
+}
+
+float HiLoFilterAudioProcessor::getLoFilterCutoffPosition() {
+  return (kHiLoFilterPositionMax - deadZoneSize) / 2.0f;
+}
+
+void HiLoFilterAudioProcessor::setFilterState(float currentFilterPosition) {
+  float loCutoff = (kHiLoFilterPositionMax - deadZoneSize) / 2.0f;
+  float hiCutoff = (kHiLoFilterPositionMax + deadZoneSize) / 2.0f;
+  HiLoFilterState newFilterState;
+  if(currentFilterPosition > hiCutoff) {
+    newFilterState = kHiLoFilterStateHi;
   }
-  else if(filterPosition < loCutoff) {
-      filterState = kHiLoFilterStateLo;
-    }
+  else if(currentFilterPosition < loCutoff) {
+    newFilterState = kHiLoFilterStateLo;
+  }
   else {
-    filterState = kHiLoFilterStatePassthru;
+    newFilterState = kHiLoFilterStatePassthru;
   }
 
+  if(newFilterState != filterState) {
+    filterState = newFilterState;
+    resetLastIOData();
+    recalculateCoefficients();
+  }
+}
+
+float HiLoFilterAudioProcessor::getFilterFrequency() {
   switch(filterState) {
     case kHiLoFilterStateHi: {
-      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2)) / (float)loCutoff;
+      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2)) / getLoFilterCutoffPosition();
       float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, hiFilterRange);
       return newFrequency;
     }
     case kHiLoFilterStateLo: {
-      float relativeFilterPosition = (float)filterPosition / (float)loCutoff;
+      float relativeFilterPosition = filterPosition / getLoFilterCutoffPosition();
       float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, loFilterRange, kHiLoFilterRangeMin);
       return newFrequency;
     }
@@ -128,8 +145,8 @@ void HiLoFilterAudioProcessor::recalculateCoefficients() {
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
   switch(index) {
     case kHiLoFilterParamFilterPosition:
-      filterPosition = (int)(kHiLoFilterPositionMax * newValue);
-      getFilterFrequency();
+      filterPosition = kHiLoFilterPositionMax * newValue;
+      setFilterState(filterPosition);
       break;
    case kHiLoFilterParamFilterResonance:
       filterResonance = newValue * (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin) + kHiLoFilterResonanceMin;
