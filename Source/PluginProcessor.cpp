@@ -158,7 +158,7 @@ void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
       loFilterRange = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
       break;
     case kHiLoFilterParamDeadZoneSize:
-      deadZoneSize = (int)(kHiLoFilterDeadZoneMax * newValue);
+      deadZoneSize = newValue * (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin) + kHiLoFilterDeadZoneMin;
       break;
     default: break;
   }
