@@ -114,6 +114,9 @@ private:
   void processHiFilter(float *channelData, const int channel, const int numSamples);
   void processLoFilter(float *channelData, const int channel, const int numSamples);
 
+  void resetLastIOData();
+
+
   float filterPosition;
   float filterResonance;
   float hiFilterRange;

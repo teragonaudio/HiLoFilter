@@ -30,6 +30,16 @@ const String HiLoFilterAudioProcessor::getName() const {
   return JucePlugin_Name;
 }
 
+void HiLoFilterAudioProcessor::resetLastIOData() {
+  for(int i = 0; i < 2; i++) {
+    lastInput1[i] = 0.0f;
+    lastInput2[i] = 0.0f;
+    lastInput3[i] = 0.0f;
+    lastOutput1[i] = 0.0f;
+    lastOutput2[i] = 0.0f;
+  }
+}
+
 int HiLoFilterAudioProcessor::getNumParameters() {
   return kHiLoFilterNumParams;
 }
