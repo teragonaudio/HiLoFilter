@@ -268,6 +268,7 @@ void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     lastOutput2[i] = 0.0f;
   }
 
+  resetLastIOData();
   recalculateCoefficients();
 }
 
