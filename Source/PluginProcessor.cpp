@@ -205,7 +205,7 @@ static const String getParameterTextForFrequency(const float frequency) {
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
   switch(index) {
     case kHiLoFilterParamFilterPosition:
-      return String(filterPosition, 0);
+      return String((int)filterPosition);
     case kHiLoFilterParamFilterResonance:
       return String(filterResonance, PARAM_TEXT_NUM_DECIMAL_PLACES);
     case kHiLoFilterParamHiFilterRange:
@@ -213,7 +213,7 @@ const String HiLoFilterAudioProcessor::getParameterText(int index) {
     case kHiLoFilterParamLoFilterRange:
       return getParameterTextForFrequency(loFilterLimit);
     case kHiLoFilterParamDeadZoneSize:
-      return String(deadZoneSize, 0);
+      return String((int)deadZoneSize);
     default:
       return String::empty;
   }
