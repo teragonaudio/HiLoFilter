@@ -32,10 +32,12 @@ typedef enum {
 
 static const float kHiLoFilterPositionMax = 127.0f;
 static const float kHiLoFilterResonanceMin = 0.1f;
+static const float kHiLoFilterResonanceDefault = 1.0f;
 static const float kHiLoFilterResonanceMax = sqrtf(2.0f);
 static const float kHiLoFilterRangeMin = 20.0f;
 static const float kHiLoFilterRangeMax = 20000.0f;
 static const int kHiLoFilterDeadZoneMin = 1;
+static const int kHiLoFilterDeadZoneDefault = 6;
 static const int kHiLoFilterDeadZoneMax = 10;
 
 #define PARAM_TEXT_NUM_DECIMAL_PLACES 2
