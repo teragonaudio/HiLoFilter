@@ -11,6 +11,11 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#if WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 
 //==============================================================================
 HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
