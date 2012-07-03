@@ -1,11 +1,10 @@
-About HiLoFilter
-================
+HiLoFilter
+==========
 
 HiLoFilter is a simple hipass and lopass filter which can be easily controlled
 with a single knob. It is loosely inspired by the same type of filter found on
-some Pioneer DJM mixers, and also the [The Pilgrim]
-(http://arcticanaudio.com/effects/thepilgrim.html), another great plugin which
-provides roughly the same functionality.
+some Pioneer DJM mixers, and also the [The Pilgrim][1], another great plugin
+which provides roughly the same functionality.
 
 So for those who haven't used such a filter, here's how it works:
 
@@ -51,9 +50,9 @@ other stuff in my liveset, and got rid of the effect chain, which reduced the
 liveset to 16 instances. It was better, but still too high.
 
 HiLoFilter isn't anything special. I coded it in an afternoon, and the filter
-code is from the long-retired Convolver plugin from [Teragon Audio]
-(http://www.teragonaudio.com). But written in highly optimized C++, the
-performance is almost twice as good as The Pilgrim.
+code is from the long-retired Convolver plugin from [Teragon Audio][2].  But
+written in highly optimized C++, the performance is almost twice as good as
+The Pilgrim.
 
 I benchmarked HiLoFilter against The Pilgrim in an empty liveset with 100
 instances (more details on the test setup below). The resulting CPU usage
@@ -96,10 +95,9 @@ GitHub, you can file a bug report there.
 Licensing
 ---------
 
-HiLoFilter is licensed under the GPL. It uses the excellent [Juce framework]
-(http://rawmaterialsoftware.com/juce), and therefore is also GPL'd. The source
-code is available at [the HiLoFilter GitHub website]
-(http://github.com/teragonaudio/HiLoFilter).
+HiLoFilter is licensed under the GPL. It uses the excellent [Juce
+framework][3], and therefore is also GPL'd. The source
+code is available at [the HiLoFilter GitHub website][4].
 
 Testing Configuration
 ---------------------
@@ -110,3 +108,8 @@ is a MacBook Pro 2x2.66 Core 2 Duo with 8Gb RAM and an Intel 310 SSD (3Gbps),
 running OSX 10.6.8. The test was performed with Ableton Live 8.3 with a buffer
 size of 512. Your results may vary.
 
+
+[1]: http://arcticanaudio.com/effects/thepilgrim.html
+[2]: http://teragonaudio.com
+[3]: http://rawmaterialsoftware.com/juce
+[4]: http://github.com/teragonaudio/HiLoFilter
