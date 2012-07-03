@@ -2,6 +2,7 @@
 xcuserdata
 workspace.xml
 *.orig
+Builds/MacOSX/build/*
 Builds/VisualStudio2010/Debug/*
 Builds/VisualStudio2010/Release/*
 Builds/VisualStudio2010/ipch/*
