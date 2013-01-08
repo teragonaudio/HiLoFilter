@@ -10,11 +10,12 @@
 		08E2E2371C0667A30558587E /* AUInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D45934B79BD616027F4BE6B /* AUInputElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		10540F518945AD172381E946 /* PluginEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A437B56F56F4BA3A3256E6 /* PluginEditor.cpp */; };
 		1A66E23E3A89A929787D35C4 /* juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = A512ECE8C68124EE488EDE5F /* juce_audio_basics.mm */; };
+		24358945169CA4C7001415B1 /* AUCarbonViewBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 549CAC5C28BCE1611ECEAD5E /* AUCarbonViewBase.cpp */; };
+		24358946169CA4DE001415B1 /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C337DA48475C0961B565B14 /* AUMIDIEffectBase.cpp */; };
 		25B602FC02A37C237C8B31FF /* juce_events.mm in Sources */ = {isa = PBXBuildFile; fileRef = 68492256F18D8701B922C03B /* juce_events.mm */; };
 		2F7AFFD383742ABCC784FE0F /* juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = C24E41168795132FA2756537 /* juce_core.mm */; };
 		315B21D584557941523E21AA /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2696576AEDC676B585889C71 /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		33E7B4D42C4E4300F6BC5ABC /* AUBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A94B1AE1B4C2115646B61171 /* AUBuffer.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
-		39B036A2BA57380E6694F68F /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C337DA48475C0961B565B14 /* AUMIDIEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		3DC0775CCD2B962930E135AD /* juce_AU_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F04834EA54147E1B20DD32 /* juce_AU_Wrapper.mm */; };
 		3FE0BE718804C9351421171A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EAD47803CB126D747894762 /* WebKit.framework */; };
 		431847370D90B23D74107C28 /* CAStreamBasicDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D0402D66FF9DE1B5D13B540 /* CAStreamBasicDescription.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -35,7 +36,6 @@
 		7166BB0AF568261F138F6E82 /* AUBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09655409F2C3F1F7F1601E51 /* AUBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		7832BAE80AB025B1AD527CA7 /* juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = B149BDDEC7F6928712026BF8 /* juce_graphics.mm */; };
 		7DDD17D756D41E6AFA09A6BF /* juce_RTAS_DigiCode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC9200C39D1C791F6B318E5 /* juce_RTAS_DigiCode2.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
-		7FC978DBEB75678F98643DD5 /* AUCarbonViewBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 549CAC5C28BCE1611ECEAD5E /* AUCarbonViewBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		83E26C3F0618F3B6A7ADF29F /* ComponentBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4AC79A359CD9F7E869030B /* ComponentBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		9C190F9D9AB83567CF4E895F /* PluginProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B683C7C778DF336F7AC4C1B0 /* PluginProcessor.cpp */; };
 		A07C30CDBC7CF6F179FC8B75 /* juce_VST_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 277A28DCF0E446C7A5F0A877 /* juce_VST_Wrapper.mm */; };
@@ -2340,7 +2340,7 @@
 		DB9470030E84A4DDB945BFAD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = CB657B640CB274315C185C75 /* Build configuration list for PBXProject "HiLoFilter" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2402,14 +2402,12 @@
 				10540F518945AD172381E946 /* PluginEditor.cpp in Sources */,
 				7166BB0AF568261F138F6E82 /* AUBase.cpp in Sources */,
 				33E7B4D42C4E4300F6BC5ABC /* AUBuffer.cpp in Sources */,
-				7FC978DBEB75678F98643DD5 /* AUCarbonViewBase.cpp in Sources */,
 				53259991326F0996FDC2CC77 /* AUCarbonViewControl.cpp in Sources */,
 				680EBCCA2E11B91EE2A0B256 /* AUCarbonViewDispatch.cpp in Sources */,
 				C6C553BFEA00868F7B373FF0 /* AUDispatch.cpp in Sources */,
 				D965729E2A7339083A0552CE /* AUEffectBase.cpp in Sources */,
 				08E2E2371C0667A30558587E /* AUInputElement.cpp in Sources */,
 				F99FB8D1E37FF6722ADC8061 /* AUMIDIBase.cpp in Sources */,
-				39B036A2BA57380E6694F68F /* AUMIDIEffectBase.cpp in Sources */,
 				6D3AAC763FE5074AEDC506CE /* AUOutputBase.cpp in Sources */,
 				5A4306B65C3F0ECE4FA7C67D /* AUOutputElement.cpp in Sources */,
 				315B21D584557941523E21AA /* AUScopeElement.cpp in Sources */,
@@ -2437,6 +2435,8 @@
 				F396365AA053D33A8CDD838A /* juce_RTAS_Wrapper.cpp in Sources */,
 				B3A5451C3003DDBA79AC5E7B /* juce_VST_Wrapper.cpp in Sources */,
 				A07C30CDBC7CF6F179FC8B75 /* juce_VST_Wrapper.mm in Sources */,
+				24358945169CA4C7001415B1 /* AUCarbonViewBase.cpp in Sources */,
+				24358946169CA4DE001415B1 /* AUMIDIEffectBase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2468,6 +2468,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXCLUDED_SOURCE_FILE_NAMES = "$(EXCLUDED_SOURCE_FILE_NAMES_$(CURRENT_ARCH))";
 				EXCLUDED_SOURCE_FILE_NAMES_x86_64 = "*Carbon*.cpp";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2479,7 +2480,7 @@
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"../../third-party/vstsdk2.4",
@@ -2506,6 +2507,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				EXCLUDED_SOURCE_FILE_NAMES = "$(EXCLUDED_SOURCE_FILE_NAMES_$(CURRENT_ARCH))";
 				EXCLUDED_SOURCE_FILE_NAMES_x86_64 = "*Carbon*.cpp";
@@ -2517,7 +2519,7 @@
 					"JUCE_ObjCExtraSuffix=Zx5z0Z",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
 				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"../../third-party/vstsdk2.4",
