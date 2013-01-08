@@ -74,6 +74,8 @@ public:
 
   const String getParameterName(int index);
 
+  const String getParameterNameForStorage(int index);
+
   const String getParameterText(int index);
 
   const String getInputChannelName(int channelIndex) const;

@@ -193,6 +193,17 @@ const String HiLoFilterAudioProcessor::getParameterName(int index) {
   }
 }
 
+const String HiLoFilterAudioProcessor::getParameterNameForStorage(int index) {
+  switch(index) {
+    case kHiLoFilterParamFilterPosition: return String("Position");
+    case kHiLoFilterParamFilterResonance: return String("Resonance");
+    case kHiLoFilterParamHiFilterRange: return String("HiFilterLimit");
+    case kHiLoFilterParamLoFilterRange: return String("LoFilterLimit");
+    case kHiLoFilterParamDeadZoneSize: return String("DeadZoneSize");
+    default: return String::empty;
+  }
+}
+
 static const String getParameterTextForFrequency(const float frequency) {
   String outText;
   if(frequency > 1000) {
