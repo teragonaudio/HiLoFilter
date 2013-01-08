@@ -375,11 +375,22 @@ void HiLoFilterAudioProcessor::getStateInformation(MemoryBlock& destData) {
   // You should use this method to store your parameters in the memory block.
   // You could do that either as raw data, or use the XML or ValueTree classes
   // as intermediaries to make it easy to save and load complex data.
+  XmlElement xml("HiLoFilterStorage");
+  for(int i = 0; i < kHiLoFilterNumParams; i++) {
+    xml.setAttribute(getParameterNameForStorage(i), getParameter(i));
+  }
+  copyXmlToBinary(xml, destData);
 }
 
 void HiLoFilterAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
   // You should use this method to restore your parameters from this memory block,
   // whose contents will have been created by the getStateInformation() call.
+  ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+  if(xmlState != 0 && xmlState->hasTagName("HiLoFilterStorage")) {
+    for(int i = 0; i < kHiLoFilterNumParams; i++) {
+      setParameter(i, xmlState->getDoubleAttribute(getParameterNameForStorage(i)));
+    }
+  }
 }
 
 //==============================================================================
