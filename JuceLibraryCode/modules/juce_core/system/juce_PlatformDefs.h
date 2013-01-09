@@ -297,8 +297,13 @@ namespace juce
  #endif
 #endif
 
+#if defined (_MSC_VER) && _MSC_VER > 1600
+  #define _ALLOW_KEYWORD_MACROS 1 // (to stop VC2012 complaining)
+#endif
+
 #if defined (_MSC_VER) && _MSC_VER >= 1600
  #if _MSC_VER >= 1700
+  #define noexcept throw()
   #define JUCE_COMPILER_SUPPORTS_NOEXCEPT 1
  #else
   #define JUCE_COMPILER_SUPPORTS_NOEXCEPT 0
