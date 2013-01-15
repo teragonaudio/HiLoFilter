@@ -223,12 +223,15 @@ private:
     //==============================================================================
     String newLineString;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OutputStream);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OutputStream)
 };
 
 //==============================================================================
 /** Writes a number to a stream as 8-bit characters in the default system encoding. */
 OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, int number);
+
+/** Writes a number to a stream as 8-bit characters in the default system encoding. */
+OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, int64 number);
 
 /** Writes a number to a stream as 8-bit characters in the default system encoding. */
 OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, double number);

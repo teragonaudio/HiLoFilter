@@ -75,7 +75,8 @@ namespace SocketHelpers
         if (handle <= 0 || port <= 0)
             return false;
 
-        struct sockaddr_in servTmpAddr = { 0 };
+        struct sockaddr_in servTmpAddr;
+        zerostruct (servTmpAddr); // (can't use "= { 0 }" on this object because it's typedef'ed as a C struct)
         servTmpAddr.sin_family = PF_INET;
         servTmpAddr.sin_addr.s_addr = htonl (INADDR_ANY);
         servTmpAddr.sin_port = htons ((uint16) port);
@@ -97,7 +98,7 @@ namespace SocketHelpers
            #if JUCE_WINDOWS
             bytesThisTime = recv (handle, static_cast<char*> (destBuffer) + bytesRead, maxBytesToRead - bytesRead, 0);
            #else
-            while ((bytesThisTime = (int) ::read (handle, addBytesToPointer (destBuffer, bytesRead), maxBytesToRead - bytesRead)) < 0
+            while ((bytesThisTime = (int) ::read (handle, addBytesToPointer (destBuffer, bytesRead), (size_t) (maxBytesToRead - bytesRead))) < 0
                      && errno == EINTR
                      && connected)
             {
@@ -201,7 +202,9 @@ namespace SocketHelpers
                                const int portNumber,
                                const int timeOutMillisecs) noexcept
     {
-        struct addrinfo hints = { 0 };
+        struct addrinfo hints;
+        zerostruct (hints);
+
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = isDatagram ? SOCK_DGRAM : SOCK_STREAM;
         hints.ai_flags = AI_NUMERICSERV;
@@ -230,7 +233,7 @@ namespace SocketHelpers
         }
 
         setSocketBlockingState (handle, false);
-        const int result = ::connect (handle, info->ai_addr, (int) info->ai_addrlen);
+        const int result = ::connect (handle, info->ai_addr, (socklen_t) info->ai_addrlen);
         freeaddrinfo (info);
 
         if (result < 0)
@@ -301,7 +304,7 @@ int StreamingSocket::write (const void* sourceBuffer, const int numBytesToWrite)
    #else
     int result;
 
-    while ((result = (int) ::write (handle, sourceBuffer, numBytesToWrite)) < 0
+    while ((result = (int) ::write (handle, sourceBuffer, (size_t) numBytesToWrite)) < 0
             && errno == EINTR)
     {
     }
@@ -393,7 +396,9 @@ bool StreamingSocket::createListener (const int newPortNumber, const String& loc
     portNumber = newPortNumber;
     isListener = true;
 
-    struct sockaddr_in servTmpAddr = { 0 };
+    struct sockaddr_in servTmpAddr;
+    zerostruct (servTmpAddr);
+
     servTmpAddr.sin_family = PF_INET;
     servTmpAddr.sin_addr.s_addr = htonl (INADDR_ANY);
 
@@ -564,7 +569,7 @@ int DatagramSocket::write (const void* sourceBuffer, const int numBytesToWrite)
     jassert (serverAddress != nullptr && connected);
 
     return connected ? (int) sendto (handle, (const char*) sourceBuffer,
-                                     numBytesToWrite, 0,
+                                     (size_t) numBytesToWrite, 0,
                                      static_cast <const struct addrinfo*> (serverAddress)->ai_addr,
                                      static_cast <const struct addrinfo*> (serverAddress)->ai_addrlen)
                      : -1;

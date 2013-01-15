@@ -142,6 +142,7 @@ public:
    #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
     Array& operator= (Array&& other) noexcept
     {
+        const ScopedLockType lock (getLock());
         data = static_cast <ArrayAllocationBase<ElementType, TypeOfCriticalSectionToUse>&&> (other.data);
         numUsed = other.numUsed;
         other.numUsed = 0;
@@ -219,7 +220,7 @@ public:
 
     /** Returns one of the elements in the array.
         If the index passed in is beyond the range of valid elements, this
-        will return zero.
+        will return a default value.
 
         If you're certain that the index will always be a valid element, you
         can call getUnchecked() instead, which is faster.
@@ -266,7 +267,7 @@ public:
         return data.elements [index];
     }
 
-    /** Returns the first element in the array, or 0 if the array is empty.
+    /** Returns the first element in the array, or a default value if the array is empty.
 
         @see operator[], getUnchecked, getLast
     */
@@ -277,7 +278,7 @@ public:
                              : ElementType();
     }
 
-    /** Returns the last element in the array, or 0 if the array is empty.
+    /** Returns the last element in the array, or a default value if the array is empty.
 
         @see operator[], getUnchecked, getFirst
     */
@@ -460,17 +461,17 @@ public:
         {
             const ScopedLockType lock (getLock());
             data.ensureAllocatedSize (numUsed + numberOfElements);
-            ElementType* insertPos;
+            ElementType* insertPos = data.elements;
 
             if (isPositiveAndBelow (indexToInsertAt, numUsed))
             {
-                insertPos = data.elements + indexToInsertAt;
+                insertPos += indexToInsertAt;
                 const int numberToMove = numUsed - indexToInsertAt;
                 memmove (insertPos + numberOfElements, insertPos, numberToMove * sizeof (ElementType));
             }
             else
             {
-                insertPos = data.elements + numUsed;
+                insertPos += numUsed;
             }
 
             numUsed += numberOfElements;
@@ -570,7 +571,7 @@ public:
         const ScopedLockType lock2 (otherArray.getLock());
 
         data.swapWith (otherArray.data);
-        swapVariables (numUsed, otherArray.numUsed);
+        std::swap (numUsed, otherArray.numUsed);
     }
 
     /** Adds elements from another array to the end of this array.
@@ -672,37 +673,30 @@ public:
         @returns                    the index of the element, or -1 if it's not found
         @see addSorted, sort
     */
-    template <class ElementComparator>
-    int indexOfSorted (ElementComparator& comparator, ParameterType elementToLookFor) const
+    template <typename ElementComparator, typename TargetValueType>
+    int indexOfSorted (ElementComparator& comparator, TargetValueType elementToLookFor) const
     {
         (void) comparator;  // if you pass in an object with a static compareElements() method, this
                             // avoids getting warning messages about the parameter being unused
 
         const ScopedLockType lock (getLock());
-        int start = 0;
-        int end_ = numUsed;
 
-        for (;;)
+        for (int s = 0, e = numUsed;;)
         {
-            if (start >= end_)
-            {
+            if (s >= e)
                 return -1;
-            }
-            else if (comparator.compareElements (elementToLookFor, data.elements [start]) == 0)
-            {
-                return start;
-            }
-            else
-            {
-                const int halfway = (start + end_) >> 1;
 
-                if (halfway == start)
-                    return -1;
-                else if (comparator.compareElements (elementToLookFor, data.elements [halfway]) >= 0)
-                    start = halfway;
-                else
-                    end_ = halfway;
-            }
+            if (comparator.compareElements (elementToLookFor, data.elements [s]) == 0)
+                return s;
+
+            const int halfway = (s + e) / 2;
+            if (halfway == s)
+                return -1;
+
+            if (comparator.compareElements (elementToLookFor, data.elements [halfway]) >= 0)
+                s = halfway;
+            else
+                e = halfway;
         }
     }
 
@@ -733,9 +727,7 @@ public:
             if (numberToShift > 0)
                 memmove (e, e + 1, ((size_t) numberToShift) * sizeof (ElementType));
 
-            if ((numUsed << 1) < data.numAllocated)
-                minimiseStorageOverheads();
-
+            minimiseStorageAfterRemoval();
             return removed;
         }
         else
@@ -752,7 +744,7 @@ public:
         @param valueToRemove   the object to try to remove
         @see remove, removeRange
     */
-    void removeValue (ParameterType valueToRemove)
+    void removeFirstMatchingValue (ParameterType valueToRemove)
     {
         const ScopedLockType lock (getLock());
         ElementType* const e = data.elements;
@@ -765,6 +757,23 @@ public:
                 break;
             }
         }
+    }
+
+    /** Removes an item from the array.
+
+        This will remove the first occurrence of the given element from the array.
+        If the item isn't found, no action is taken.
+
+        @param valueToRemove   the object to try to remove
+        @see remove, removeRange
+    */
+    void removeAllInstancesOf (ParameterType valueToRemove)
+    {
+        const ScopedLockType lock (getLock());
+
+        for (int i = numUsed; --i >= 0;)
+            if (valueToRemove == data.elements[i])
+                remove (i);
     }
 
     /** Removes a range of elements from the array.
@@ -798,9 +807,7 @@ public:
                 memmove (e, e + numberToRemove, ((size_t) numToShift) * sizeof (ElementType));
 
             numUsed -= numberToRemove;
-
-            if ((numUsed << 1) < data.numAllocated)
-                minimiseStorageOverheads();
+            minimiseStorageAfterRemoval();
         }
     }
 
@@ -820,9 +827,7 @@ public:
             data.elements [numUsed - i].~ElementType();
 
         numUsed -= howManyToRemove;
-
-        if ((numUsed << 1) < data.numAllocated)
-            minimiseStorageOverheads();
+        minimiseStorageAfterRemoval();
     }
 
     /** Removes any elements which are also in another array.
@@ -895,8 +900,8 @@ public:
         if (isPositiveAndBelow (index1, numUsed)
              && isPositiveAndBelow (index2, numUsed))
         {
-            swapVariables (data.elements [index1],
-                           data.elements [index2]);
+            std::swap (data.elements [index1],
+                       data.elements [index2]);
         }
     }
 
@@ -1028,6 +1033,12 @@ private:
     {
         for (int i = 0; i < numUsed; ++i)
             data.elements[i].~ElementType();
+    }
+
+    void minimiseStorageAfterRemoval()
+    {
+        if (data.numAllocated > numUsed * 2)
+            data.shrinkToNoMoreThan (jmax (numUsed, 64 / (int) sizeof (ElementType)));
     }
 };
 

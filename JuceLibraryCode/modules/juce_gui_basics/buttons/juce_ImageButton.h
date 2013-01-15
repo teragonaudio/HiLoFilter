@@ -127,16 +127,6 @@ public:
     */
     Image getDownImage() const;
 
-    //==============================================================================
-    struct Ids
-    {
-        static const Identifier tagType, upImage, overImage, downImage,
-                                upOverlay, overOverlay, downOverlay,
-                                upOpacity, overOpacity, downOpacity;
-    };
-
-    void refreshFromValueTree (const ValueTree&, ComponentBuilder&);
-
 protected:
     //==============================================================================
     /** @internal */
@@ -157,7 +147,7 @@ private:
 
     Image getCurrentImage() const;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ImageButton);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ImageButton)
 };
 
 

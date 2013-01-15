@@ -210,9 +210,12 @@ public:
     */
     void setNeedsToBeSaved (bool needsToBeSaved);
 
+    /** Attempts to reload the settings from the file. */
+    bool reload();
+
     //==============================================================================
     /** Returns the file that's being used. */
-    File getFile() const                              { return file; }
+    const File& getFile() const noexcept            { return file; }
 
 
 protected:
@@ -229,9 +232,13 @@ private:
     InterProcessLock::ScopedLockType* createProcessLock() const;
 
     void timerCallback();
-    void initialise();
+    bool saveAsXml();
+    bool saveAsBinary();
+    bool loadAsXml();
+    bool loadAsBinary();
+    bool loadAsBinary (InputStream&);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesFile);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesFile)
 };
 
 #endif   // __JUCE_PROPERTIESFILE_JUCEHEADER__

@@ -134,6 +134,9 @@ private:
     class ColourSpaceView;
     class HueSelectorComp;
     class SwatchComponent;
+    class ColourComponentSlider;
+    class ColourSpaceMarker;
+    class HueSelectorMarker;
     friend class ColourSpaceView;
     friend class ScopedPointer<ColourSpaceView>;
     friend class HueSelectorComp;
@@ -157,7 +160,7 @@ private:
     void paint (Graphics& g);
     void resized();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelector);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelector)
 
    #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
     // This constructor is here temporarily to prevent old code compiling, because the parameters

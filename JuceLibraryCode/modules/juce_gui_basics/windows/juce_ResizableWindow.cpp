@@ -343,8 +343,7 @@ void ResizableWindow::setConstrainer (ComponentBoundsConstrainer* newConstrainer
 
         setResizable (shouldBeResizable, useBottomRightCornerResizer);
 
-        ComponentPeer* const peer = getPeer();
-        if (peer != nullptr)
+        if (ComponentPeer* const peer = getPeer())
             peer->setConstrainer (newConstrainer);
     }
 }
@@ -393,8 +392,7 @@ void ResizableWindow::lookAndFeelChanged()
     {
         Component::addToDesktop (getDesktopWindowStyleFlags());
 
-        ComponentPeer* const peer = getPeer();
-        if (peer != nullptr)
+        if (ComponentPeer* const peer = getPeer())
             peer->setConstrainer (constrainer);
     }
 }
@@ -438,9 +436,7 @@ void ResizableWindow::setFullScreen (const bool shouldBeFullScreen)
 
         if (isOnDesktop())
         {
-            ComponentPeer* const peer = getPeer();
-
-            if (peer != nullptr)
+            if (ComponentPeer* const peer = getPeer())
             {
                 // keep a copy of this intact in case the real one gets messed-up while we're un-maximising
                 const Rectangle<int> lastPos (lastNonFullScreenPos);
@@ -478,9 +474,7 @@ void ResizableWindow::setMinimised (const bool shouldMinimise)
 {
     if (shouldMinimise != isMinimised())
     {
-        ComponentPeer* const peer = getPeer();
-
-        if (peer != nullptr)
+        if (ComponentPeer* const peer = getPeer())
         {
             updateLastPos();
             peer->setMinimised (shouldMinimise);
@@ -501,7 +495,7 @@ void ResizableWindow::updateLastPos()
 void ResizableWindow::parentSizeChanged()
 {
     if (isFullScreen() && getParentComponent() != nullptr)
-        setBounds (0, 0, getParentWidth(), getParentHeight());
+        setBounds (getParentComponent()->getLocalBounds());
 }
 
 //==============================================================================
@@ -538,13 +532,13 @@ bool ResizableWindow::restoreWindowStateFromString (const String& s)
 
     {
         Desktop& desktop = Desktop::getInstance();
-        RectangleList allMonitors (desktop.getAllMonitorDisplayAreas());
+        RectangleList allMonitors (desktop.getDisplays().getRectangleList (true));
         allMonitors.clipTo (newPos);
         const Rectangle<int> onScreenArea (allMonitors.getBounds());
 
         if (onScreenArea.getWidth() * onScreenArea.getHeight() < 32 * 32)
         {
-            const Rectangle<int> screen (desktop.getMonitorAreaContaining (newPos.getCentre()));
+            const Rectangle<int> screen (desktop.getDisplays().getDisplayContaining (newPos.getCentre()).userArea);
 
             newPos.setSize (jmin (newPos.getWidth(),  screen.getWidth()),
                             jmin (newPos.getHeight(), screen.getHeight()));

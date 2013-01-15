@@ -41,7 +41,22 @@ StringArray Font::findAllTypefaceNames()
     File ("/system/fonts").findChildFiles (fonts, File::findFiles, false, "*.ttf");
 
     for (int i = 0; i < fonts.size(); ++i)
-        results.add (fonts.getReference(i).getFileNameWithoutExtension());
+        results.addIfNotAlreadyThere (fonts.getReference(i).getFileNameWithoutExtension()
+                                        .upToLastOccurrenceOf ("-", false, false));
+
+    return results;
+}
+
+StringArray Font::findAllTypefaceStyles (const String& family)
+{
+    StringArray results ("Regular");
+
+    Array<File> fonts;
+    File ("/system/fonts").findChildFiles (fonts, File::findFiles, false, family + "-*.ttf");
+
+    for (int i = 0; i < fonts.size(); ++i)
+        results.addIfNotAlreadyThere (fonts.getReference(i).getFileNameWithoutExtension()
+                                        .fromLastOccurrenceOf ("-", false, false));
 
     return results;
 }
@@ -74,46 +89,54 @@ Typeface::Ptr Font::getDefaultTypefaceForFont (const Font& font)
     return Typeface::createSystemTypefaceFor (f);
 }
 
+const float referenceFontSize = 256.0f;
+const float referenceFontToUnits = 1.0f / referenceFontSize;
+
 //==============================================================================
 class AndroidTypeface   : public Typeface
 {
 public:
     AndroidTypeface (const Font& font)
-        : Typeface (font.getTypefaceName()),
-          ascent (0),
-          descent (0)
+        : Typeface (font.getTypefaceName(), font.getTypefaceStyle()),
+          ascent (0), descent (0), heightToPointsFactor (1.0f)
     {
-        jint flags = 0;
-        if (font.isBold()) flags = 1;
-        if (font.isItalic()) flags += 2;
+        JNIEnv* const env = getEnv();
 
-        JNIEnv* env = getEnv();
+        const bool isBold   = style.contains ("Bold");
+        const bool isItalic = style.contains ("Italic");
 
-        File fontFile (File ("/system/fonts").getChildFile (name).withFileExtension (".ttf"));
+        File fontFile (getFontFile (name, style));
+
+        if (! fontFile.exists())
+            fontFile = findFontFile (name, isBold, isItalic);
 
         if (fontFile.exists())
             typeface = GlobalRef (env->CallStaticObjectMethod (TypefaceClass, TypefaceClass.createFromFile,
                                                                javaString (fontFile.getFullPathName()).get()));
         else
             typeface = GlobalRef (env->CallStaticObjectMethod (TypefaceClass, TypefaceClass.create,
-                                                               javaString (getName()).get(), flags));
+                                                               javaString (getName()).get(),
+                                                               (isBold ? 1 : 0) + (isItalic ? 2 : 0)));
 
         rect = GlobalRef (env->NewObject (RectClass, RectClass.constructor, 0, 0, 0, 0));
 
         paint = GlobalRef (GraphicsHelpers::createPaint (Graphics::highResamplingQuality));
         const LocalRef<jobject> ignored (paint.callObjectMethod (Paint.setTypeface, typeface.get()));
 
-        const float standardSize = 256.0f;
-        paint.callVoidMethod (Paint.setTextSize, standardSize);
-        ascent = std::abs (paint.callFloatMethod (Paint.ascent)) / standardSize;
-        descent = paint.callFloatMethod (Paint.descent) / standardSize;
+        paint.callVoidMethod (Paint.setTextSize, referenceFontSize);
 
-        const float height = ascent + descent;
-        unitsToHeightScaleFactor = 1.0f / 256.0f;
+        const float fullAscent = std::abs (paint.callFloatMethod (Paint.ascent));
+        const float fullDescent = paint.callFloatMethod (Paint.descent);
+        const float totalHeight = fullAscent + fullDescent;
+
+        ascent  = fullAscent / totalHeight;
+        descent = fullDescent / totalHeight;
+        heightToPointsFactor = referenceFontSize / totalHeight;
     }
 
-    float getAscent() const    { return ascent; }
-    float getDescent() const   { return descent; }
+    float getAscent() const                 { return ascent; }
+    float getDescent() const                { return descent; }
+    float getHeightToPointsFactor() const   { return heightToPointsFactor; }
 
     float getStringWidth (const String& text)
     {
@@ -131,7 +154,7 @@ public:
         for (int i = 0; i < numDone; ++i)
             x += localWidths[i];
 
-        return x * unitsToHeightScaleFactor;
+        return x * referenceFontToUnits;
     }
 
     void getGlyphPositions (const String& text, Array<int>& glyphs, Array<float>& xOffsets)
@@ -155,7 +178,7 @@ public:
         {
             glyphs.add ((int) s.getAndAdvance());
             x += localWidths[i];
-            xOffsets.add (x * unitsToHeightScaleFactor);
+            xOffsets.add (x * referenceFontToUnits);
         }
     }
 
@@ -168,7 +191,7 @@ public:
     {
         JNIEnv* env = getEnv();
 
-        jobject matrix = GraphicsHelpers::createMatrix (env, AffineTransform::scale (unitsToHeightScaleFactor, unitsToHeightScaleFactor).followedBy (t));
+        jobject matrix = GraphicsHelpers::createMatrix (env, AffineTransform::scale (referenceFontToUnits).followedBy (t));
         jintArray maskData = (jintArray) android.activity.callObjectMethod (JuceAppActivity.renderGlyph, (jchar) glyphNumber, paint.get(), matrix, rect.get());
 
         env->DeleteLocalRef (matrix);
@@ -209,10 +232,45 @@ public:
     }
 
     GlobalRef typeface, paint, rect;
-    float ascent, descent, unitsToHeightScaleFactor;
+    float ascent, descent, heightToPointsFactor;
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AndroidTypeface);
+    static File findFontFile (const String& family,
+                              const bool bold, const bool italic)
+    {
+        File file;
+
+        if (bold || italic)
+        {
+            String suffix;
+            if (bold)   suffix = "Bold";
+            if (italic) suffix << "Italic";
+
+            file = getFontFile (family, suffix);
+
+            if (file.exists())
+                return file;
+        }
+
+        file = getFontFile (family, "Regular");
+
+        if (! file.exists())
+            file = getFontFile (family, String::empty);
+
+        return file;
+    }
+
+    static File getFontFile (const String& family, const String& style)
+    {
+        String path ("/system/fonts/" + family);
+
+        if (style.isNotEmpty())
+            path << '-' << style;
+
+        return File (path + ".ttf");
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AndroidTypeface)
 };
 
 //==============================================================================

@@ -23,14 +23,14 @@
   ==============================================================================
 */
 
-ToolbarButton::ToolbarButton (const int itemId_, const String& buttonText,
-                              Drawable* const normalImage_, Drawable* const toggledOnImage_)
-   : ToolbarItemComponent (itemId_, buttonText, true),
-     normalImage (normalImage_),
-     toggledOnImage (toggledOnImage_),
+ToolbarButton::ToolbarButton (const int iid, const String& buttonText,
+                              Drawable* const normalIm, Drawable* const toggledOnIm)
+   : ToolbarItemComponent (iid, buttonText, true),
+     normalImage (normalIm),
+     toggledOnImage (toggledOnIm),
      currentImage (nullptr)
 {
-    jassert (normalImage_ != nullptr);
+    jassert (normalImage != nullptr);
 }
 
 ToolbarButton::~ToolbarButton()
@@ -73,6 +73,7 @@ void ToolbarButton::updateDrawable()
 {
     if (currentImage != nullptr)
     {
+        currentImage->setInterceptsMouseClicks (false, false);
         currentImage->setTransformToFit (getContentArea().toFloat(), RectanglePlacement::centred);
         currentImage->setAlpha (isEnabled() ? 1.0f : 0.5f);
     }

@@ -34,10 +34,10 @@ template <class ComClass>
 class ComSmartPtr
 {
 public:
-    ComSmartPtr() throw() : p (0)                               {}
-    ComSmartPtr (ComClass* const p_) : p (p_)                   { if (p_ != 0) p_->AddRef(); }
-    ComSmartPtr (const ComSmartPtr<ComClass>& p_) : p (p_.p)    { if (p  != 0) p ->AddRef(); }
-    ~ComSmartPtr()                                              { release(); }
+    ComSmartPtr() throw() : p (0)                                  {}
+    ComSmartPtr (ComClass* const obj) : p (obj)                    { if (p) p->AddRef(); }
+    ComSmartPtr (const ComSmartPtr<ComClass>& other) : p (other.p) { if (p) p->AddRef(); }
+    ~ComSmartPtr()                                                 { release(); }
 
     operator ComClass*() const throw()     { return p; }
     ComClass& operator*() const throw()    { return *p; }
@@ -63,12 +63,7 @@ public:
 
     HRESULT CoCreateInstance (REFCLSID classUUID, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
     {
-       #if ! JUCE_MINGW
         return ::CoCreateInstance (classUUID, 0, dwClsContext, __uuidof (ComClass), (void**) resetAndGetPointerAddress());
-       #else
-        jassertfalse; // need to find a mingw equivalent of __uuidof to make this possible
-        return E_NOTIMPL;
-       #endif
     }
 
     template <class OtherComClass>
@@ -83,12 +78,7 @@ public:
     template <class OtherComClass>
     HRESULT QueryInterface (ComSmartPtr<OtherComClass>& destObject) const
     {
-       #if ! JUCE_MINGW
         return this->QueryInterface (__uuidof (OtherComClass), destObject);
-       #else
-        jassertfalse; // need to find a mingw equivalent of __uuidof to make this possible
-        return E_NOTIMPL;
-       #endif
     }
 
 private:
@@ -103,36 +93,37 @@ private:
 #define JUCE_COMRESULT  HRESULT __stdcall
 
 //==============================================================================
-/** Handy base class for writing COM objects, providing ref-counting and a basic QueryInterface method.
-*/
 template <class ComClass>
-class ComBaseClassHelper   : public ComClass
+class ComBaseClassHelperBase   : public ComClass
 {
 public:
-    ComBaseClassHelper()  : refCount (1) {}
-    virtual ~ComBaseClassHelper() {}
-
-    JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
-    {
-       #if ! JUCE_MINGW
-        if (refId == __uuidof (ComClass))   { AddRef(); *result = dynamic_cast <ComClass*> (this); return S_OK; }
-       #else
-        jassertfalse; // need to find a mingw equivalent of __uuidof to make this possible
-       #endif
-
-        if (refId == IID_IUnknown)          { AddRef(); *result = dynamic_cast <IUnknown*> (this); return S_OK; }
-
-        *result = 0;
-        return E_NOINTERFACE;
-    }
+    ComBaseClassHelperBase (unsigned int initialRefCount)  : refCount (initialRefCount) {}
+    virtual ~ComBaseClassHelperBase() {}
 
     ULONG __stdcall AddRef()    { return ++refCount; }
     ULONG __stdcall Release()   { const ULONG r = --refCount; if (r == 0) delete this; return r; }
 
-    void resetReferenceCount() noexcept     { refCount = 0; }
-
 protected:
     ULONG refCount;
+};
+
+/** Handy base class for writing COM objects, providing ref-counting and a basic QueryInterface method.
+*/
+template <class ComClass>
+class ComBaseClassHelper   : public ComBaseClassHelperBase <ComClass>
+{
+public:
+    ComBaseClassHelper (unsigned int initialRefCount = 1) : ComBaseClassHelperBase <ComClass> (initialRefCount) {}
+    ~ComBaseClassHelper() {}
+
+    JUCE_COMRESULT QueryInterface (REFIID refId, void** result)
+    {
+        if (refId == __uuidof (ComClass))   { this->AddRef(); *result = dynamic_cast <ComClass*> (this); return S_OK; }
+        if (refId == IID_IUnknown)          { this->AddRef(); *result = dynamic_cast <IUnknown*> (this); return S_OK; }
+
+        *result = 0;
+        return E_NOINTERFACE;
+    }
 };
 
 #endif   // __JUCE_WIN32_COMSMARTPTR_JUCEHEADER__

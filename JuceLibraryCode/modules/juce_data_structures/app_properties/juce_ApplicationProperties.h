@@ -39,8 +39,7 @@
     all users (stored in a folder accessible to all users).
 
     The class manages the creation of these files on-demand, allowing access via the
-    getUserSettings() and getCommonSettings() methods. It also has a few handy
-    methods like testWriteAccess() to check that the files can be saved.
+    getUserSettings() and getCommonSettings() methods.
 
     After creating an instance of an ApplicationProperties object, you should first
     of all call setStorageParameters() to tell it the parameters to use to create
@@ -123,7 +122,7 @@ private:
 
     void openFiles();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ApplicationProperties);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ApplicationProperties)
 };
 
 

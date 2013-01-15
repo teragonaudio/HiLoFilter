@@ -85,7 +85,7 @@
  #endif
 
  #if JUCE_MINGW
-  #include <Imm.h>
+  #include <imm.h>
  #endif
 
 //==============================================================================
@@ -96,6 +96,7 @@
  #include <X11/Xutil.h>
  #include <X11/Xmd.h>
  #include <X11/keysym.h>
+ #include <X11/XKBlib.h>
  #include <X11/cursorfont.h>
  #include <unistd.h>
 
@@ -181,6 +182,7 @@ namespace juce
 #include "layout/juce_ComponentBoundsConstrainer.cpp"
 #include "layout/juce_ComponentBuilder.cpp"
 #include "layout/juce_ComponentMovementWatcher.cpp"
+#include "layout/juce_ConcertinaPanel.cpp"
 #include "layout/juce_GroupComponent.cpp"
 #include "layout/juce_MultiDocumentPanel.cpp"
 #include "layout/juce_ResizableBorderComponent.cpp"
@@ -255,7 +257,6 @@ namespace juce
 
 #if JUCE_MAC || JUCE_IOS
  #include "../juce_core/native/juce_osx_ObjCHelpers.h"
- #include "../juce_core/native/juce_mac_ObjCSuffix.h"
  #include "../juce_graphics/native/juce_mac_CoreGraphicsHelpers.h"
  #include "../juce_graphics/native/juce_mac_CoreGraphicsContext.h"
 

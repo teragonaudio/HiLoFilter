@@ -35,7 +35,7 @@ public:
         pixelStride = format == Image::RGB ? 3 : ((format == Image::ARGB) ? 4 : 1);
         lineStride = (pixelStride * jmax (1, width) + 3) & ~3;
 
-        imageData.allocate (lineStride * jmax (1, height), clearImage);
+        imageData.allocate ((size_t) (lineStride * jmax (1, height)), clearImage);
 
         CGColorSpaceRef colourSpace = (format == Image::SingleChannel) ? CGColorSpaceCreateDeviceGray()
                                                                        : CGColorSpaceCreateDeviceRGB();
@@ -53,7 +53,7 @@ public:
 
     LowLevelGraphicsContext* createLowLevelContext()
     {
-        return new CoreGraphicsContext (context, height);
+        return new CoreGraphicsContext (context, height, 1.0f);
     }
 
     void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode)
@@ -115,18 +115,19 @@ private:
        #endif
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoreGraphicsImage);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoreGraphicsImage)
 };
 
-ImagePixelData* NativeImageType::create (Image::PixelFormat format, int width, int height, bool clearImage) const
+ImagePixelData::Ptr NativeImageType::create (Image::PixelFormat format, int width, int height, bool clearImage) const
 {
     return new CoreGraphicsImage (format == Image::RGB ? Image::ARGB : format, width, height, clearImage);
 }
 
 //==============================================================================
-CoreGraphicsContext::CoreGraphicsContext (CGContextRef context_, const float flipHeight_)
+CoreGraphicsContext::CoreGraphicsContext (CGContextRef context_, const float flipHeight_, const float targetScale_)
     : context (context_),
       flipHeight (flipHeight_),
+      targetScale (targetScale_),
       lastClipRectIsValid (false),
       state (new SavedState())
 {
@@ -192,11 +193,11 @@ bool CoreGraphicsContext::clipToRectangle (const Rectangle<int>& r)
     return ! isClipEmpty();
 }
 
-bool CoreGraphicsContext::clipToRectangleList (const RectangleList& clipRegion)
+bool CoreGraphicsContext::clipToRectangleListWithoutTest (const RectangleList& clipRegion)
 {
     if (clipRegion.isEmpty())
     {
-        CGContextClipToRect (context, CGRectMake (0, 0, 0, 0));
+        CGContextClipToRect (context, CGRectZero);
         lastClipRectIsValid = true;
         lastClipRect = Rectangle<int>();
         return false;
@@ -204,26 +205,28 @@ bool CoreGraphicsContext::clipToRectangleList (const RectangleList& clipRegion)
     else
     {
         const int numRects = clipRegion.getNumRectangles();
-
         HeapBlock <CGRect> rects (numRects);
-        for (int i = 0; i < numRects; ++i)
-        {
-            const Rectangle<int>& r = clipRegion.getRectangle(i);
-            rects[i] = CGRectMake (r.getX(), flipHeight - r.getBottom(), r.getWidth(), r.getHeight());
-        }
+
+        int i = 0;
+        for (const Rectangle<int>* r = clipRegion.begin(), * const e = clipRegion.end(); r != e; ++r)
+            rects[i++] = CGRectMake (r->getX(), flipHeight - r->getBottom(), r->getWidth(), r->getHeight());
 
         CGContextClipToRects (context, rects, numRects);
         lastClipRectIsValid = false;
-        return ! isClipEmpty();
+        return true;
     }
+}
+
+bool CoreGraphicsContext::clipToRectangleList (const RectangleList& clipRegion)
+{
+    return clipToRectangleListWithoutTest (clipRegion) && ! isClipEmpty();
 }
 
 void CoreGraphicsContext::excludeClipRectangle (const Rectangle<int>& r)
 {
     RectangleList remaining (getClipBounds());
     remaining.subtract (r);
-    clipToRectangleList (remaining);
-    lastClipRectIsValid = false;
+    clipToRectangleListWithoutTest (remaining);
 }
 
 void CoreGraphicsContext::clipToPath (const Path& path, const AffineTransform& transform)
@@ -248,7 +251,7 @@ void CoreGraphicsContext::clipToImageAlpha (const Image& sourceImage, const Affi
         AffineTransform t (AffineTransform::verticalFlip (sourceImage.getHeight()).followedBy (transform));
         applyTransform (t);
 
-        CGRect r = CGRectMake (0, 0, sourceImage.getWidth(), sourceImage.getHeight());
+        CGRect r = convertToCGRect (sourceImage.getBounds());
         CGContextClipToMask (context, r, image);
 
         applyTransform (t.inverted());
@@ -296,9 +299,7 @@ void CoreGraphicsContext::restoreState()
 {
     CGContextRestoreGState (context);
 
-    SavedState* const top = stateStack.getLast();
-
-    if (top != nullptr)
+    if (SavedState* const top = stateStack.getLast())
     {
         state = top;
         stateStack.removeLast (1, false);
@@ -485,7 +486,7 @@ void CoreGraphicsContext::drawImage (const Image& sourceImage, const AffineTrans
         CGContextDrawImage (context, imageRect, image);
     }
 
-    CGImageRelease (image); // (This causes a memory bug in iPhone sim 3.0 - try upgrading to a later version if you hit this)
+    CGImageRelease (image); // (This causes a memory bug in iOS sim 3.0 - try upgrading to a later version if you hit this)
     CGContextRestoreGState (context);
 }
 
@@ -556,13 +557,11 @@ void CoreGraphicsContext::setFont (const Font& newFont)
         state->fontRef = 0;
         state->font = newFont;
 
-        OSXTypeface* osxTypeface = dynamic_cast <OSXTypeface*> (state->font.getTypeface());
-
-        if (osxTypeface != nullptr)
+        if (OSXTypeface* osxTypeface = dynamic_cast <OSXTypeface*> (state->font.getTypeface()))
         {
             state->fontRef = osxTypeface->fontRef;
             CGContextSetFont (context, state->fontRef);
-            CGContextSetFontSize (context, state->font.getHeight() * osxTypeface->fontHeightToCGSizeFactor);
+            CGContextSetFontSize (context, state->font.getHeight() * osxTypeface->fontHeightToPointsFactor);
 
             state->fontTransform = osxTypeface->renderingTransform;
             state->fontTransform.a *= state->font.getHorizontalScale();
@@ -584,7 +583,7 @@ void CoreGraphicsContext::drawGlyph (int glyphNumber, const AffineTransform& tra
         {
             CGContextSetTextMatrix (context, state->fontTransform); // have to set this each time, as it's not saved as part of the state
 
-            CGGlyph g = glyphNumber;
+            CGGlyph g = (CGGlyph) glyphNumber;
             CGContextShowGlyphsAtPoint (context, transform.getTranslationX(),
                                         flipHeight - roundToInt (transform.getTranslationY()), &g, 1);
         }
@@ -598,7 +597,7 @@ void CoreGraphicsContext::drawGlyph (int glyphNumber, const AffineTransform& tra
             t.d = -t.d;
             CGContextSetTextMatrix (context, t);
 
-            CGGlyph g = glyphNumber;
+            CGGlyph g = (CGGlyph) glyphNumber;
             CGContextShowGlyphsAtPoint (context, 0, 0, &g, 1);
 
             CGContextRestoreGState (context);
@@ -665,7 +664,7 @@ CGShadingRef CoreGraphicsContext::SavedState::getShading (CoreGraphicsContext& o
         numGradientLookupEntries = g.createLookupTable (fillType.transform, gradientLookupTable) - 1;
 
         CGFunctionRef function = CGFunctionCreate (this, 1, 0, 4, 0, &(owner.gradientCallbacks));
-        CGPoint p1 (CGPointMake (g.point1.x, g.point1.y));
+        CGPoint p1 (convertToCGPoint (g.point1));
 
         if (g.isRadial)
         {
@@ -676,7 +675,7 @@ CGShadingRef CoreGraphicsContext::SavedState::getShading (CoreGraphicsContext& o
         else
         {
             shading = CGShadingCreateAxial (owner.rgbColourSpace, p1,
-                                            CGPointMake (g.point2.x, g.point2.y),
+                                            convertToCGPoint (g.point2),
                                             function, true, true);
         }
 
@@ -790,11 +789,9 @@ Image juce_loadWithCoreImage (InputStream& input)
 
   #if JUCE_IOS
     JUCE_AUTORELEASEPOOL
-    UIImage* uiImage = [UIImage imageWithData: [NSData dataWithBytesNoCopy: data.getData()
-                                                                    length: data.getSize()
-                                                              freeWhenDone: NO]];
-
-    if (uiImage != nil)
+    if (UIImage* uiImage = [UIImage imageWithData: [NSData dataWithBytesNoCopy: data.getData()
+                                                                        length: data.getSize()
+                                                                  freeWhenDone: NO]])
     {
         CGImageRef loadedImage = uiImage.CGImage;
 
@@ -824,7 +821,7 @@ Image juce_loadWithCoreImage (InputStream& input)
             CoreGraphicsImage* const cgImage = dynamic_cast<CoreGraphicsImage*> (image.getPixelData());
             jassert (cgImage != nullptr); // if USE_COREGRAPHICS_RENDERING is set, the CoreGraphicsImage class should have been used.
 
-            CGContextDrawImage (cgImage->context, CGRectMake (0, 0, image.getWidth(), image.getHeight()), loadedImage);
+            CGContextDrawImage (cgImage->context, convertToCGRect (image.getBounds()), loadedImage);
             CGContextFlush (cgImage->context);
 
            #if ! JUCE_IOS

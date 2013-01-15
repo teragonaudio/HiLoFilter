@@ -98,7 +98,7 @@ private:
     //==============================================================================
     int millisecondsBeforeTipAppears;
     Point<int> lastMousePos;
-    int mouseClicks;
+    int mouseClicks, mouseWheelMoves;
     unsigned int lastCompChangeTime, lastHideTime;
     Component* lastComponentUnderMouse;
     bool changedCompsSinceShown;
@@ -112,7 +112,7 @@ private:
     void showFor (const String& tip);
     void hide();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TooltipWindow);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TooltipWindow)
 };
 
 

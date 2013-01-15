@@ -156,7 +156,7 @@ public:
         If the map doesn't contain the key, a default instance of the value type is returned.
         @param keyToLookFor    the key of the item being requested
     */
-    inline const ValueType operator[] (KeyTypeParameter keyToLookFor) const
+    inline ValueType operator[] (KeyTypeParameter keyToLookFor) const
     {
         const ScopedLockType sl (getLock());
 
@@ -336,15 +336,15 @@ private:
     class HashEntry
     {
     public:
-        HashEntry (KeyTypeParameter key_, ValueTypeParameter value_, HashEntry* const nextEntry_)
-            : key (key_), value (value_), nextEntry (nextEntry_)
+        HashEntry (KeyTypeParameter k, ValueTypeParameter val, HashEntry* const next)
+            : key (k), value (val), nextEntry (next)
         {}
 
         const KeyType key;
         ValueType value;
         HashEntry* nextEntry;
 
-        JUCE_DECLARE_NON_COPYABLE (HashEntry);
+        JUCE_DECLARE_NON_COPYABLE (HashEntry)
     };
 
 public:
@@ -421,7 +421,7 @@ public:
         HashEntry* entry;
         int index;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Iterator);
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Iterator)
     };
 
 private:
@@ -440,7 +440,7 @@ private:
         return hash;
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HashMap);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HashMap)
 };
 
 

@@ -43,10 +43,24 @@ JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, launchApp, void, (JNIEnv* en
     initialiseJuce_GUI();
 
     JUCEApplication* app = dynamic_cast <JUCEApplication*> (JUCEApplicationBase::createInstance());
-    if (! app->initialiseApp (String::empty))
+    if (! app->initialiseApp())
         exit (0);
 
     jassert (MessageManager::getInstance()->isThisTheMessageThread());
+}
+
+JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, suspendApp, void, (JNIEnv* env, jobject activity))
+{
+    JUCEApplicationBase* const app = JUCEApplicationBase::getInstance();
+    if (app != nullptr)
+        app->suspended();
+}
+
+JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, resumeApp, void, (JNIEnv* env, jobject activity))
+{
+    JUCEApplicationBase* const app = JUCEApplicationBase::getInstance();
+    if (app != nullptr)
+        app->resumed();
 }
 
 JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, quitApp, void, (JNIEnv* env, jobject activity))
@@ -80,6 +94,7 @@ DECLARE_JNI_CLASS (CanvasMinimal, "android/graphics/Canvas");
  METHOD (hasFocus,      "hasFocus",         "()Z") \
  METHOD (invalidate,    "invalidate",       "(IIII)V") \
  METHOD (containsPoint, "containsPoint",    "(II)Z") \
+ METHOD (showKeyboard,  "showKeyboard",     "(Z)V") \
  METHOD (createGLView,  "createGLView",     "()L" JUCE_ANDROID_ACTIVITY_CLASSPATH "$OpenGLView;") \
 
 DECLARE_JNI_CLASS (ComponentPeerView, JUCE_ANDROID_ACTIVITY_CLASSPATH "$ComponentPeerView");
@@ -90,8 +105,8 @@ DECLARE_JNI_CLASS (ComponentPeerView, JUCE_ANDROID_ACTIVITY_CLASSPATH "$Componen
 class AndroidComponentPeer  : public ComponentPeer
 {
 public:
-    AndroidComponentPeer (Component* const component, const int windowStyleFlags)
-        : ComponentPeer (component, windowStyleFlags),
+    AndroidComponentPeer (Component& comp, const int windowStyleFlags)
+        : ComponentPeer (comp, windowStyleFlags),
           usingAndroidGraphics (false),
           fullScreen (false),
           sizeAllocated (0)
@@ -99,7 +114,7 @@ public:
         // NB: must not put this in the initialiser list, as it invokes a callback,
         // which will fail if the peer is only half-constructed.
         view = GlobalRef (android.activity.callObjectMethod (JuceAppActivity.createNewView,
-                                                             component->isOpaque()));
+                                                             component.isOpaque()));
 
         if (isFocused())
             handleFocusGain();
@@ -261,7 +276,7 @@ public:
 
     void setFullScreen (bool shouldBeFullScreen)
     {
-        Rectangle<int> r (shouldBeFullScreen ? Desktop::getInstance().getMainMonitorArea()
+        Rectangle<int> r (shouldBeFullScreen ? Desktop::getInstance().getDisplays().getMainDisplay().userArea
                                              : lastNonFullscreenBounds);
 
         if ((! shouldBeFullScreen) && r.isEmpty())
@@ -271,7 +286,7 @@ public:
         if (! r.isEmpty())
             setBounds (r.getX(), r.getY(), r.getWidth(), r.getHeight(), shouldBeFullScreen);
 
-        component->repaint();
+        component.repaint();
     }
 
     bool isFullScreen() const
@@ -286,8 +301,8 @@ public:
 
     bool contains (const Point<int>& position, bool trueIfInAChildWindow) const
     {
-        return isPositiveAndBelow (position.x, component->getWidth())
-            && isPositiveAndBelow (position.y, component->getHeight())
+        return isPositiveAndBelow (position.x, component.getWidth())
+            && isPositiveAndBelow (position.y, component.getHeight())
             && ((! trueIfInAChildWindow) || view.callBooleanMethod (ComponentPeerView.containsPoint,
                                                                     position.x, position.y));
     }
@@ -320,26 +335,35 @@ public:
     }
 
     //==============================================================================
-    void handleMouseDownCallback (float x, float y, int64 time)
+    void handleMouseDownCallback (int index, float x, float y, int64 time)
     {
         lastMousePos.setXY ((int) x, (int) y);
         currentModifiers = currentModifiers.withoutMouseButtons();
-        handleMouseEvent (0, lastMousePos, currentModifiers, time);
+        handleMouseEvent (index, lastMousePos, currentModifiers, time);
         currentModifiers = currentModifiers.withoutMouseButtons().withFlags (ModifierKeys::leftButtonModifier);
-        handleMouseEvent (0, lastMousePos, currentModifiers, time);
+        handleMouseEvent (index, lastMousePos, currentModifiers, time);
     }
 
-    void handleMouseDragCallback (float x, float y, int64 time)
+    void handleMouseDragCallback (int index, float x, float y, int64 time)
     {
         lastMousePos.setXY ((int) x, (int) y);
-        handleMouseEvent (0, lastMousePos, currentModifiers, time);
+        handleMouseEvent (index, lastMousePos, currentModifiers, time);
     }
 
-    void handleMouseUpCallback (float x, float y, int64 time)
+    void handleMouseUpCallback (int index, float x, float y, int64 time)
     {
         lastMousePos.setXY ((int) x, (int) y);
         currentModifiers = currentModifiers.withoutMouseButtons();
-        handleMouseEvent (0, lastMousePos, currentModifiers, time);
+        handleMouseEvent (index, lastMousePos, currentModifiers, time);
+    }
+
+    void handleKeyDownCallback (int k, int kc)
+    {
+        handleKeyPress (k, kc);
+    }
+
+    void handleKeyUpCallback (int k, int kc)
+    {
     }
 
     //==============================================================================
@@ -361,10 +385,15 @@ public:
             handleFocusLoss();
     }
 
-    void textInputRequired (const Point<int>& position)
+    void textInputRequired (const Point<int>&)
     {
-        // TODO
+        view.callVoidMethod (ComponentPeerView.showKeyboard, true);
     }
+
+    void dismissPendingTextInput()
+    {
+        view.callVoidMethod (ComponentPeerView.showKeyboard, false);
+     }
 
     //==============================================================================
     void handlePaintCallback (JNIEnv* env, jobject canvas)
@@ -392,7 +421,7 @@ public:
         {
             {
                 Image temp (new PreallocatedImage (clip.getWidth(), clip.getHeight(),
-                                                   dest, ! component->isOpaque()));
+                                                   dest, ! component.isOpaque()));
 
                 {
                     LowLevelGraphicsSoftwareRenderer g (temp);
@@ -521,10 +550,10 @@ private:
         HeapBlock<jint> allocatedData;
         bool hasAlpha;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PreallocatedImage);
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PreallocatedImage)
     };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AndroidComponentPeer);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AndroidComponentPeer)
 };
 
 ModifierKeys AndroidComponentPeer::currentModifiers = 0;
@@ -534,22 +563,23 @@ Point<int> AndroidComponentPeer::lastMousePos;
 #define JUCE_VIEW_CALLBACK(returnType, javaMethodName, params, juceMethodInvocation) \
   JUCE_JNI_CALLBACK (JUCE_JOIN_MACRO (JUCE_ANDROID_ACTIVITY_CLASSNAME, _00024ComponentPeerView), javaMethodName, returnType, params) \
   { \
-      AndroidComponentPeer* const peer = AndroidComponentPeer::findPeerForJavaView (env, view); \
-      if (peer != nullptr) \
+      if (AndroidComponentPeer* const peer = AndroidComponentPeer::findPeerForJavaView (env, view)) \
           peer->juceMethodInvocation; \
   }
 
-JUCE_VIEW_CALLBACK (void, handlePaint,      (JNIEnv* env, jobject view, jobject canvas),                    handlePaintCallback (env, canvas))
-JUCE_VIEW_CALLBACK (void, handleMouseDown,  (JNIEnv* env, jobject view, jfloat x, jfloat y, jlong time),    handleMouseDownCallback ((float) x, (float) y, (int64) time))
-JUCE_VIEW_CALLBACK (void, handleMouseDrag,  (JNIEnv* env, jobject view, jfloat x, jfloat y, jlong time),    handleMouseDragCallback ((float) x, (float) y, (int64) time))
-JUCE_VIEW_CALLBACK (void, handleMouseUp,    (JNIEnv* env, jobject view, jfloat x, jfloat y, jlong time),    handleMouseUpCallback ((float) x, (float) y, (int64) time))
-JUCE_VIEW_CALLBACK (void, viewSizeChanged,  (JNIEnv* env, jobject view),                                    handleMovedOrResized())
-JUCE_VIEW_CALLBACK (void, focusChanged,     (JNIEnv* env, jobject view, jboolean hasFocus),                 handleFocusChangeCallback (hasFocus))
+JUCE_VIEW_CALLBACK (void, handlePaint,      (JNIEnv* env, jobject view, jobject canvas),                          handlePaintCallback (env, canvas))
+JUCE_VIEW_CALLBACK (void, handleMouseDown,  (JNIEnv* env, jobject view, jint i, jfloat x, jfloat y, jlong time),  handleMouseDownCallback (i, (float) x, (float) y, (int64) time))
+JUCE_VIEW_CALLBACK (void, handleMouseDrag,  (JNIEnv* env, jobject view, jint i, jfloat x, jfloat y, jlong time),  handleMouseDragCallback (i, (float) x, (float) y, (int64) time))
+JUCE_VIEW_CALLBACK (void, handleMouseUp,    (JNIEnv* env, jobject view, jint i, jfloat x, jfloat y, jlong time),  handleMouseUpCallback (i, (float) x, (float) y, (int64) time))
+JUCE_VIEW_CALLBACK (void, viewSizeChanged,  (JNIEnv* env, jobject view),                                          handleMovedOrResized())
+JUCE_VIEW_CALLBACK (void, focusChanged,     (JNIEnv* env, jobject view, jboolean hasFocus),                       handleFocusChangeCallback (hasFocus))
+JUCE_VIEW_CALLBACK (void, handleKeyDown,    (JNIEnv* env, jobject view, jint k, jint kc),                         handleKeyDownCallback ((int) k, (int) kc))
+JUCE_VIEW_CALLBACK (void, handleKeyUp,      (JNIEnv* env, jobject view, jint k, jint kc),                         handleKeyUpCallback ((int) k, (int) kc))
 
 //==============================================================================
 ComponentPeer* Component::createNewPeer (int styleFlags, void*)
 {
-    return new AndroidComponentPeer (this, styleFlags);
+    return new AndroidComponentPeer (*this, styleFlags);
 }
 
 jobject createOpenGLView (ComponentPeer* peer)
@@ -611,6 +641,10 @@ bool Process::isForegroundProcess()
     return true;      // TODO
 }
 
+void Process::makeForegroundProcess()
+{
+}
+
 //==============================================================================
 void JUCE_CALLTYPE NativeMessageBox::showMessageBoxAsync (AlertWindow::AlertIconType iconType,
                                                           const String& title, const String& message,
@@ -670,9 +704,20 @@ void Desktop::setKioskComponent (Component* kioskModeComponent, bool enableOrDis
 }
 
 //==============================================================================
-void Desktop::getCurrentMonitorPositions (Array <Rectangle<int> >& monitorCoords, const bool clipToWorkArea)
+bool juce_areThereAnyAlwaysOnTopWindows()
 {
-    monitorCoords.add (Rectangle<int> (android.screenWidth, android.screenHeight));
+    return false;
+}
+
+//==============================================================================
+void Desktop::Displays::findDisplays()
+{
+    Display d;
+    d.userArea = d.totalArea = Rectangle<int> (android.screenWidth, android.screenHeight);
+    d.isMain = true;
+    d.scale = 1.0;
+
+    displays.add (d);
 }
 
 JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, setScreenSize, void, (JNIEnv* env, jobject activity,
@@ -682,7 +727,7 @@ JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, setScreenSize, void, (JNIEnv
     android.screenWidth = screenWidth;
     android.screenHeight = screenHeight;
 
-    Desktop::getInstance().refreshMonitorSizes();
+    const_cast <Desktop::Displays&> (Desktop::getInstance().getDisplays()).refresh();
 }
 
 //==============================================================================
@@ -692,7 +737,7 @@ Image juce_createIconForFile (const File& file)
 }
 
 //==============================================================================
-void* MouseCursor::createMouseCursorFromImage (const Image&, int, int)                          { return nullptr; }
+void* CustomMouseCursorInfo::create() const                                                     { return nullptr; }
 void* MouseCursor::createStandardMouseCursor (const MouseCursor::StandardCursorType)            { return nullptr; }
 void MouseCursor::deleteMouseCursor (void* const /*cursorHandle*/, const bool /*isStandard*/)   {}
 
@@ -733,9 +778,9 @@ String SystemClipboard::getTextFromClipboard()
 const int extendedKeyModifier       = 0x10000;
 
 const int KeyPress::spaceKey        = ' ';
-const int KeyPress::returnKey       = 0x0d;
-const int KeyPress::escapeKey       = 0x1b;
-const int KeyPress::backspaceKey    = 0x7f;
+const int KeyPress::returnKey       = 66;
+const int KeyPress::escapeKey       = 4;
+const int KeyPress::backspaceKey    = 67;
 const int KeyPress::leftKey         = extendedKeyModifier + 1;
 const int KeyPress::rightKey        = extendedKeyModifier + 2;
 const int KeyPress::upKey           = extendedKeyModifier + 3;
@@ -746,7 +791,7 @@ const int KeyPress::endKey          = extendedKeyModifier + 7;
 const int KeyPress::homeKey         = extendedKeyModifier + 8;
 const int KeyPress::deleteKey       = extendedKeyModifier + 9;
 const int KeyPress::insertKey       = -1;
-const int KeyPress::tabKey          = 9;
+const int KeyPress::tabKey          = 61;
 const int KeyPress::F1Key           = extendedKeyModifier + 10;
 const int KeyPress::F2Key           = extendedKeyModifier + 11;
 const int KeyPress::F3Key           = extendedKeyModifier + 12;

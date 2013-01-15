@@ -26,12 +26,13 @@
 #ifndef __JUCE_NAMEDPIPE_JUCEHEADER__
 #define __JUCE_NAMEDPIPE_JUCEHEADER__
 
+#include "../threads/juce_ReadWriteLock.h"
 
 //==============================================================================
 /**
     A cross-process pipe that can have data written to and read from it.
 
-    Two or more processes can use these for inter-process communication.
+    Two processes can use NamedPipe objects to exchange blocks of data.
 
     @see InterprocessConnection
 */
@@ -45,16 +46,13 @@ public:
     /** Destructor. */
     ~NamedPipe();
 
-
     //==============================================================================
     /** Tries to open a pipe that already exists.
-
         Returns true if it succeeds.
     */
     bool openExisting (const String& pipeName);
 
     /** Tries to create a new pipe.
-
         Returns true if it succeeds.
     */
     bool createNewPipe (const String& pipeName);
@@ -81,30 +79,23 @@ public:
         If timeOutMilliseconds is less than zero, it will wait indefinitely, otherwise
         this is a maximum timeout for reading from the pipe.
     */
-    int read (void* destBuffer, int maxBytesToRead, int timeOutMilliseconds = 5000);
+    int read (void* destBuffer, int maxBytesToRead, int timeOutMilliseconds);
 
     /** Writes some data to the pipe.
-
-        If the operation fails, it returns -1, otherwise, it will return the number of
-        bytes written.
+        @returns the number of bytes written, or -1 on failure.
     */
-    int write (const void* sourceBuffer, int numBytesToWrite,
-               int timeOutMilliseconds = 2000);
-
-    /** If any threads are currently blocked on a read operation, this tells them to abort.
-    */
-    void cancelPendingReads();
+    int write (const void* sourceBuffer, int numBytesToWrite, int timeOutMilliseconds);
 
 private:
     //==============================================================================
-    class Pimpl;
+    JUCE_PUBLIC_IN_DLL_BUILD (class Pimpl)
     ScopedPointer<Pimpl> pimpl;
     String currentPipeName;
-    CriticalSection lock;
+    ReadWriteLock lock;
 
     bool openInternal (const String& pipeName, const bool createPipe);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamedPipe);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamedPipe)
 };
 
 

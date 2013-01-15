@@ -26,13 +26,13 @@
 class Button::RepeatTimer  : public Timer
 {
 public:
-    RepeatTimer (Button& owner_) : owner (owner_)   {}
+    RepeatTimer (Button& b) : owner (b)   {}
     void timerCallback()    { owner.repeatTimerCallback(); }
 
 private:
     Button& owner;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RepeatTimer);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RepeatTimer)
 };
 
 //==============================================================================
@@ -192,26 +192,28 @@ void Button::setRadioGroupId (const int newGroupId)
 
 void Button::turnOffOtherButtonsInGroup (const bool sendChangeNotification)
 {
-    Component* const p = getParentComponent();
-
-    if (p != nullptr && radioGroupId != 0)
+    if (Component* const p = getParentComponent())
     {
-        WeakReference<Component> deletionWatcher (this);
-
-        for (int i = p->getNumChildComponents(); --i >= 0;)
+        if (radioGroupId != 0)
         {
-            Component* const c = p->getChildComponent (i);
+            WeakReference<Component> deletionWatcher (this);
 
-            if (c != this)
+            for (int i = p->getNumChildComponents(); --i >= 0;)
             {
-                Button* const b = dynamic_cast <Button*> (c);
+                Component* const c = p->getChildComponent (i);
 
-                if (b != nullptr && b->getRadioGroupId() == radioGroupId)
+                if (c != this)
                 {
-                    b->setToggleState (false, sendChangeNotification);
+                    if (Button* const b = dynamic_cast <Button*> (c))
+                    {
+                        if (b->getRadioGroupId() == radioGroupId)
+                        {
+                            b->setToggleState (false, sendChangeNotification);
 
-                    if (deletionWatcher == nullptr)
-                        return;
+                            if (deletionWatcher == nullptr)
+                                return;
+                        }
+                    }
                 }
             }
         }
@@ -662,30 +664,4 @@ Button::RepeatTimer& Button::getRepeatTimer()
         repeatTimer = new RepeatTimer (*this);
 
     return *repeatTimer;
-}
-
-const Identifier Button::Ids::text ("text");
-const Identifier Button::Ids::radioGroup ("radioGroup");
-const Identifier Button::Ids::connectedLeft ("connectedLeft");
-const Identifier Button::Ids::connectedRight ("connectedRight");
-const Identifier Button::Ids::connectedTop ("connectedTop");
-const Identifier Button::Ids::connectedBottom ("connectedBottom");
-
-void Button::refreshFromValueTree (const ValueTree& state, ComponentBuilder&)
-{
-    ComponentBuilder::refreshBasicComponentProperties (*this, state);
-
-    setButtonText (state [Ids::text].toString());
-    setRadioGroupId (state [Ids::radioGroup]);
-    setConnectedEdges (getConnectedFlags (state));
-}
-
-int Button::getConnectedFlags (const ValueTree& state)
-{
-    int connected = 0;
-    if (state [Button::Ids::connectedLeft])    connected |= Button::ConnectedOnLeft;
-    if (state [Button::Ids::connectedRight])   connected |= Button::ConnectedOnRight;
-    if (state [Button::Ids::connectedTop])     connected |= Button::ConnectedOnTop;
-    if (state [Button::Ids::connectedBottom])  connected |= Button::ConnectedOnBottom;
-    return connected;
 }

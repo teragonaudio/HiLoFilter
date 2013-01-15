@@ -102,6 +102,12 @@ public:
     */
     void removeNonExistentFiles();
 
+    /** Tells the OS to add a file to the OS-managed list of recent documents for this app.
+        Not all OSes maintain a list of recent files for an application, so this
+        function will have no effect on some OSes. Currently it's just implemented for OSX.
+    */
+    static void registerRecentFileNatively (const File& file);
+
     //==============================================================================
     /** Adds entries to a menu, representing each of the files in the list.
 
@@ -152,7 +158,7 @@ private:
     StringArray files;
     int maxNumberOfItems;
 
-    JUCE_LEAK_DETECTOR (RecentlyOpenedFilesList);
+    JUCE_LEAK_DETECTOR (RecentlyOpenedFilesList)
 };
 
 

@@ -55,6 +55,11 @@ namespace pnglibNamespace
    using std::free;
   #endif
 
+  #if JUCE_CLANG
+   #pragma clang diagnostic push
+   #pragma clang diagnostic ignored "-Wsign-conversion"
+  #endif
+
   using std::abs;
   #define PNG_INTERNAL
   #define NO_DUMMY_DECL
@@ -79,6 +84,10 @@ namespace pnglibNamespace
   #include "pnglib/pngwrite.c"
   #include "pnglib/pngwtran.c"
   #include "pnglib/pngwutil.c"
+
+  #if JUCE_CLANG
+   #pragma clang diagnostic pop
+  #endif
 #else
   extern "C"
   {
@@ -90,6 +99,7 @@ namespace pnglibNamespace
 
 #undef max
 #undef min
+#undef fdopen
 
 #if JUCE_MSVC
  #pragma warning (pop)
@@ -100,14 +110,15 @@ namespace PNGHelpers
 {
     using namespace pnglibNamespace;
 
-    static void JUCE_CDECL readCallback (png_structp png, png_bytep data, png_size_t length)
-    {
-        static_cast<InputStream*> (png_get_io_ptr (png))->read (data, (int) length);
-    }
-
     static void JUCE_CDECL writeDataCallback (png_structp png, png_bytep data, png_size_t length)
     {
         static_cast<OutputStream*> (png_get_io_ptr (png))->write (data, (int) length);
+    }
+
+   #if ! JUCE_USING_COREIMAGE_LOADER
+    static void JUCE_CDECL readCallback (png_structp png, png_bytep data, png_size_t length)
+    {
+        static_cast<InputStream*> (png_get_io_ptr (png))->read (data, (int) length);
     }
 
     struct PNGErrorStruct {};
@@ -116,13 +127,15 @@ namespace PNGHelpers
     {
         throw PNGErrorStruct();
     }
+   #endif
 }
 
 //==============================================================================
 PNGImageFormat::PNGImageFormat()    {}
 PNGImageFormat::~PNGImageFormat()   {}
 
-String PNGImageFormat::getFormatName()  { return "PNG"; }
+String PNGImageFormat::getFormatName()                   { return "PNG"; }
+bool PNGImageFormat::usesFileExtension (const File& f)   { return f.hasFileExtension ("png"); }
 
 bool PNGImageFormat::canUnderstand (InputStream& in)
 {
@@ -135,13 +148,13 @@ bool PNGImageFormat::canUnderstand (InputStream& in)
             && header[3] == 'G';
 }
 
-#if (JUCE_MAC || JUCE_IOS) && USE_COREGRAPHICS_RENDERING && JUCE_USE_COREIMAGE_LOADER
+#if JUCE_USING_COREIMAGE_LOADER
  Image juce_loadWithCoreImage (InputStream& input);
 #endif
 
 Image PNGImageFormat::decodeImage (InputStream& in)
 {
-#if (JUCE_MAC || JUCE_IOS) && USE_COREGRAPHICS_RENDERING && JUCE_USE_COREIMAGE_LOADER
+#if JUCE_USING_COREIMAGE_LOADER
     return juce_loadWithCoreImage (in);
 #else
     using namespace pnglibNamespace;

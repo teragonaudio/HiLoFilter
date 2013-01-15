@@ -62,6 +62,9 @@
  #include <net/if_dl.h>
  #include <mach/mach_time.h>
  #include <mach-o/dyld.h>
+ #include <objc/runtime.h>
+ #include <objc/objc.h>
+ #include <objc/message.h>
 
 //==============================================================================
 #elif JUCE_WINDOWS
@@ -80,7 +83,11 @@
 
  #define STRICT 1
  #define WIN32_LEAN_AND_MEAN 1
- #define _WIN32_WINNT 0x0600
+ #if JUCE_MINGW
+  #define _WIN32_WINNT 0x0501
+ #else
+  #define _WIN32_WINNT 0x0600
+ #endif
  #define _UNICODE 1
  #define UNICODE 1
  #ifndef _WIN32_IE
@@ -119,7 +126,6 @@
  #if JUCE_MSVC && ! JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
   #pragma comment (lib, "kernel32.lib")
   #pragma comment (lib, "user32.lib")
-  #pragma comment (lib, "shell32.lib")
   #pragma comment (lib, "wininet.lib")
   #pragma comment (lib, "advapi32.lib")
   #pragma comment (lib, "ws2_32.lib")
@@ -142,17 +148,17 @@
   #endif
  #endif
 
- /* Used with DynamicLibrary to simplify importing functions
+ /* Used with DynamicLibrary to simplify importing functions from a win32 DLL.
 
+    dll: the DynamicLibrary object
     functionName: function to import
     localFunctionName: name you want to use to actually call it (must be different)
     returnType: the return type
-    object: the DynamicLibrary to use
     params: list of params (bracketed)
  */
- #define JUCE_DLL_FUNCTION(functionName, localFunctionName, returnType, object, params) \
+ #define JUCE_LOAD_WINAPI_FUNCTION(dll, functionName, localFunctionName, returnType, params) \
     typedef returnType (WINAPI *type##localFunctionName) params; \
-    type##localFunctionName localFunctionName = (type##localFunctionName)object.getFunction (#functionName);
+    type##localFunctionName localFunctionName = (type##localFunctionName) dll.getFunction (#functionName);
 
 //==============================================================================
 #elif JUCE_LINUX
@@ -182,6 +188,7 @@
  #include <sys/file.h>
  #include <sys/prctl.h>
  #include <signal.h>
+ #include <stddef.h>
 
 //==============================================================================
 #elif JUCE_ANDROID

@@ -28,8 +28,8 @@ bool juce_performDragDropText (const String&, bool& shouldStop);
 
 
 //==============================================================================
-class DragImageComponent  : public Component,
-                            public Timer
+class DragAndDropContainer::DragImageComponent  : public Component,
+                                                  private Timer
 {
 public:
     DragImageComponent (const Image& im,
@@ -43,8 +43,7 @@ public:
           owner (owner_),
           mouseDragSource (mouseDragSource_),
           imageOffset (imageOffset_),
-          hasCheckedForExternalDrag (false),
-          isDoingExternalDrag (false)
+          hasCheckedForExternalDrag (false)
     {
         setSize (im.getWidth(), im.getHeight());
 
@@ -96,16 +95,13 @@ public:
             DragAndDropTarget::SourceDetails details (sourceDetails);
             DragAndDropTarget* finalTarget = nullptr;
 
-            if (! isDoingExternalDrag)
-            {
-                const bool wasVisible = isVisible();
-                setVisible (false);
-                Component* unused;
-                finalTarget = findTarget (e.getScreenPosition(), details.localPosition, unused);
+            const bool wasVisible = isVisible();
+            setVisible (false);
+            Component* unused;
+            finalTarget = findTarget (e.getScreenPosition(), details.localPosition, unused);
 
-                if (wasVisible) // fade the component and remove it - it'll be deleted later by the timer callback
-                    dismissWithAnimation (finalTarget == nullptr);
-            }
+            if (wasVisible) // fade the component and remove it - it'll be deleted later by the timer callback
+                dismissWithAnimation (finalTarget == nullptr);
 
             if (getParentComponent() != nullptr)
                 getParentComponent()->removeChildComponent (this);
@@ -154,8 +150,15 @@ public:
 
         sendDragMove (details);
 
-        if (canDoExternalDrag && getCurrentlyOver() == nullptr)
-            checkForExternalDrag (details, screenPos);
+        if (canDoExternalDrag)
+        {
+            const Time now (Time::getCurrentTime());
+
+            if (getCurrentlyOver() != nullptr)
+                lastTimeOverTarget = now;
+            else if (now > lastTimeOverTarget + RelativeTime::milliseconds (700))
+                checkForExternalDrag (details, screenPos);
+        }
     }
 
     void timerCallback()
@@ -179,7 +182,8 @@ private:
     DragAndDropContainer& owner;
     WeakReference<Component> mouseDragSource, currentlyOverComp;
     const Point<int> imageOffset;
-    bool hasCheckedForExternalDrag, isDoingExternalDrag;
+    bool hasCheckedForExternalDrag;
+    Time lastTimeOverTarget;
 
     DragAndDropTarget* getCurrentlyOver() const noexcept
     {
@@ -236,6 +240,22 @@ private:
             target->itemDragMove (details);
     }
 
+    struct ExternalDragAndDropMessage  : public CallbackMessage
+    {
+        ExternalDragAndDropMessage (const StringArray& f, bool canMove)
+            : files (f), canMoveFiles (canMove)
+        {}
+
+        void messageCallback()
+        {
+            DragAndDropContainer::performExternalDragDropOfFiles (files, canMoveFiles);
+        }
+
+    private:
+        StringArray files;
+        bool canMoveFiles;
+    };
+
     void checkForExternalDrag (DragAndDropTarget::SourceDetails& details, const Point<int>& screenPos)
     {
         if (! hasCheckedForExternalDrag)
@@ -247,17 +267,11 @@ private:
                 bool canMoveFiles = false;
 
                 if (owner.shouldDropFilesWhenDraggedExternally (details, files, canMoveFiles)
-                     && files.size() > 0)
+                      && files.size() > 0
+                      && ModifierKeys::getCurrentModifiersRealtime().isAnyMouseButtonDown())
                 {
-                    WeakReference<Component> thisWeakRef (this);
-                    setVisible (false);
-                    isDoingExternalDrag = true;
-
-                    if (ModifierKeys::getCurrentModifiersRealtime().isAnyMouseButtonDown())
-                        DragAndDropContainer::performExternalDragDropOfFiles (files, canMoveFiles);
-
-                    delete thisWeakRef.get();
-                    return;
+                    (new ExternalDragAndDropMessage (files, canMoveFiles))->post();
+                    delete this;
                 }
             }
         }
@@ -284,7 +298,7 @@ private:
         }
     }
 
-    JUCE_DECLARE_NON_COPYABLE (DragImageComponent);
+    JUCE_DECLARE_NON_COPYABLE (DragImageComponent)
 };
 
 
@@ -396,8 +410,7 @@ void DragAndDropContainer::startDragging (const var& sourceDescription,
        #if JUCE_WINDOWS
         // Under heavy load, the layered window's paint callback can often be lost by the OS,
         // so forcing a repaint at least once makes sure that the window becomes visible..
-        ComponentPeer* const peer = dragImageComponent->getPeer();
-        if (peer != nullptr)
+        if (ComponentPeer* const peer = dragImageComponent->getPeer())
             peer->performAnyPendingRepaintsNow();
        #endif
     }
@@ -441,3 +454,7 @@ bool DragAndDropTarget::shouldDrawDragImageWhenOver()         { return true; }
 void FileDragAndDropTarget::fileDragEnter (const StringArray&, int, int)  {}
 void FileDragAndDropTarget::fileDragMove  (const StringArray&, int, int)  {}
 void FileDragAndDropTarget::fileDragExit  (const StringArray&)            {}
+
+void TextDragAndDropTarget::textDragEnter (const String&, int, int)  {}
+void TextDragAndDropTarget::textDragMove  (const String&, int, int)  {}
+void TextDragAndDropTarget::textDragExit  (const String&)            {}

@@ -23,72 +23,35 @@
   ==============================================================================
 */
 
-class AlertWindowTextEditor  : public TextEditor
+static juce_wchar getDefaultPasswordChar() noexcept
 {
-public:
-    AlertWindowTextEditor (const String& name, const bool isPasswordBox)
-        : TextEditor (name, isPasswordBox ? getDefaultPasswordChar() :  0)
-    {
-        setSelectAllWhenFocused (true);
-    }
+   #if JUCE_LINUX
+    return 0x2022;
+   #else
+    return 0x25cf;
+   #endif
+}
 
-    void returnPressed()
-    {
-        // pass these up the component hierarchy to be trigger the buttons
-        getParentComponent()->keyPressed (KeyPress (KeyPress::returnKey, 0, '\n'));
-    }
-
-    void escapePressed()
-    {
-        // pass these up the component hierarchy to be trigger the buttons
-        getParentComponent()->keyPressed (KeyPress (KeyPress::escapeKey, 0, 0));
-    }
-
-private:
-    JUCE_DECLARE_NON_COPYABLE (AlertWindowTextEditor);
-
-    static juce_wchar getDefaultPasswordChar() noexcept
-    {
-      #if JUCE_LINUX
-        return 0x2022;
-      #else
-        return 0x25cf;
-      #endif
-    }
-};
-
+extern bool juce_areThereAnyAlwaysOnTopWindows();
 
 //==============================================================================
 AlertWindow::AlertWindow (const String& title,
                           const String& message,
                           AlertIconType iconType,
-                          Component* associatedComponent_)
+                          Component* comp)
    : TopLevelWindow (title, true),
      alertIconType (iconType),
-     associatedComponent (associatedComponent_),
+     associatedComponent (comp),
      escapeKeyCancels (true)
 {
+    setAlwaysOnTop (juce_areThereAnyAlwaysOnTopWindows());
+
     if (message.isEmpty())
         text = " "; // to force an update if the message is empty
 
     setMessage (message);
 
-    for (int i = Desktop::getInstance().getNumComponents(); --i >= 0;)
-    {
-        Component* const c = Desktop::getInstance().getComponent (i);
-
-        if (c != nullptr && c->isAlwaysOnTop() && c->isShowing())
-        {
-            setAlwaysOnTop (true);
-            break;
-        }
-    }
-
-    if (! JUCEApplication::isStandaloneApp())
-        setAlwaysOnTop (true); // for a plugin, make it always-on-top because the host windows are often top-level
-
     AlertWindow::lookAndFeelChanged();
-
     constrainer.setMinimumOnscreenAmounts (0x10000, 0x10000, 0x10000, 0x10000);
 }
 
@@ -175,15 +138,17 @@ void AlertWindow::addTextEditor (const String& name,
                                  const String& onScreenLabel,
                                  const bool isPasswordBox)
 {
-    AlertWindowTextEditor* const tc = new AlertWindowTextEditor (name, isPasswordBox);
-    textBoxes.add (tc);
-    allComps.add (tc);
+    TextEditor* ed = new TextEditor (name, isPasswordBox ? getDefaultPasswordChar() : 0);
+    ed->setSelectAllWhenFocused (true);
+    ed->setEscapeAndReturnKeysConsumed (false);
+    textBoxes.add (ed);
+    allComps.add (ed);
 
-    tc->setColour (TextEditor::outlineColourId, findColour (ComboBox::outlineColourId));
-    tc->setFont (getLookAndFeel().getAlertWindowMessageFont());
-    tc->setText (initialContents);
-    tc->setCaretPosition (initialContents.length());
-    addAndMakeVisible (tc);
+    ed->setColour (TextEditor::outlineColourId, findColour (ComboBox::outlineColourId));
+    ed->setFont (getLookAndFeel().getAlertWindowMessageFont());
+    ed->setText (initialContents);
+    ed->setCaretPosition (initialContents.length());
+    addAndMakeVisible (ed);
     textboxNames.add (onScreenLabel);
 
     updateLayout (false);
@@ -262,7 +227,7 @@ public:
     {
         AttributedString s;
         s.setJustification (Justification::topLeft);
-        s.append (getName(), getFont());
+        s.append (getText(), getFont());
 
         TextLayout text;
         text.createLayoutWithBalancedLineLengths (s, width - 8.0f);
@@ -272,7 +237,7 @@ public:
 private:
     int bestWidth;
 
-    JUCE_DECLARE_NON_COPYABLE (AlertTextComp);
+    JUCE_DECLARE_NON_COPYABLE (AlertTextComp)
 };
 
 void AlertWindow::addTextBlock (const String& textBlock)
@@ -325,8 +290,8 @@ Component* AlertWindow::removeCustomComponent (const int index)
 
     if (c != nullptr)
     {
-        customComps.removeValue (c);
-        allComps.removeValue (c);
+        customComps.removeFirstMatchingValue (c);
+        allComps.removeFirstMatchingValue (c);
         removeChildComponent (c);
 
         updateLayout (false);
@@ -343,8 +308,7 @@ void AlertWindow::paint (Graphics& g)
     g.setColour (findColour (textColourId));
     g.setFont (getLookAndFeel().getAlertWindowFont());
 
-    int i;
-    for (i = textBoxes.size(); --i >= 0;)
+    for (int i = textBoxes.size(); --i >= 0;)
     {
         const TextEditor* const te = textBoxes.getUnchecked(i);
 
@@ -354,7 +318,7 @@ void AlertWindow::paint (Graphics& g)
                           Justification::centredLeft, 1);
     }
 
-    for (i = comboBoxNames.size(); --i >= 0;)
+    for (int i = comboBoxNames.size(); --i >= 0;)
     {
         const ComboBox* const cb = comboBoxes.getUnchecked(i);
 
@@ -364,7 +328,7 @@ void AlertWindow::paint (Graphics& g)
                           Justification::centredLeft, 1);
     }
 
-    for (i = customComps.size(); --i >= 0;)
+    for (int i = customComps.size(); --i >= 0;)
     {
         const Component* const c = customComps.getUnchecked(i);
 
@@ -392,7 +356,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     int iconSpace = 0;
 
     AttributedString attributedText;
-    attributedText.append (getName(), Font (font.getHeight() * 1.1f, Font::bold));
+    attributedText.append (getName(), font.withHeight (font.getHeight() * 1.1f).boldened());
 
     if (text.isNotEmpty())
         attributedText.append ("\n\n" + text, font);
@@ -419,8 +383,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     int h = textBottom;
 
     int buttonW = 40;
-    int i;
-    for (i = 0; i < buttons.size(); ++i)
+    for (int i = 0; i < buttons.size(); ++i)
         buttonW += 16 + buttons.getUnchecked(i)->getWidth();
 
     w = jmax (buttonW, w);
@@ -430,7 +393,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     if (buttons.size() > 0)
         h += 20 + buttons.getUnchecked(0)->getHeight();
 
-    for (i = customComps.size(); --i >= 0;)
+    for (int i = customComps.size(); --i >= 0;)
     {
         Component* c = customComps.getUnchecked(i);
         w = jmax (w, (c->getWidth() * 100) / 80);
@@ -440,7 +403,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
             h += labelHeight;
     }
 
-    for (i = textBlocks.size(); --i >= 0;)
+    for (int i = textBlocks.size(); --i >= 0;)
     {
         const AlertTextComp* const ac = static_cast <const AlertTextComp*> (textBlocks.getUnchecked(i));
         w = jmax (w, ac->getPreferredWidth());
@@ -448,7 +411,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
 
     w = jmin (w, (int) (getParentWidth() * 0.7f));
 
-    for (i = textBlocks.size(); --i >= 0;)
+    for (int i = textBlocks.size(); --i >= 0;)
     {
         AlertTextComp* const ac = static_cast <AlertTextComp*> (textBlocks.getUnchecked(i));
         ac->updateLayout ((int) (w * 0.8f));
@@ -482,13 +445,13 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     const int spacer = 16;
     int totalWidth = -spacer;
 
-    for (i = buttons.size(); --i >= 0;)
+    for (int i = buttons.size(); --i >= 0;)
         totalWidth += buttons.getUnchecked(i)->getWidth() + spacer;
 
     int x = (w - totalWidth) / 2;
     int y = (int) (getHeight() * 0.95f);
 
-    for (i = 0; i < buttons.size(); ++i)
+    for (int i = 0; i < buttons.size(); ++i)
     {
         TextButton* const c = buttons.getUnchecked(i);
         int ny = proportionOfHeight (0.95f) - c->getHeight();
@@ -503,7 +466,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
 
     y = textBottom;
 
-    for (i = 0; i < allComps.size(); ++i)
+    for (int i = 0; i < allComps.size(); ++i)
     {
         Component* const c = allComps.getUnchecked(i);
         h = 22;

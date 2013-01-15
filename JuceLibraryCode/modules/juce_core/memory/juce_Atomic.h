@@ -181,7 +181,7 @@ private:
 /*
     The following code is in the header so that the atomics can be inlined where possible...
 */
-#if JUCE_IOS || (JUCE_MAC && (JUCE_PPC || defined (__clang__) || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 2)))
+#if JUCE_IOS || (JUCE_MAC && (JUCE_PPC || JUCE_CLANG || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 2)))
   #define JUCE_ATOMICS_MAC 1        // Older OSX builds using gcc4.1 or earlier
 
   #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
@@ -191,7 +191,7 @@ private:
   #endif
 
   #if JUCE_PPC || JUCE_IOS
-    // None of these atomics are available for PPC or for iPhoneOS 3.1 or earlier!!
+    // None of these atomics are available for PPC or for iOS 3.1 or earlier!!
     template <typename Type> static Type OSAtomicAdd64Barrier (Type b, JUCE_MAC_ATOMICS_VOLATILE Type* a) noexcept  { jassertfalse; return *a += b; }
     template <typename Type> static Type OSAtomicIncrement64Barrier (JUCE_MAC_ATOMICS_VOLATILE Type* a) noexcept    { jassertfalse; return ++*a; }
     template <typename Type> static Type OSAtomicDecrement64Barrier (JUCE_MAC_ATOMICS_VOLATILE Type* a) noexcept    { jassertfalse; return --*a; }

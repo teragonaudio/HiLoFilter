@@ -35,7 +35,7 @@
 
     @see AudioPluginFormat
 */
-class JUCE_API  AudioPluginFormatManager  : public DeletedAtShutdown
+class JUCE_API  AudioPluginFormatManager
 {
 public:
     //==============================================================================
@@ -43,8 +43,6 @@ public:
 
     /** Destructor. */
     ~AudioPluginFormatManager();
-
-    juce_DeclareSingleton_SingleThreaded (AudioPluginFormatManager, false);
 
     //==============================================================================
     /** Adds any formats that it knows about, e.g. VST.
@@ -94,7 +92,7 @@ private:
     //==============================================================================
     OwnedArray <AudioPluginFormat> formats;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginFormatManager);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginFormatManager)
 };
 
 

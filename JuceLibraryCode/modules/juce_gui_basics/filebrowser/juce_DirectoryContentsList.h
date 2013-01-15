@@ -40,7 +40,7 @@
     @see FileListComponent, FileBrowserComponent
 */
 class JUCE_API  DirectoryContentsList   : public ChangeBroadcaster,
-                                          public TimeSliceClient
+                                          private TimeSliceClient
 {
 public:
     //==============================================================================
@@ -184,8 +184,6 @@ public:
 
     //==============================================================================
     /** @internal */
-    int useTimeSlice();
-    /** @internal */
     TimeSliceThread& getTimeSliceThread()                   { return thread; }
     /** @internal */
     static int compareElements (const DirectoryContentsList::FileInfo* first,
@@ -203,6 +201,7 @@ private:
     ScopedPointer <DirectoryIterator> fileFindHandle;
     bool volatile shouldStop;
 
+    int useTimeSlice();
     void stopSearching();
     void changed();
     bool checkNextFile (bool& hasChanged);
@@ -211,7 +210,7 @@ private:
                   const Time& creationTime, bool isReadOnly);
     void setTypeFlags (int newFlags);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DirectoryContentsList);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DirectoryContentsList)
 };
 
 

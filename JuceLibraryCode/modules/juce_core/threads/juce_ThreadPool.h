@@ -128,7 +128,7 @@ private:
     ThreadPool* pool;
     bool shouldStop, isActive, shouldBeDeleted;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadPoolJob);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadPoolJob)
 };
 
 
@@ -136,7 +136,7 @@ private:
 /**
     A set of threads that will run a list of jobs.
 
-    When a ThreadPoolJob object is added to the ThreadPool's list, its run() method
+    When a ThreadPoolJob object is added to the ThreadPool's list, its runJob() method
     will be called by the next pooled thread that becomes free.
 
     @see ThreadPoolJob, Thread
@@ -308,7 +308,7 @@ private:
     // whether the jobs should be deleted - see the new method for details.
     void removeAllJobs (bool, int, bool);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadPool);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadPool)
 };
 
 

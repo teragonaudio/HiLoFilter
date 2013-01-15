@@ -31,7 +31,7 @@ public:
          pipeOutName (pipePath + "_out"),
          pipeIn (-1), pipeOut (-1),
          createdPipe (createPipe),
-         blocked (false), stopReadOperation (false)
+         stopReadOperation (false)
     {
         signal (SIGPIPE, signalHandler);
         siginterrupt (SIGPIPE, 1);
@@ -49,71 +49,65 @@ public:
         }
     }
 
-    int read (char* destBuffer, int maxBytesToRead)
+    int read (char* destBuffer, int maxBytesToRead, int timeOutMilliseconds)
     {
-        int bytesRead = -1;
-        blocked = true;
+        const uint32 timeoutEnd = getTimeoutEnd (timeOutMilliseconds);
 
         if (pipeIn == -1)
         {
-            pipeIn = ::open ((createdPipe ? pipeInName
-                                          : pipeOutName).toUTF8(), O_RDWR);
+            pipeIn = openPipe (createdPipe ? pipeInName : pipeOutName, O_RDWR | O_NONBLOCK, timeoutEnd);
 
             if (pipeIn == -1)
-            {
-                blocked = false;
                 return -1;
-            }
         }
 
-        bytesRead = 0;
+        int bytesRead = 0;
 
         while (bytesRead < maxBytesToRead)
         {
             const int bytesThisTime = maxBytesToRead - bytesRead;
-            const int numRead = (int) ::read (pipeIn, destBuffer, bytesThisTime);
+            const int numRead = (int) ::read (pipeIn, destBuffer, (size_t) bytesThisTime);
 
-            if (numRead <= 0 || stopReadOperation)
+            if (numRead <= 0)
             {
-                bytesRead = -1;
-                break;
+                if (errno != EWOULDBLOCK || stopReadOperation || hasExpired (timeoutEnd))
+                    return -1;
+
+                const int maxWaitingTime = 30;
+                waitForInput (pipeIn, timeoutEnd == 0 ? maxWaitingTime
+                                                      : jmin (maxWaitingTime,
+                                                              (int) (timeoutEnd - Time::getMillisecondCounter())));
+                continue;
             }
 
             bytesRead += numRead;
             destBuffer += numRead;
         }
 
-        blocked = false;
         return bytesRead;
     }
 
     int write (const char* sourceBuffer, int numBytesToWrite, int timeOutMilliseconds)
     {
-        int bytesWritten = -1;
+        const uint32 timeoutEnd = getTimeoutEnd (timeOutMilliseconds);
 
         if (pipeOut == -1)
         {
-            pipeOut = ::open ((createdPipe ? pipeOutName
-                                           : pipeInName).toUTF8(), O_WRONLY);
+            pipeOut = openPipe (createdPipe ? pipeOutName : pipeInName, O_WRONLY, timeoutEnd);
 
             if (pipeOut == -1)
                 return -1;
         }
 
-        bytesWritten = 0;
-        const uint32 timeOutTime = Time::getMillisecondCounter() + timeOutMilliseconds;
+        int bytesWritten = 0;
 
-        while (bytesWritten < numBytesToWrite
-                && (timeOutMilliseconds < 0 || Time::getMillisecondCounter() < timeOutTime))
+        while (bytesWritten < numBytesToWrite && ! hasExpired (timeoutEnd))
         {
             const int bytesThisTime = numBytesToWrite - bytesWritten;
-            const int numWritten = (int) ::write (pipeOut, sourceBuffer, bytesThisTime);
+            const int numWritten = (int) ::write (pipeOut, sourceBuffer, (size_t) bytesThisTime);
 
             if (numWritten <= 0)
-            {
-                bytesWritten = -1;
-                break;
-            }
+                return -1;
 
             bytesWritten += numWritten;
             sourceBuffer += numWritten;
@@ -132,51 +126,66 @@ public:
     int pipeIn, pipeOut;
 
     const bool createdPipe;
-    bool volatile blocked, stopReadOperation;
+    bool stopReadOperation;
 
 private:
     static void signalHandler (int) {}
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pimpl);
+    static uint32 getTimeoutEnd (const int timeOutMilliseconds)
+    {
+        return timeOutMilliseconds >= 0 ? Time::getMillisecondCounter() + (uint32) timeOutMilliseconds : 0;
+    }
+
+    static bool hasExpired (const uint32 timeoutEnd)
+    {
+        return timeoutEnd != 0 && Time::getMillisecondCounter() >= timeoutEnd;
+    }
+
+    static int openPipe (const String& name, int flags, const uint32 timeoutEnd)
+    {
+        for (;;)
+        {
+            const int p = ::open (name.toUTF8(), flags);
+
+            if (p != -1 || hasExpired (timeoutEnd))
+                return p;
+
+            Thread::sleep (2);
+        }
+    }
+
+    static void waitForInput (const int handle, const int timeoutMsecs) noexcept
+    {
+        struct timeval timeout;
+        timeout.tv_sec = timeoutMsecs / 1000;
+        timeout.tv_usec = (timeoutMsecs % 1000) * 1000;
+
+        fd_set rset;
+        FD_ZERO (&rset);
+        FD_SET (handle, &rset);
+
+        select (handle + 1, &rset, nullptr, 0, &timeout);
+    }
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pimpl)
 };
 
-NamedPipe::NamedPipe()
+void NamedPipe::close()
 {
-}
-
-NamedPipe::~NamedPipe()
-{
-    close();
-}
-
-void NamedPipe::cancelPendingReads()
-{
-    while (pimpl != nullptr && pimpl->blocked)
+    if (pimpl != nullptr)
     {
         pimpl->stopReadOperation = true;
 
         char buffer[1] = { 0 };
-        int bytesWritten = (int) ::write (pimpl->pipeIn, buffer, 1);
-        (void) bytesWritten;
+        ::write (pimpl->pipeIn, buffer, 1);
 
-        int timeout = 2000;
-        while (pimpl->blocked && --timeout >= 0)
-            Thread::sleep (2);
-
-        pimpl->stopReadOperation = false;
+        ScopedWriteLock sl (lock);
+        pimpl = nullptr;
     }
-}
-
-void NamedPipe::close()
-{
-    cancelPendingReads();
-    ScopedPointer<Pimpl> deleter (pimpl); // (clears the pimpl member variable before deleting it)
 }
 
 bool NamedPipe::openInternal (const String& pipeName, const bool createPipe)
 {
-    close();
-
    #if JUCE_IOS
     pimpl = new Pimpl (File::getSpecialLocation (File::tempDirectory)
                          .getChildFile (File::createLegalFileName (pipeName)).getFullPathName(), createPipe);
@@ -193,17 +202,14 @@ bool NamedPipe::openInternal (const String& pipeName, const bool createPipe)
     return true;
 }
 
-int NamedPipe::read (void* destBuffer, int maxBytesToRead, int /*timeOutMilliseconds*/)
+int NamedPipe::read (void* destBuffer, int maxBytesToRead, int timeOutMilliseconds)
 {
-    return pimpl != nullptr ? pimpl->read (static_cast <char*> (destBuffer), maxBytesToRead) : -1;
+    ScopedReadLock sl (lock);
+    return pimpl != nullptr ? pimpl->read (static_cast <char*> (destBuffer), maxBytesToRead, timeOutMilliseconds) : -1;
 }
 
 int NamedPipe::write (const void* sourceBuffer, int numBytesToWrite, int timeOutMilliseconds)
 {
+    ScopedReadLock sl (lock);
     return pimpl != nullptr ? pimpl->write (static_cast <const char*> (sourceBuffer), numBytesToWrite, timeOutMilliseconds) : -1;
-}
-
-bool NamedPipe::isOpen() const
-{
-    return pimpl != nullptr;
 }

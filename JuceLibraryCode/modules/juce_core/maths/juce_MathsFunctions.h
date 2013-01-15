@@ -285,7 +285,7 @@ inline int numElementsInArray (Type (&array)[N])
 template <typename Type>
 inline Type juce_hypot (Type a, Type b) noexcept
 {
-   #if JUCE_WINDOWS
+   #if JUCE_MSVC
     return static_cast <Type> (_hypot (a, b));
    #else
     return static_cast <Type> (hypot (a, b));
@@ -331,7 +331,9 @@ inline bool juce_isfinite (FloatingPointType value)
 //==============================================================================
 #if JUCE_MSVC
  #pragma optimize ("t", off)
- #pragma float_control (precise, on, push)
+ #ifndef __INTEL_COMPILER
+  #pragma float_control (precise, on, push)
+ #endif
 #endif
 
 /** Fast floating-point-to-integer conversion.
@@ -347,6 +349,10 @@ inline bool juce_isfinite (FloatingPointType value)
 template <typename FloatType>
 inline int roundToInt (const FloatType value) noexcept
 {
+  #ifdef __INTEL_COMPILER
+   #pragma float_control (precise, on, push)
+  #endif
+
     union { int asInt[2]; double asDouble; } n;
     n.asDouble = ((double) value) + 6755399441055744.0;
 
@@ -355,10 +361,16 @@ inline int roundToInt (const FloatType value) noexcept
    #else
     return n.asInt [0];
    #endif
+
+  #ifdef __INTEL_COMPILER
+   #pragma float_control (pop)
+  #endif
 }
 
 #if JUCE_MSVC
- #pragma float_control (pop)
+ #ifndef __INTEL_COMPILER
+  #pragma float_control (pop)
+ #endif
  #pragma optimize ("", on)  // resets optimisations to the project defaults
 #endif
 

@@ -36,6 +36,11 @@
     Analogous to the AudioSampleBuffer, this holds a set of midi events with
     integer time-stamps. The buffer is kept sorted in order of the time-stamps.
 
+    If you're working with a sequence of midi events that may need to be manipulated
+    or read/written to a midi file, then MidiMessageSequence is probably a more
+    appropriate container. MidiBuffer is designed for lower-level streams of raw
+    midi data.
+
     @see MidiMessage
 */
 class JUCE_API  MidiBuffer
@@ -217,7 +222,7 @@ public:
         const MidiBuffer& buffer;
         const uint8* data;
 
-        JUCE_DECLARE_NON_COPYABLE (Iterator);
+        JUCE_DECLARE_NON_COPYABLE (Iterator)
     };
 
 private:
@@ -229,7 +234,7 @@ private:
     uint8* getData() const noexcept;
     uint8* findEventAfter (uint8*, int samplePosition) const noexcept;
 
-    JUCE_LEAK_DETECTOR (MidiBuffer);
+    JUCE_LEAK_DETECTOR (MidiBuffer)
 };
 
 

@@ -66,6 +66,12 @@
  #define __cdecl
 #endif
 
+#ifdef __clang__
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wconversion"
+ #pragma clang diagnostic ignored "-Wshadow"
+#endif
+
 // VSTSDK V2.4 includes..
 #include <public.sdk/source/vst2.x/audioeffectx.h>
 #include <public.sdk/source/vst2.x/aeffeditor.h>
@@ -76,10 +82,22 @@
  #error "It looks like you're trying to include an out-of-date VSTSDK version - make sure you have at least version 2.4"
 #endif
 
+#ifdef __clang__
+ #pragma clang diagnostic pop
+#endif
+
 //==============================================================================
+#ifdef _MSC_VER
+ #pragma pack (push, 8)
+#endif
+
 #include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_FakeMouseMoveGenerator.h"
 #include "../utility/juce_PluginHostType.h"
+
+#ifdef _MSC_VER
+ #pragma pack (pop)
+#endif
 
 #undef MemoryBlock
 
@@ -155,11 +173,10 @@ namespace
         {
             const MOUSEHOOKSTRUCTEX& hs = *(MOUSEHOOKSTRUCTEX*) lParam;
 
-            Component* const comp = Desktop::getInstance().findComponentAt (Point<int> (hs.pt.x,
-                                                                                        hs.pt.y));
-            if (comp != nullptr && comp->getWindowHandle() != 0)
-                return PostMessage ((HWND) comp->getWindowHandle(), WM_MOUSEWHEEL,
-                                    hs.mouseData & 0xffff0000, (hs.pt.x & 0xffff) | (hs.pt.y << 16));
+            if (Component* const comp = Desktop::getInstance().findComponentAt (Point<int> (hs.pt.x, hs.pt.y)))
+                if (comp->getWindowHandle() != 0)
+                    return PostMessage ((HWND) comp->getWindowHandle(), WM_MOUSEWHEEL,
+                                        hs.mouseData & 0xffff0000, (hs.pt.x & 0xffff) | (hs.pt.y << 16));
         }
 
         return CallNextHookEx (mouseWheelHook, nCode, wParam, lParam);
@@ -254,6 +271,7 @@ public:
          numInChans (JucePlugin_MaxNumInputChannels),
          numOutChans (JucePlugin_MaxNumOutputChannels),
          isProcessing (false),
+         isBypassed (false),
          hasShutdown (false),
          firstProcessCallback (true),
          shouldDeleteEditor (false),
@@ -264,7 +282,7 @@ public:
         filter->addListener (this);
 
         cEffect.flags |= effFlagsHasEditor;
-        cEffect.version = (long) (JucePlugin_VersionCode);
+        cEffect.version = convertHexVersionToDecimal (JucePlugin_VersionCode);
 
         setUniqueID ((int) (JucePlugin_VSTUniqueID));
 
@@ -303,7 +321,7 @@ public:
             deleteTempChannels();
 
             jassert (activePlugins.contains (this));
-            activePlugins.removeValue (this);
+            activePlugins.removeFirstMatchingValue (this);
         }
 
         if (activePlugins.size() == 0)
@@ -351,7 +369,7 @@ public:
     }
 
     bool getProductString (char* text)  { return getEffectName (text); }
-    VstInt32 getVendorVersion()         { return JucePlugin_VersionCode; }
+    VstInt32 getVendorVersion()         { return convertHexVersionToDecimal (JucePlugin_VersionCode); }
     VstPlugCategory getPlugCategory()   { return JucePlugin_VSTCategory; }
     bool keysRequired()                 { return (JucePlugin_EditorRequiresKeyboardFocus) != 0; }
 
@@ -380,7 +398,8 @@ public:
            #endif
         }
         else if (strcmp (text, "receiveVstTimeInfo") == 0
-                 || strcmp (text, "conformsToWindowRules") == 0)
+                 || strcmp (text, "conformsToWindowRules") == 0
+                 || strcmp (text, "bypass") == 0)
         {
             result = 1;
         }
@@ -435,6 +454,12 @@ public:
         }
     }
 
+    bool setBypass (bool b)
+    {
+        isBypassed = b;
+        return true;
+    }
+
     //==============================================================================
     VstInt32 processEvents (VstEvents* events)
     {
@@ -452,15 +477,14 @@ public:
         const int numOut = numOutChans;
 
         AudioSampleBuffer temp (numIn, numSamples);
-        int i;
-        for (i = numIn; --i >= 0;)
-            memcpy (temp.getSampleData (i), outputs[i], sizeof (float) * numSamples);
+        for (int i = numIn; --i >= 0;)
+            memcpy (temp.getSampleData (i), outputs[i], sizeof (float) * (size_t) numSamples);
 
         processReplacing (inputs, outputs, numSamples);
 
         AudioSampleBuffer dest (outputs, numOut, numSamples);
 
-        for (i = jmin (numIn, numOut); --i >= 0;)
+        for (int i = jmin (numIn, numOut); --i >= 0;)
             dest.addFrom (i, 0, temp, i, 0, numSamples);
     }
 
@@ -502,7 +526,7 @@ public:
             if (filter->isSuspended())
             {
                 for (int i = 0; i < numOut; ++i)
-                    zeromem (outputs[i], sizeof (float) * numSamples);
+                    zeromem (outputs[i], sizeof (float) * (size_t) numSamples);
             }
             else
             {
@@ -530,7 +554,7 @@ public:
                     }
 
                     if (i < numIn && chan != inputs[i])
-                        memcpy (chan, inputs[i], sizeof (float) * numSamples);
+                        memcpy (chan, inputs[i], sizeof (float) * (size_t) numSamples);
 
                     channels[i] = chan;
                 }
@@ -540,17 +564,17 @@ public:
 
                 {
                     AudioSampleBuffer chans (channels, jmax (numIn, numOut), numSamples);
-                    filter->processBlock (chans, midiEvents);
+
+                    if (isBypassed)
+                        filter->processBlockBypassed (chans, midiEvents);
+                    else
+                        filter->processBlock (chans, midiEvents);
                 }
 
                 // copy back any temp channels that may have been used..
                 for (i = 0; i < numOut; ++i)
-                {
-                    const float* const chan = tempChannels.getUnchecked(i);
-
-                    if (chan != nullptr)
-                        memcpy (outputs[i], chan, sizeof (float) * numSamples);
-                }
+                    if (const float* const chan = tempChannels.getUnchecked(i))
+                        memcpy (outputs[i], chan, sizeof (float) * (size_t) numSamples);
             }
         }
 
@@ -605,7 +629,7 @@ public:
         if (filter != nullptr)
         {
             isProcessing = true;
-            channels.calloc (numInChans + numOutChans);
+            channels.calloc ((size_t) (numInChans + numOutChans));
 
             double rate = getSampleRate();
             jassert (rate > 0);
@@ -656,7 +680,7 @@ public:
     bool getCurrentPosition (AudioPlayHead::CurrentPositionInfo& info)
     {
         const VstTimeInfo* const ti = getTimeInfo (kVstPpqPosValid | kVstTempoValid | kVstBarsValid | kVstCyclePosValid
-                                                   | kVstTimeSigValid | kVstSmpteValid | kVstClockValid);
+                                                    | kVstTimeSigValid | kVstSmpteValid | kVstClockValid);
 
         if (ti == nullptr || ti->sampleRate <= 0)
             return false;
@@ -674,6 +698,7 @@ public:
             info.timeSigDenominator = 4;
         }
 
+        info.timeInSamples = (int64) ti->samplePos;
         info.timeInSeconds = ti->samplePos / ti->sampleRate;
         info.ppqPosition = (ti->flags & kVstPpqPosValid) != 0 ? ti->ppqPos : 0.0;
         info.ppqPositionOfLastBarStart = (ti->flags & kVstBarsValid) != 0 ? ti->barStartPos : 0.0;
@@ -804,14 +829,17 @@ public:
 
     void audioProcessorParameterChanged (AudioProcessor*, int index, float newValue)
     {
-        setParameterAutomated (index, newValue);
+        if (audioMaster != nullptr)
+            audioMaster (&cEffect, audioMasterAutomate, index, 0, 0, newValue);
     }
 
     void audioProcessorParameterChangeGestureBegin (AudioProcessor*, int index)   { beginEdit (index); }
-    void audioProcessorParameterChangeGestureEnd (AudioProcessor*, int index)     { endEdit (index); }
+    void audioProcessorParameterChangeGestureEnd   (AudioProcessor*, int index)   { endEdit   (index); }
 
     void audioProcessorChanged (AudioProcessor*)
     {
+        setInitialDelay (filter->getLatencySamples());
+        ioChanged();
         updateDisplay();
     }
 
@@ -820,16 +848,14 @@ public:
         return filter != nullptr && filter->isParameterAutomatable ((int) index);
     }
 
-    class ChannelConfigComparator
+    struct ChannelConfigComparator
     {
-    public:
         static int compareElements (const short* const first, const short* const second) noexcept
         {
-            if (first[0] < second[0])       return -1;
-            else if (first[0] > second[0])  return 1;
-            else if (first[1] < second[1])  return -1;
-            else if (first[1] > second[1])  return 1;
-
+            if (first[0] < second[0])  return -1;
+            if (first[0] > second[0])  return 1;
+            if (first[1] < second[1])  return -1;
+            if (first[1] > second[1])  return 1;
             return 0;
         }
     };
@@ -853,19 +879,62 @@ public:
 
             if (inCountMatches && outCountMatches)
             {
-                speakerIn = (VstSpeakerArrangementType) pluginInput->type;
+                speakerIn  = (VstSpeakerArrangementType) pluginInput->type;
                 speakerOut = (VstSpeakerArrangementType) pluginOutput->type;
-                numInChans = pluginInput->numChannels;
+                numInChans  = pluginInput->numChannels;
                 numOutChans = pluginOutput->numChannels;
 
                 filter->setPlayConfigDetails (numInChans, numOutChans,
                                               filter->getSampleRate(),
                                               filter->getBlockSize());
+
+                filter->setSpeakerArrangement (getSpeakerArrangementString (speakerIn),
+                                               getSpeakerArrangementString (speakerOut));
                 return true;
             }
         }
 
+        filter->setSpeakerArrangement (String::empty, String::empty);
         return false;
+    }
+
+    static const char* getSpeakerArrangementString (VstSpeakerArrangementType type) noexcept
+    {
+        switch (type)
+        {
+            case kSpeakerArrMono:           return "M";
+            case kSpeakerArrStereo:         return "L R";
+            case kSpeakerArrStereoSurround: return "Ls Rs";
+            case kSpeakerArrStereoCenter:   return "Lc Rc";
+            case kSpeakerArrStereoSide:     return "Sl Sr";
+            case kSpeakerArrStereoCLfe:     return "C Lfe";
+            case kSpeakerArr30Cine:         return "L R C";
+            case kSpeakerArr30Music:        return "L R S";
+            case kSpeakerArr31Cine:         return "L R C Lfe";
+            case kSpeakerArr31Music:        return "L R Lfe S";
+            case kSpeakerArr40Cine:         return "L R C S";
+            case kSpeakerArr40Music:        return "L R Ls Rs";
+            case kSpeakerArr41Cine:         return "L R C Lfe S";
+            case kSpeakerArr41Music:        return "L R Lfe Ls Rs";
+            case kSpeakerArr50:             return "L R C Ls Rs" ;
+            case kSpeakerArr51:             return "L R C Lfe Ls Rs";
+            case kSpeakerArr60Cine:         return "L R C Ls Rs Cs";
+            case kSpeakerArr60Music:        return "L R Ls Rs Sl Sr ";
+            case kSpeakerArr61Cine:         return "L R C Lfe Ls Rs Cs";
+            case kSpeakerArr61Music:        return "L R Lfe Ls Rs Sl Sr";
+            case kSpeakerArr70Cine:         return "L R C Ls Rs Lc Rc ";
+            case kSpeakerArr70Music:        return "L R C Ls Rs Sl Sr";
+            case kSpeakerArr71Cine:         return "L R C Lfe Ls Rs Lc Rc";
+            case kSpeakerArr71Music:        return "L R C Lfe Ls Rs Sl Sr";
+            case kSpeakerArr80Cine:         return "L R C Ls Rs Lc Rc Cs";
+            case kSpeakerArr80Music:        return "L R C Ls Rs Cs Sl Sr";
+            case kSpeakerArr81Cine:         return "L R C Lfe Ls Rs Lc Rc Cs";
+            case kSpeakerArr81Music:        return "L R C Lfe Ls Rs Cs Sl Sr" ;
+            case kSpeakerArr102:            return "L R C Lfe Ls Rs Tfl Tfc Tfr Trl Trr Lfe2";
+            default:                        break;
+        }
+
+        return nullptr;
     }
 
     //==============================================================================
@@ -891,18 +960,18 @@ public:
 
     VstInt32 setChunk (void* data, VstInt32 byteSize, bool onlyRestoreCurrentProgramData)
     {
-        if (filter == nullptr)
-            return 0;
-
-        chunkMemory.setSize (0);
-        chunkMemoryTime = 0;
-
-        if (byteSize > 0 && data != nullptr)
+        if (filter != nullptr)
         {
-            if (onlyRestoreCurrentProgramData)
-                filter->setCurrentProgramStateInformation (data, byteSize);
-            else
-                filter->setStateInformation (data, byteSize);
+            chunkMemory.setSize (0);
+            chunkMemoryTime = 0;
+
+            if (byteSize > 0 && data != nullptr)
+            {
+                if (onlyRestoreCurrentProgramData)
+                    filter->setCurrentProgramStateInformation (data, byteSize);
+                else
+                    filter->setStateInformation (data, byteSize);
+            }
         }
 
         return 0;
@@ -974,9 +1043,7 @@ public:
 
         if (editorComp == nullptr)
         {
-            AudioProcessorEditor* const ed = filter->createEditorIfNeeded();
-
-            if (ed != nullptr)
+            if (AudioProcessorEditor* const ed = filter->createEditorIfNeeded())
             {
                 cEffect.flags |= effFlagsHasEditor;
                 ed->setOpaque (true);
@@ -1003,8 +1070,7 @@ public:
 
         if (editorComp != nullptr)
         {
-            Component* const modalComponent = Component::getCurrentlyModalComponent();
-            if (modalComponent != nullptr)
+            if (Component* const modalComponent = Component::getCurrentlyModalComponent())
             {
                 modalComponent->exitModalState (0);
 
@@ -1174,8 +1240,8 @@ public:
                #endif
             }
 
-            if (editorComp->getPeer() != nullptr)
-                editorComp->getPeer()->handleMovedOrResized();
+            if (ComponentPeer* peer = editorComp->getPeer())
+                peer->handleMovedOrResized();
         }
     }
 
@@ -1202,19 +1268,19 @@ public:
             editor->setTopLeftPosition (0, 0);
             addAndMakeVisible (editor);
 
-          #if JUCE_WINDOWS
+           #if JUCE_WINDOWS
             if (! getHostType().isReceptor())
                 addMouseListener (this, true);
 
             registerMouseWheelHook();
-          #endif
+           #endif
         }
 
         ~EditorCompWrapper()
         {
-          #if JUCE_WINDOWS
+           #if JUCE_WINDOWS
             unregisterMouseWheelHook();
-          #endif
+           #endif
 
             deleteAllChildren(); // note that we can't use a ScopedPointer because the editor may
                                  // have been transferred to another parent which takes over ownership.
@@ -1247,9 +1313,7 @@ public:
 
         void resized()
         {
-            Component* const editor = getChildComponent(0);
-
-            if (editor != nullptr)
+            if (Component* const editor = getChildComponent(0))
                 editor->setBounds (getLocalBounds());
         }
 
@@ -1259,6 +1323,10 @@ public:
 
             const int cw = child->getWidth();
             const int ch = child->getHeight();
+
+           #if JUCE_MAC && JUCE_64BIT
+            setTopLeftPosition (0, getHeight() - ch);
+           #endif
 
             wrapper.resizeHostWindow (cw, ch);
 
@@ -1300,7 +1368,7 @@ public:
         JuceVSTWrapper& wrapper;
         FakeMouseMoveGenerator fakeMouseGenerator;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditorCompWrapper);
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditorCompWrapper)
     };
 
     //==============================================================================
@@ -1314,7 +1382,7 @@ private:
     VSTMidiEventList outgoingEvents;
     VstSpeakerArrangementType speakerIn, speakerOut;
     int numInChans, numOutChans;
-    bool isProcessing, hasShutdown, firstProcessCallback, shouldDeleteEditor;
+    bool isProcessing, isBypassed, hasShutdown, firstProcessCallback, shouldDeleteEditor;
     HeapBlock<float*> channels;
     Array<float*> tempChannels;  // see note in processReplacing()
 
@@ -1325,6 +1393,14 @@ private:
    #else
     HWND hostWindow;
    #endif
+
+    static inline VstInt32 convertHexVersionToDecimal (const unsigned int hexVersion)
+    {
+        return (VstInt32) (((hexVersion >> 24) & 0xff) * 1000
+                           + ((hexVersion >> 16) & 0xff) * 100
+                           + ((hexVersion >> 8)  & 0xff) * 10
+                           + (hexVersion & 0xff));
+    }
 
     //==============================================================================
    #if JUCE_WINDOWS
@@ -1371,15 +1447,8 @@ private:
             tempChannels.insertMultiple (0, 0, filter->getNumInputChannels() + filter->getNumOutputChannels());
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceVSTWrapper);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceVSTWrapper)
 };
-
-//==============================================================================
-/** Somewhere in the codebase of your plugin, you need to implement this function
-    and make it create an instance of the filter subclass that you're building.
-*/
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
-
 
 //==============================================================================
 namespace
@@ -1397,13 +1466,9 @@ namespace
                 MessageManagerLock mmLock;
                #endif
 
-                AudioProcessor* const filter = createPluginFilter();
-
-                if (filter != nullptr)
-                {
-                    JuceVSTWrapper* const wrapper = new JuceVSTWrapper (audioMaster, filter);
-                    return wrapper->getAeffect();
-                }
+                AudioProcessor* const filter = createPluginFilterOfType (AudioProcessor::wrapperType_VST);
+                JuceVSTWrapper* const wrapper = new JuceVSTWrapper (audioMaster, filter);
+                return wrapper->getAeffect();
             }
         }
         catch (...)
@@ -1413,17 +1478,23 @@ namespace
     }
 }
 
+#if ! JUCE_WINDOWS
+ #define JUCE_EXPORTED_FUNCTION extern "C" __attribute__ ((visibility("default")))
+#endif
+
 //==============================================================================
 // Mac startup code..
 #if JUCE_MAC
 
-    extern "C" __attribute__ ((visibility("default"))) AEffect* VSTPluginMain (audioMasterCallback audioMaster)
+    JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster);
+    JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
         initialiseMac();
         return pluginEntryPoint (audioMaster);
     }
 
-    extern "C" __attribute__ ((visibility("default"))) AEffect* main_macho (audioMasterCallback audioMaster)
+    JUCE_EXPORTED_FUNCTION AEffect* main_macho (audioMasterCallback audioMaster);
+    JUCE_EXPORTED_FUNCTION AEffect* main_macho (audioMasterCallback audioMaster)
     {
         initialiseMac();
         return pluginEntryPoint (audioMaster);
@@ -1433,15 +1504,15 @@ namespace
 // Linux startup code..
 #elif JUCE_LINUX
 
-    extern "C" __attribute__ ((visibility("default"))) AEffect* VSTPluginMain (audioMasterCallback audioMaster)
+    JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster);
+    JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
         SharedMessageThread::getInstance();
         return pluginEntryPoint (audioMaster);
     }
 
-    extern "C" __attribute__ ((visibility("default"))) AEffect* main_plugin (audioMasterCallback audioMaster) asm ("main");
-
-    extern "C" __attribute__ ((visibility("default"))) AEffect* main_plugin (audioMasterCallback audioMaster)
+    JUCE_EXPORTED_FUNCTION AEffect* main_plugin (audioMasterCallback audioMaster) asm ("main");
+    JUCE_EXPORTED_FUNCTION AEffect* main_plugin (audioMasterCallback audioMaster)
     {
         return VSTPluginMain (audioMaster);
     }
@@ -1465,18 +1536,6 @@ namespace
         return (int) pluginEntryPoint (audioMaster);
     }
    #endif
-
-   #if JucePlugin_Build_RTAS
-    BOOL WINAPI DllMainVST (HINSTANCE instance, DWORD dwReason, LPVOID)
-   #else
-    extern "C" BOOL WINAPI DllMain (HINSTANCE instance, DWORD dwReason, LPVOID)
-   #endif
-    {
-        if (dwReason == DLL_PROCESS_ATTACH)
-            Process::setCurrentModuleInstanceHandle (instance);
-
-        return TRUE;
-    }
 #endif
 
 #endif

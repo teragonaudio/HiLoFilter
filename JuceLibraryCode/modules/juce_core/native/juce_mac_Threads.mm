@@ -34,7 +34,14 @@ bool Process::isForegroundProcess()
    #if JUCE_MAC
     return [NSApp isActive];
    #else
-    return true; // xxx change this if more than one app is ever possible on the iPhone!
+    return true; // xxx change this if more than one app is ever possible on iOS!
+   #endif
+}
+
+void Process::makeForegroundProcess()
+{
+   #if JUCE_MAC
+    [NSApp activateIgnoringOtherApps: YES];
    #endif
 }
 

@@ -23,11 +23,11 @@
   ==============================================================================
 */
 
-TooltipWindow::TooltipWindow (Component* const parent_,
-                              const int millisecondsBeforeTipAppears_)
+TooltipWindow::TooltipWindow (Component* const parentComp, const int delayMs)
     : Component ("tooltip"),
-      millisecondsBeforeTipAppears (millisecondsBeforeTipAppears_),
+      millisecondsBeforeTipAppears (delayMs),
       mouseClicks (0),
+      mouseWheelMoves (0),
       lastHideTime (0),
       lastComponentUnderMouse (nullptr),
       changedCompsSinceShown (true)
@@ -38,8 +38,8 @@ TooltipWindow::TooltipWindow (Component* const parent_,
     setAlwaysOnTop (true);
     setOpaque (true);
 
-    if (parent_ != nullptr)
-        parent_->addChildComponent (this);
+    if (parentComp != nullptr)
+        parentComp->addChildComponent (this);
 }
 
 TooltipWindow::~TooltipWindow()
@@ -72,15 +72,16 @@ void TooltipWindow::showFor (const String& tip)
 
     Point<int> mousePos (Desktop::getMousePosition());
     Rectangle<int> parentArea;
+    Component* const parent = getParentComponent();
 
-    if (getParentComponent() != nullptr)
+    if (parent != nullptr)
     {
-        mousePos = getParentComponent()->getLocalPoint (nullptr, mousePos);
-        parentArea = getParentComponent()->getLocalBounds();
+        mousePos   = parent->getLocalPoint (nullptr, mousePos);
+        parentArea = parent->getLocalBounds();
     }
     else
     {
-        parentArea = Desktop::getInstance().getMonitorAreaContaining (mousePos);
+        parentArea = Desktop::getInstance().getDisplays().getDisplayContaining (mousePos).userArea;
     }
 
     int w, h;
@@ -98,18 +99,16 @@ void TooltipWindow::showFor (const String& tip)
     else
         y += 6;
 
-    x = jlimit (parentArea.getX(), parentArea.getRight() - w, x);
+    x = jlimit (parentArea.getX(), parentArea.getRight()  - w, x);
     y = jlimit (parentArea.getY(), parentArea.getBottom() - h, y);
 
     setBounds (x, y, w, h);
     setVisible (true);
 
-    if (getParentComponent() == nullptr)
-    {
+    if (parent == nullptr)
         addToDesktop (ComponentPeer::windowHasDropShadow
                         | ComponentPeer::windowIsTemporary
                         | ComponentPeer::windowIgnoresKeyPresses);
-    }
 
     toFront (false);
 }
@@ -118,12 +117,11 @@ String TooltipWindow::getTipFor (Component* const c)
 {
     if (c != nullptr
          && Process::isForegroundProcess()
-         && ! Component::isMouseButtonDownAnywhere())
+         && ! ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown())
     {
-        TooltipClient* const ttc = dynamic_cast <TooltipClient*> (c);
-
-        if (ttc != nullptr && ! c->isCurrentlyBlockedByAnotherModalComponent())
-            return ttc->getTooltip();
+        if (TooltipClient* const ttc = dynamic_cast <TooltipClient*> (c))
+            if (! c->isCurrentlyBlockedByAnotherModalComponent())
+                return ttc->getTooltip();
     }
 
     return String::empty;
@@ -146,9 +144,12 @@ void TooltipWindow::timerCallback()
     lastComponentUnderMouse = newComp;
     lastTipUnderMouse = newTip;
 
-    const int clickCount = Desktop::getInstance().getMouseButtonClickCounter();
-    const bool mouseWasClicked = clickCount > mouseClicks;
+    Desktop& desktop = Desktop::getInstance();
+    const int clickCount = desktop.getMouseButtonClickCounter();
+    const int wheelCount = desktop.getMouseWheelMoveCounter();
+    const bool mouseWasClicked = (clickCount > mouseClicks || wheelCount > mouseWheelMoves);
     mouseClicks = clickCount;
+    mouseWheelMoves = wheelCount;
 
     const Point<int> mousePos (Desktop::getMousePosition());
     const bool mouseMovedQuickly = mousePos.getDistanceFrom (lastMousePos) > 12;
@@ -180,7 +181,7 @@ void TooltipWindow::timerCallback()
         // appear after a timeout..
         if (newTip.isNotEmpty()
              && newTip != tipShowing
-             && now > lastCompChangeTime + millisecondsBeforeTipAppears)
+             && now > lastCompChangeTime + (unsigned int) millisecondsBeforeTipAppears)
         {
             showFor (newTip);
         }

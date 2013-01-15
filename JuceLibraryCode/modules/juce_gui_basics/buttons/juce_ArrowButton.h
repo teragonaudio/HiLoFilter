@@ -53,27 +53,14 @@ public:
     /** Destructor. */
     ~ArrowButton();
 
-
-protected:
-    //==============================================================================
     /** @internal */
-    void paintButton (Graphics& g,
-                      bool isMouseOverButton,
-                      bool isButtonDown);
-
-    /** @internal */
-    void buttonStateChanged();
+    void paintButton (Graphics&, bool isMouseOverButton, bool isButtonDown);
 
 private:
-    //==============================================================================
     Colour colour;
-    DropShadowEffect shadow;
     Path path;
-    int offset;
 
-    void updateShadowAndOffset();
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArrowButton);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArrowButton)
 };
 
 

@@ -407,6 +407,7 @@ private:
     OwnedArray <ColumnInfo> columns;
     Array <Listener*> listeners;
     ScopedPointer <Component> dragOverlayComp;
+    class DragOverlayComp;
 
     bool columnsChanged, columnsResized, sortChanged, menuActive, stretchToFit;
     int columnIdBeingResized, columnIdBeingDragged, initialColumnWidth;
@@ -423,7 +424,7 @@ private:
     void setColumnUnderMouse (int columnId);
     void resizeColumnsToFit (int firstColumnIndex, int targetTotalWidth);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TableHeaderComponent);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TableHeaderComponent)
 };
 
 /** This typedef is just for compatibility with old code - newer code should use the TableHeaderComponent::Listener class directly. */

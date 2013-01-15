@@ -579,7 +579,7 @@ public:
         then to use that to iterate the string.
         @see getCharPointer
     */
-    const juce_wchar operator[] (int index) const noexcept;
+    juce_wchar operator[] (int index) const noexcept;
 
     /** Returns the final character of the string.
         If the string is empty this will return 0.
@@ -647,7 +647,7 @@ public:
     */
     String fromFirstOccurrenceOf (const String& substringToStartFrom,
                                   bool includeSubStringInResult,
-                                        bool ignoreCase) const;
+                                  bool ignoreCase) const;
 
     /** Returns a section of the string starting from the last occurrence of a given substring.
 
@@ -1049,7 +1049,7 @@ public:
     */
     CharPointer_UTF8 toUTF8() const;
 
-    /** Returns a pointer to a UTF-32 version of this string.
+    /** Returns a pointer to a UTF-16 version of this string.
 
         Because it returns a reference to the string's internal data, the pointer
         that is returned must not be stored anywhere, as it can be deleted whenever the
@@ -1133,7 +1133,7 @@ public:
     */
     int copyToUTF16 (CharPointer_UTF16::CharType* destBuffer, int maxBufferSizeBytes) const noexcept;
 
-    /** Copies the string to a buffer as UTF-16 characters.
+    /** Copies the string to a buffer as UTF-32 characters.
 
         Returns the number of bytes copied to the buffer, including the terminating null
         character.
@@ -1262,6 +1262,8 @@ JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, short number);
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, int number);
 /** Appends a decimal number at the end of a string. */
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, long number);
+/** Appends a decimal number at the end of a string. */
+JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, int64 number);
 /** Appends a decimal number at the end of a string. */
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, float number);
 /** Appends a decimal number at the end of a string. */

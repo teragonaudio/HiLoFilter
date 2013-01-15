@@ -61,8 +61,7 @@ public:
     virtual ~AudioProcessor();
 
     //==============================================================================
-    /** Returns the name of this processor.
-    */
+    /** Returns the name of this processor. */
     virtual const String getName() const = 0;
 
     //==============================================================================
@@ -135,6 +134,17 @@ public:
     virtual void processBlock (AudioSampleBuffer& buffer,
                                MidiBuffer& midiMessages) = 0;
 
+    /** Renders the next block when the processor is being bypassed.
+        The default implementation of this method will pass-through any incoming audio, but
+        you may override this method e.g. to add latency compensation to the data to match
+        the processor's latency characteristics. This will avoid situations where bypassing
+        will shift the signal forward in time, possibly creating pre-echo effects and odd timings.
+        Another use for this method would be to cross-fade or morph between the wet (not bypassed)
+        and dry (bypassed) signals.
+    */
+    virtual void processBlockBypassed (AudioSampleBuffer& buffer,
+                                       MidiBuffer& midiMessages);
+
     //==============================================================================
     /** Returns the current AudioPlayHead object that should be used to find
         out the state and position of the playhead.
@@ -143,9 +153,9 @@ public:
         object to get the details about the time of the start of the block currently
         being processed.
 
-        If the host hasn't supplied a playhead object, this will return 0.
+        If the host hasn't supplied a playhead object, this will return nullptr.
     */
-    AudioPlayHead* getPlayHead() const noexcept               { return playHead; }
+    AudioPlayHead* getPlayHead() const noexcept                 { return playHead; }
 
 
     //==============================================================================
@@ -154,7 +164,7 @@ public:
         This can be called from your processBlock() method - it's not guaranteed
         to be valid at any other time, and may return 0 if it's unknown.
     */
-    double getSampleRate() const noexcept                     { return sampleRate; }
+    double getSampleRate() const noexcept                       { return sampleRate; }
 
     /** Returns the current typical block size that is being used.
 
@@ -165,7 +175,7 @@ public:
         processBlock, it's just the normal one. The actual block sizes used may be
         larger or smaller than this, and will vary between successive calls.
     */
-    int getBlockSize() const noexcept                         { return blockSize; }
+    int getBlockSize() const noexcept                           { return blockSize; }
 
     //==============================================================================
     /** Returns the number of input channels that the host will be sending the filter.
@@ -177,7 +187,7 @@ public:
         Note that this method is only valid during or after the prepareToPlay()
         method call. Until that point, the number of channels will be unknown.
     */
-    int getNumInputChannels() const noexcept                  { return numInputChannels; }
+    int getNumInputChannels() const noexcept                    { return numInputChannels; }
 
     /** Returns the number of output channels that the host will be sending the filter.
 
@@ -188,18 +198,33 @@ public:
         Note that this method is only valid during or after the prepareToPlay()
         method call. Until that point, the number of channels will be unknown.
     */
-    int getNumOutputChannels() const noexcept                 { return numOutputChannels; }
+    int getNumOutputChannels() const noexcept                   { return numOutputChannels; }
 
-    /** Returns the name of one of the input channels, as returned by the host.
+    /** Returns a string containing a whitespace-separated list of speaker types
+        corresponding to each input channel.
+        For example in a 5.1 arrangement, the string may be "L R C Lfe Ls Rs"
+        If the speaker arrangement is unknown, the returned string will be empty.
+    */
+    const String& getInputSpeakerArrangement() const noexcept   { return inputSpeakerArrangement; }
 
-        The host might not supply very useful names for channels, and this might be
+    /** Returns a string containing a whitespace-separated list of speaker types
+        corresponding to each output channel.
+        For example in a 5.1 arrangement, the string may be "L R C Lfe Ls Rs"
+        If the speaker arrangement is unknown, the returned string will be empty.
+    */
+    const String& getOutputSpeakerArrangement() const noexcept  { return outputSpeakerArrangement; }
+
+    //==============================================================================
+    /** Returns the name of one of the processor's input channels.
+
+        The processor might not supply very useful names for channels, and this might be
         something like "1", "2", "left", "right", etc.
     */
     virtual const String getInputChannelName (int channelIndex) const = 0;
 
-    /** Returns the name of one of the output channels, as returned by the host.
+    /** Returns the name of one of the processor's output channels.
 
-        The host might not supply very useful names for channels, and this might be
+        The processor might not supply very useful names for channels, and this might be
         something like "1", "2", "left", "right", etc.
     */
     virtual const String getOutputChannelName (int channelIndex) const = 0;
@@ -216,7 +241,7 @@ public:
         The host will call this to find the latency - the filter itself should set this value
         by calling setLatencySamples() as soon as it can during its initialisation.
     */
-    int getLatencySamples() const noexcept                            { return latencySamples; }
+    int getLatencySamples() const noexcept                      { return latencySamples; }
 
     /** The filter should call this to set the number of samples delay that it introduces.
 
@@ -224,6 +249,9 @@ public:
         later if the value changes.
     */
     void setLatencySamples (int newLatency);
+
+    /** Returns true if a silent input always produces a silent output (i.e. it has no tail). */
+    virtual bool silenceInProducesSilenceOut() const = 0;
 
     /** Returns true if the processor wants midi messages. */
     virtual bool acceptsMidi() const = 0;
@@ -243,7 +271,7 @@ public:
 
         @see suspendProcessing
     */
-    const CriticalSection& getCallbackLock() const noexcept             { return callbackLock; }
+    const CriticalSection& getCallbackLock() const noexcept     { return callbackLock; }
 
     /** Enables and disables the processing callback.
 
@@ -310,7 +338,7 @@ public:
     //==============================================================================
     /** Creates the filter's UI.
 
-        This can return 0 if you want a UI-less filter, in which case the host may create
+        This can return nullptr if you want a UI-less filter, in which case the host may create
         a generic UI that lets the user twiddle the parameters directly.
 
         If you do want to pass back a component, the component should be created and set to
@@ -344,14 +372,11 @@ public:
 
     //==============================================================================
     /** Returns the active editor, if there is one.
-
-        Bear in mind this can return 0, even if an editor has previously been
-        opened.
+        Bear in mind this can return nullptr, even if an editor has previously been opened.
     */
     AudioProcessorEditor* getActiveEditor() const noexcept             { return activeEditor; }
 
     /** Returns the active editor, or if there isn't one, it will create one.
-
         This may call createEditor() internally to create the component.
     */
     AudioProcessorEditor* createEditorIfNeeded();
@@ -378,6 +403,11 @@ public:
     /** Returns the value of a parameter as a text string. */
     virtual const String getParameterText (int parameterIndex) = 0;
 
+    /** Some plugin types may be able to return a label string for a
+        parameter's units.
+    */
+    virtual String getParameterLabel (int index) const;
+
     /** The host will call this method to change the value of one of the filter's parameters.
 
         The host may call this at any time, including during the audio processing
@@ -391,8 +421,7 @@ public:
 
         The value passed will be between 0 and 1.0.
     */
-    virtual void setParameter (int parameterIndex,
-                               float newValue) = 0;
+    virtual void setParameter (int parameterIndex, float newValue) = 0;
 
     /** Your filter can call this when it needs to change one of its parameters.
 
@@ -404,8 +433,7 @@ public:
         the beginParameterChangeGesture() and endParameterChangeGesture() methods to
         tell the host when the user has started and stopped changing the parameter.
     */
-    void setParameterNotifyingHost (int parameterIndex,
-                                    float newValue);
+    void setParameterNotifyingHost (int parameterIndex, float newValue);
 
     /** Returns true if the host can automate this parameter.
 
@@ -458,19 +486,16 @@ public:
     */
     virtual int getNumPrograms() = 0;
 
-    /** Returns the number of the currently active program.
-    */
+    /** Returns the number of the currently active program. */
     virtual int getCurrentProgram() = 0;
 
-    /** Called by the host to change the current program.
-    */
+    /** Called by the host to change the current program. */
     virtual void setCurrentProgram (int index) = 0;
 
     /** Must return the name of a given program. */
     virtual const String getProgramName (int index) = 0;
 
-    /** Called by the host to rename a program.
-    */
+    /** Called by the host to rename a program. */
     virtual void changeProgramName (int index, const String& newName) = 0;
 
     //==============================================================================
@@ -524,6 +549,8 @@ public:
     */
     virtual void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
 
+    /** This method is called when the number of input or output channels is changed. */
+    virtual void numChannelsChanged();
 
     //==============================================================================
     /** Adds a listener that will be called when an aspect of this processor changes. */
@@ -541,12 +568,32 @@ public:
 
     //==============================================================================
     /** Not for public use - this is called before deleting an editor component. */
-    void editorBeingDeleted (AudioProcessorEditor* editor) noexcept;
+    void editorBeingDeleted (AudioProcessorEditor*) noexcept;
 
     /** Not for public use - this is called to initialise the processor before playing. */
-    void setPlayConfigDetails (int numIns, int numOuts,
-                               double sampleRate,
-                               int blockSize) noexcept;
+    void setPlayConfigDetails (int numIns, int numOuts, double sampleRate, int blockSize) noexcept;
+
+    /** Not for public use - this is called to initialise the processor before playing. */
+    void setSpeakerArrangement (const String& inputs, const String& outputs);
+
+    /** Flags to indicate the type of plugin context in which a processor is being used. */
+    enum WrapperType
+    {
+        wrapperType_Undefined = 0,
+        wrapperType_VST,
+        wrapperType_AudioUnit,
+        wrapperType_RTAS,
+        wrapperType_AAX,
+        wrapperType_Standalone
+    };
+
+    /** When loaded by a plugin wrapper, this flag will be set to indicate the type
+        of plugin within which the processor is running.
+    */
+    WrapperType wrapperType;
+
+    /** @internal */
+    static void setTypeOfNextNewPlugin (WrapperType);
 
 protected:
     //==============================================================================
@@ -563,7 +610,7 @@ protected:
 
     /** Retrieves an XML element that was stored as binary with the copyXmlToBinary() method.
 
-        This might return 0 if the data's unsuitable or corrupted. Otherwise it will return
+        This might return nullptr if the data's unsuitable or corrupted. Otherwise it will return
         an XmlElement object that the caller must delete when no longer needed.
     */
     static XmlElement* getXmlFromBinary (const void* data, int sizeInBytes);
@@ -581,12 +628,13 @@ private:
     int blockSize, numInputChannels, numOutputChannels, latencySamples;
     bool suspended, nonRealtime;
     CriticalSection callbackLock, listenerLock;
+    String inputSpeakerArrangement, outputSpeakerArrangement;
 
    #if JUCE_DEBUG
     BigInteger changingParams;
    #endif
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioProcessor);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioProcessor)
 };
 
 

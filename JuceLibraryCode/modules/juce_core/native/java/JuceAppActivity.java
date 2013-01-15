@@ -30,12 +30,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.*;
+import android.view.inputmethod.BaseInputConnection;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 import android.graphics.*;
 import android.opengl.*;
 import android.text.ClipboardManager;
+import android.text.InputType;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +50,8 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 
 //==============================================================================
 public final class JuceAppActivity   extends Activity
@@ -70,6 +78,27 @@ public final class JuceAppActivity   extends Activity
         super.onDestroy();
     }
 
+    @Override
+    protected final void onPause()
+    {
+        suspendApp();
+        super.onPause();
+    }
+
+    @Override
+    protected final void onResume()
+    {
+        super.onResume();
+        resumeApp();
+    }
+
+    @Override
+    public void onConfigurationChanged (Configuration cfg)
+    {
+        super.onConfigurationChanged (cfg);
+        setContentView (viewHolder);
+    }
+
     private void callAppLauncher()
     {
         launchApp (getApplicationInfo().publicSourceDir,
@@ -79,6 +108,8 @@ public final class JuceAppActivity   extends Activity
     //==============================================================================
     private native void launchApp (String appFile, String appDataDir);
     private native void quitApp();
+    private native void suspendApp();
+    private native void resumeApp();
     private native void setScreenSize (int screenWidth, int screenHeight);
 
     //==============================================================================
@@ -273,23 +304,101 @@ public final class JuceAppActivity   extends Activity
         private boolean opaque;
 
         //==============================================================================
-        private native void handleMouseDown (float x, float y, long time);
-        private native void handleMouseDrag (float x, float y, long time);
-        private native void handleMouseUp (float x, float y, long time);
+        private native void handleMouseDown (int index, float x, float y, long time);
+        private native void handleMouseDrag (int index, float x, float y, long time);
+        private native void handleMouseUp   (int index, float x, float y, long time);
 
         @Override
         public boolean onTouchEvent (MotionEvent event)
         {
-            switch (event.getAction())
+            int action = event.getAction();
+            long time = event.getEventTime();
+
+            switch (action & MotionEvent.ACTION_MASK)
             {
-                case MotionEvent.ACTION_DOWN:  handleMouseDown (event.getX(), event.getY(), event.getEventTime()); return true;
-                case MotionEvent.ACTION_MOVE:  handleMouseDrag (event.getX(), event.getY(), event.getEventTime()); return true;
+                case MotionEvent.ACTION_DOWN:
+                    handleMouseDown (event.getPointerId(0), event.getX(), event.getY(), time);
+                    return true;
+
                 case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_UP:    handleMouseUp (event.getX(), event.getY(), event.getEventTime()); return true;
-                default: break;
+                case MotionEvent.ACTION_UP:
+                    handleMouseUp (event.getPointerId(0), event.getX(), event.getY(), time);
+                    return true;
+
+                case MotionEvent.ACTION_MOVE:
+                {
+                    int n = event.getPointerCount();
+                    for (int i = 0; i < n; ++i)
+                        handleMouseDrag (event.getPointerId(i), event.getX(i), event.getY(i), time);
+
+                    return true;
+                }
+
+                case MotionEvent.ACTION_POINTER_UP:
+                {
+                    int i = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                    handleMouseUp (event.getPointerId(i), event.getX(i), event.getY(i), time);
+                    return true;
+                }
+
+                case MotionEvent.ACTION_POINTER_DOWN:
+                {
+                    int i = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                    handleMouseDown (event.getPointerId(i), event.getX(i), event.getY(i), time);
+                    return true;
+                }
+
+                default:
+                    break;
             }
 
             return false;
+        }
+
+        //==============================================================================
+        private native void handleKeyDown (int keycode, int textchar);
+        private native void handleKeyUp (int keycode, int textchar);
+
+        public void showKeyboard (boolean shouldShow)
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService (Context.INPUT_METHOD_SERVICE);
+
+            if (imm != null)
+            {
+                if (shouldShow)
+                    imm.showSoftInput (this, InputMethodManager.SHOW_FORCED);
+                else
+                    imm.hideSoftInputFromWindow (getWindowToken(), 0);
+            }
+        }
+
+        @Override
+        public boolean onKeyDown (int keyCode, KeyEvent event)
+        {
+            handleKeyDown (keyCode, event.getUnicodeChar());
+            return true;
+        }
+
+        @Override
+        public boolean onKeyUp (int keyCode, KeyEvent event)
+        {
+            handleKeyUp (keyCode, event.getUnicodeChar());
+            return true;
+        }
+
+        // this is here to make keyboard entry work on a Galaxy Tab2 10.1
+        @Override
+        public InputConnection onCreateInputConnection (EditorInfo outAttrs)
+        {
+            outAttrs.actionLabel = "";
+            outAttrs.hintText = "";
+            outAttrs.initialCapsMode = 0;
+            outAttrs.initialSelEnd = outAttrs.initialSelStart = -1;
+            outAttrs.label = "";
+            outAttrs.imeOptions = EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+            outAttrs.inputType = InputType.TYPE_NULL;
+
+            return new BaseInputConnection (this, false);
         }
 
         //==============================================================================
@@ -386,7 +495,7 @@ public final class JuceAppActivity   extends Activity
         bounds.right++;
 
         final int w = bounds.width();
-        final int h = bounds.height();
+        final int h = Math.max (1, bounds.height());
 
         Bitmap bm = Bitmap.createBitmap (w, h, Bitmap.Config.ARGB_8888);
 
@@ -494,5 +603,44 @@ public final class JuceAppActivity   extends Activity
     public final void launchURL (String url)
     {
         startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse (url)));
+    }
+
+    public static final String getLocaleValue (boolean isRegion)
+    {
+        java.util.Locale locale = java.util.Locale.getDefault();
+
+        return isRegion ? locale.getDisplayCountry  (java.util.Locale.US)
+                        : locale.getDisplayLanguage (java.util.Locale.US);
+    }
+
+    //==============================================================================
+    private final class SingleMediaScanner  implements MediaScannerConnectionClient
+    {
+        public SingleMediaScanner (Context context, String filename)
+        {
+            file = filename;
+            msc = new MediaScannerConnection (context, this);
+            msc.connect();
+        }
+
+        @Override
+        public void onMediaScannerConnected()
+        {
+            msc.scanFile (file, null);
+        }
+
+        @Override
+        public void onScanCompleted (String path, Uri uri)
+        {
+            msc.disconnect();
+        }
+
+        private MediaScannerConnection msc;
+        private String file;
+    }
+
+    public final void scanFile (String filename)
+    {
+        new SingleMediaScanner (this, filename);
     }
 }

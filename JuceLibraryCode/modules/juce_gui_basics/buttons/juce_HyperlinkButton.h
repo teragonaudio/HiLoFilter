@@ -93,14 +93,6 @@ public:
     */
     void changeWidthToFitText();
 
-    //==============================================================================
-    struct Ids
-    {
-        static const Identifier tagType, text, url;
-    };
-
-    void refreshFromValueTree (const ValueTree&, ComponentBuilder&);
-
 protected:
     //==============================================================================
     /** @internal */
@@ -121,7 +113,7 @@ private:
 
     Font getFontToUse() const;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HyperlinkButton);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HyperlinkButton)
 };
 
 #endif   // __JUCE_HYPERLINKBUTTON_JUCEHEADER__

@@ -149,6 +149,8 @@ public:
     void resized();
 
 private:
+    class SectionComponent;
+
     Viewport viewport;
     class PropertyHolderComponent;
     PropertyHolderComponent* propertyHolderComponent;
@@ -157,7 +159,7 @@ private:
     void updatePropHolderLayout() const;
     void updatePropHolderLayout (int width) const;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertyPanel);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertyPanel)
 };
 
 

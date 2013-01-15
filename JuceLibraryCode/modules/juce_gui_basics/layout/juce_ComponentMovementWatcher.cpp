@@ -96,7 +96,7 @@ void ComponentMovementWatcher::componentMovedOrResized (Component&, bool wasMove
 
 void ComponentMovementWatcher::componentBeingDeleted (Component& comp)
 {
-    registeredParentComps.removeValue (&comp);
+    registeredParentComps.removeFirstMatchingValue (&comp);
 
     if (component == &comp)
         unregister();
@@ -118,13 +118,10 @@ void ComponentMovementWatcher::componentVisibilityChanged (Component&)
 
 void ComponentMovementWatcher::registerWithParentComps()
 {
-    Component* p = component->getParentComponent();
-
-    while (p != nullptr)
+    for (Component* p = component->getParentComponent(); p != nullptr; p = p->getParentComponent())
     {
         p->addComponentListener (this);
         registeredParentComps.add (p);
-        p = p->getParentComponent();
     }
 }
 

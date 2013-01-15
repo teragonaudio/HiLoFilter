@@ -40,7 +40,7 @@ public:
                           const OwnedArray <MidiBuffer>& sharedMidiBuffers,
                           const int numSamples) = 0;
 
-    JUCE_LEAK_DETECTOR (AudioGraphRenderingOp);
+    JUCE_LEAK_DETECTOR (AudioGraphRenderingOp)
 };
 
 //==============================================================================
@@ -59,7 +59,7 @@ public:
 private:
     const int channelNum;
 
-    JUCE_DECLARE_NON_COPYABLE (ClearChannelOp);
+    JUCE_DECLARE_NON_COPYABLE (ClearChannelOp)
 };
 
 //==============================================================================
@@ -79,7 +79,7 @@ public:
 private:
     const int srcChannelNum, dstChannelNum;
 
-    JUCE_DECLARE_NON_COPYABLE (CopyChannelOp);
+    JUCE_DECLARE_NON_COPYABLE (CopyChannelOp)
 };
 
 //==============================================================================
@@ -99,7 +99,7 @@ public:
 private:
     const int srcChannelNum, dstChannelNum;
 
-    JUCE_DECLARE_NON_COPYABLE (AddChannelOp);
+    JUCE_DECLARE_NON_COPYABLE (AddChannelOp)
 };
 
 //==============================================================================
@@ -118,7 +118,7 @@ public:
 private:
     const int bufferNum;
 
-    JUCE_DECLARE_NON_COPYABLE (ClearMidiBufferOp);
+    JUCE_DECLARE_NON_COPYABLE (ClearMidiBufferOp)
 };
 
 //==============================================================================
@@ -138,7 +138,7 @@ public:
 private:
     const int srcBufferNum, dstBufferNum;
 
-    JUCE_DECLARE_NON_COPYABLE (CopyMidiBufferOp);
+    JUCE_DECLARE_NON_COPYABLE (CopyMidiBufferOp)
 };
 
 //==============================================================================
@@ -159,7 +159,7 @@ public:
 private:
     const int srcBufferNum, dstBufferNum;
 
-    JUCE_DECLARE_NON_COPYABLE (AddMidiBufferOp);
+    JUCE_DECLARE_NON_COPYABLE (AddMidiBufferOp)
 };
 
 //==============================================================================
@@ -193,7 +193,7 @@ private:
     const int channel, bufferSize;
     int readIndex, writeIndex;
 
-    JUCE_DECLARE_NON_COPYABLE (DelayChannelOp);
+    JUCE_DECLARE_NON_COPYABLE (DelayChannelOp)
 };
 
 
@@ -236,7 +236,7 @@ private:
     int totalChans;
     int midiBufferToUse;
 
-    JUCE_DECLARE_NON_COPYABLE (ProcessBufferOp);
+    JUCE_DECLARE_NON_COPYABLE (ProcessBufferOp)
 };
 
 //==============================================================================
@@ -665,8 +665,7 @@ private:
 
     void markAnyUnusedBuffersAsFree (const int stepIndex)
     {
-        int i;
-        for (i = 0; i < nodeIds.size(); ++i)
+        for (int i = 0; i < nodeIds.size(); ++i)
         {
             if (isNodeBusy (nodeIds.getUnchecked(i))
                  && ! isBufferNeededLater (stepIndex, -1,
@@ -677,7 +676,7 @@ private:
             }
         }
 
-        for (i = 0; i < midiNodeIds.size(); ++i)
+        for (int i = 0; i < midiNodeIds.size(); ++i)
         {
             if (isNodeBusy (midiNodeIds.getUnchecked(i))
                  && ! isBufferNeededLater (stepIndex, -1,
@@ -738,7 +737,7 @@ private:
         }
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RenderingOpSequenceCalculator);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RenderingOpSequenceCalculator)
 };
 
 //==============================================================================
@@ -780,7 +779,7 @@ private:
         const uint32 destNodeId;
         SortedSet<uint32> srcNodes;
 
-        JUCE_DECLARE_NON_COPYABLE (Entry);
+        JUCE_DECLARE_NON_COPYABLE (Entry)
     };
 
     OwnedArray<Entry> entries;
@@ -850,7 +849,7 @@ private:
         return result;
     }
 
-    JUCE_DECLARE_NON_COPYABLE (ConnectionLookupTable);
+    JUCE_DECLARE_NON_COPYABLE (ConnectionLookupTable)
 };
 
 //==============================================================================
@@ -1296,8 +1295,7 @@ void AudioProcessorGraph::processBlock (AudioSampleBuffer& buffer, MidiBuffer& m
     currentMidiInputBuffer = &midiMessages;
     currentMidiOutputBuffer.clear();
 
-    int i;
-    for (i = 0; i < renderingOps.size(); ++i)
+    for (int i = 0; i < renderingOps.size(); ++i)
     {
         GraphRenderingOps::AudioGraphRenderingOp* const op
             = (GraphRenderingOps::AudioGraphRenderingOp*) renderingOps.getUnchecked(i);
@@ -1305,7 +1303,7 @@ void AudioProcessorGraph::processBlock (AudioSampleBuffer& buffer, MidiBuffer& m
         op->perform (renderingBuffers, midiBuffers, numSamples);
     }
 
-    for (i = 0; i < buffer.getNumChannels(); ++i)
+    for (int i = 0; i < buffer.getNumChannels(); ++i)
         buffer.copyFrom (i, 0, currentAudioOutputBuffer, i, 0, numSamples);
 
     midiMessages.clear();
@@ -1324,6 +1322,7 @@ const String AudioProcessorGraph::getOutputChannelName (int channelIndex) const
 
 bool AudioProcessorGraph::isInputChannelStereoPair (int /*index*/) const    { return true; }
 bool AudioProcessorGraph::isOutputChannelStereoPair (int /*index*/) const   { return true; }
+bool AudioProcessorGraph::silenceInProducesSilenceOut() const               { return false; }
 bool AudioProcessorGraph::acceptsMidi() const   { return true; }
 bool AudioProcessorGraph::producesMidi() const  { return true; }
 void AudioProcessorGraph::getStateInformation (juce::MemoryBlock& /*destData*/)   {}
@@ -1423,6 +1422,11 @@ void AudioProcessorGraph::AudioGraphIOProcessor::processBlock (AudioSampleBuffer
         default:
             break;
     }
+}
+
+bool AudioProcessorGraph::AudioGraphIOProcessor::silenceInProducesSilenceOut() const
+{
+    return isOutput();
 }
 
 bool AudioProcessorGraph::AudioGraphIOProcessor::acceptsMidi() const

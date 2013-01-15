@@ -100,12 +100,15 @@ public:
                                         Thread::stopThread() )
         @param cancelButtonText         the text that should be shown in the cancel button
                                         (if it has one)
+        @param componentToCentreAround  if this is non-null, the window will be positioned
+                                        so that it's centred around this component.
     */
     ThreadWithProgressWindow (const String& windowTitle,
                               bool hasProgressBar,
                               bool hasCancelButton,
                               int timeOutMsWhenCancelling = 10000,
-                              const String& cancelButtonText = "Cancel");
+                              const String& cancelButtonText = "Cancel",
+                              Component* componentToCentreAround = nullptr);
 
     /** Destructor. */
     ~ThreadWithProgressWindow();
@@ -149,7 +152,7 @@ private:
     CriticalSection messageLock;
     const int timeOutMsWhenCancelling;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadWithProgressWindow);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadWithProgressWindow)
 };
 
 #endif   // __JUCE_THREADWITHPROGRESSWINDOW_JUCEHEADER__

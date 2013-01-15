@@ -93,9 +93,9 @@ private:
         int order;
     };
 
-    OwnedArray <Item> items;
+    Array<Item> items;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StretchableObjectResizer);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StretchableObjectResizer)
 };
 
 

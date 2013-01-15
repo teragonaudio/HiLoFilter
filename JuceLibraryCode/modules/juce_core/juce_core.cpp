@@ -66,6 +66,10 @@
   #include <netinet/in.h>
  #endif
 
+ #if JUCE_LINUX
+  #include <langinfo.h>
+ #endif
+
  #include <pwd.h>
  #include <fcntl.h>
  #include <netdb.h>
@@ -129,6 +133,7 @@ namespace juce
 #include "text/juce_StringArray.cpp"
 #include "text/juce_StringPairArray.cpp"
 #include "text/juce_StringPool.cpp"
+#include "text/juce_TextDiff.cpp"
 #include "threads/juce_ChildProcess.cpp"
 #include "threads/juce_ReadWriteLock.cpp"
 #include "threads/juce_Thread.cpp"
@@ -148,7 +153,6 @@ namespace juce
 //==============================================================================
 #if JUCE_MAC || JUCE_IOS
 #include "native/juce_osx_ObjCHelpers.h"
-#include "native/juce_mac_ObjCSuffix.h"
 #endif
 
 #if JUCE_ANDROID

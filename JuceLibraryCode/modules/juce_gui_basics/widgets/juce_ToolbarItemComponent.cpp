@@ -32,7 +32,7 @@ ToolbarItemFactory::~ToolbarItemFactory()
 }
 
 //==============================================================================
-class ItemDragAndDropOverlayComponent    : public Component
+class ToolbarItemComponent::ItemDragAndDropOverlayComponent    : public Component
 {
 public:
     ItemDragAndDropOverlayComponent()
@@ -125,7 +125,7 @@ private:
         return dynamic_cast <ToolbarItemComponent*> (getParentComponent());
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ItemDragAndDropOverlayComponent);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ItemDragAndDropOverlayComponent)
 };
 
 

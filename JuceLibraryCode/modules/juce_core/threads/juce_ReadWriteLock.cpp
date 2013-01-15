@@ -40,38 +40,36 @@ ReadWriteLock::~ReadWriteLock() noexcept
 //==============================================================================
 void ReadWriteLock::enterRead() const noexcept
 {
+    while (! tryEnterRead())
+        waitEvent.wait (100);
+}
+
+bool ReadWriteLock::tryEnterRead() const noexcept
+{
     const Thread::ThreadID threadId = Thread::getCurrentThreadId();
+
     const SpinLock::ScopedLockType sl (accessLock);
 
-    for (;;)
+    for (int i = 0; i < readerThreads.size(); ++i)
     {
-        jassert (readerThreads.size() % 2 == 0);
+        ThreadRecursionCount& trc = readerThreads.getReference(i);
 
-        int i;
-        for (i = 0; i < readerThreads.size(); i += 2)
-            if (readerThreads.getUnchecked(i) == threadId)
-                break;
-
-        if (i < readerThreads.size()
-              || numWriters + numWaitingWriters == 0
-              || (threadId == writerThreadId && numWriters > 0))
+        if (trc.threadID == threadId)
         {
-            if (i < readerThreads.size())
-            {
-                readerThreads.set (i + 1, (Thread::ThreadID) (1 + (pointer_sized_int) readerThreads.getUnchecked (i + 1)));
-            }
-            else
-            {
-                readerThreads.add (threadId);
-                readerThreads.add ((Thread::ThreadID) 1);
-            }
-
-            return;
+            trc.count++;
+            return true;
         }
-
-        const SpinLock::ScopedUnlockType ul (accessLock);
-        waitEvent.wait (100);
     }
+
+    if (numWriters + numWaitingWriters == 0
+         || (threadId == writerThreadId && numWriters > 0))
+    {
+        ThreadRecursionCount trc = { threadId, 1 };
+        readerThreads.add (trc);
+        return true;
+    }
+
+    return false;
 }
 
 void ReadWriteLock::exitRead() const noexcept
@@ -79,20 +77,16 @@ void ReadWriteLock::exitRead() const noexcept
     const Thread::ThreadID threadId = Thread::getCurrentThreadId();
     const SpinLock::ScopedLockType sl (accessLock);
 
-    for (int i = 0; i < readerThreads.size(); i += 2)
+    for (int i = 0; i < readerThreads.size(); ++i)
     {
-        if (readerThreads.getUnchecked(i) == threadId)
-        {
-            const pointer_sized_int newCount = ((pointer_sized_int) readerThreads.getUnchecked (i + 1)) - 1;
+        ThreadRecursionCount& trc = readerThreads.getReference(i);
 
-            if (newCount == 0)
+        if (trc.threadID == threadId)
+        {
+            if (--(trc.count) == 0)
             {
-                readerThreads.removeRange (i, 2);
+                readerThreads.remove (i);
                 waitEvent.signal();
-            }
-            else
-            {
-                readerThreads.set (i + 1, (Thread::ThreadID) newCount);
             }
 
             return;
@@ -112,8 +106,8 @@ void ReadWriteLock::enterWrite() const noexcept
     {
         if (readerThreads.size() + numWriters == 0
              || threadId == writerThreadId
-             || (readerThreads.size() == 2
-                  && readerThreads.getUnchecked(0) == threadId))
+             || (readerThreads.size() == 1
+                  && readerThreads.getReference(0).threadID == threadId))
         {
             writerThreadId = threadId;
             ++numWriters;
@@ -135,8 +129,8 @@ bool ReadWriteLock::tryEnterWrite() const noexcept
 
     if (readerThreads.size() + numWriters == 0
          || threadId == writerThreadId
-         || (readerThreads.size() == 2
-              && readerThreads.getUnchecked(0) == threadId))
+         || (readerThreads.size() == 1
+              && readerThreads.getReference(0).threadID == threadId))
     {
         writerThreadId = threadId;
         ++numWriters;

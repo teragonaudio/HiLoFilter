@@ -682,7 +682,9 @@ bool MidiMessage::isTextMetaEvent() const noexcept
 
 String MidiMessage::getTextFromTextMetaEvent() const
 {
-    return String (reinterpret_cast <const char*> (getMetaEventData()), (size_t) getMetaEventLength());
+    const char* const textData = reinterpret_cast <const char*> (getMetaEventData());
+    return String (CharPointer_UTF8 (textData),
+                   CharPointer_UTF8 (textData + getMetaEventLength()));
 }
 
 bool MidiMessage::isTrackNameEvent() const noexcept         { return (data[1] == 3)    && (*data == 0xff); }
@@ -947,10 +949,9 @@ String MidiMessage::getMidiNoteName (int note, bool useSharps, bool includeOctav
     return String::empty;
 }
 
-const double MidiMessage::getMidiNoteInHertz (int noteNumber, const double frequencyOfA) noexcept
+double MidiMessage::getMidiNoteInHertz (int noteNumber, const double frequencyOfA) noexcept
 {
-    noteNumber -= 12 * 6 + 9; // now 0 = A
-    return frequencyOfA * pow (2.0, noteNumber / 12.0);
+    return frequencyOfA * pow (2.0, (noteNumber - 69) / 12.0);
 }
 
 String MidiMessage::getGMInstrumentName (const int n)

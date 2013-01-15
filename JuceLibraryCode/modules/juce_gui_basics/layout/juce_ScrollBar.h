@@ -27,7 +27,7 @@
 #define __JUCE_SCROLLBAR_JUCEHEADER__
 
 #include "../buttons/juce_Button.h"
-
+class Viewport;
 
 //==============================================================================
 /**
@@ -44,7 +44,7 @@
     The scrollbar will adjust its own visibility according to whether its thumb size
     allows it to actually be scrolled.
 
-    For most purposes, it's probably easier to use a ViewportContainer or ListBox
+    For most purposes, it's probably easier to use a Viewport or ListBox
     instead of handling a scrollbar directly.
 
     @see ScrollBar::Listener
@@ -56,12 +56,9 @@ class JUCE_API  ScrollBar  : public Component,
 public:
     //==============================================================================
     /** Creates a Scrollbar.
-
-        @param isVertical           whether it should be a vertical or horizontal bar
-        @param buttonsAreVisible    whether to show the up/down or left/right buttons
+        @param isVertical      specifies whether the bar should be a vertical or horizontal
     */
-    ScrollBar (bool isVertical,
-               bool buttonsAreVisible = true);
+    ScrollBar (bool isVertical);
 
     /** Destructor. */
     ~ScrollBar();
@@ -78,9 +75,6 @@ public:
         @param shouldBeVertical     true makes it vertical; false makes it horizontal.
     */
     void setOrientation (bool shouldBeVertical);
-
-    /** Shows or hides the scrollbar's buttons. */
-    void setButtonVisibility (bool buttonsAreVisible);
 
     /** Tells the scrollbar whether to make itself invisible when not needed.
 
@@ -105,7 +99,8 @@ public:
 
         @see setCurrentRange
     */
-    void setRangeLimits (const Range<double>& newRangeLimit);
+    void setRangeLimits (const Range<double>& newRangeLimit,
+                         NotificationType notification = sendNotificationAsync);
 
     /** Sets the minimum and maximum values that the bar will move between.
 
@@ -114,12 +109,13 @@ public:
 
         @see setCurrentRange
     */
-    void setRangeLimits (double minimum, double maximum);
+    void setRangeLimits (double minimum, double maximum,
+                         NotificationType notification = sendNotificationAsync);
 
     /** Returns the current limits on the thumb position.
         @see setRangeLimits
     */
-    const Range<double> getRangeLimit() const noexcept              { return totalRange; }
+    Range<double> getRangeLimit() const noexcept                    { return totalRange; }
 
     /** Returns the lower value that the thumb can be set to.
 
@@ -136,13 +132,21 @@ public:
     //==============================================================================
     /** Changes the position of the scrollbar's 'thumb'.
 
+        This sets both the position and size of the thumb - to just set the position without
+        changing the size, you can use setCurrentRangeStart().
+
         If this method call actually changes the scrollbar's position, it will trigger an
         asynchronous call to ScrollBar::Listener::scrollBarMoved() for all the listeners that
         are registered.
 
+        The notification parameter can be used to optionally send or inhibit a callback to
+        any scrollbar listeners.
+
+        @returns true if the range was changed, or false if nothing was changed.
         @see getCurrentRange. setCurrentRangeStart
     */
-    void setCurrentRange (const Range<double>& newRange);
+    bool setCurrentRange (const Range<double>& newRange,
+                          NotificationType notification = sendNotificationAsync);
 
     /** Changes the position of the scrollbar's 'thumb'.
 
@@ -161,7 +165,8 @@ public:
                             size is beyond these limits, it will be clipped.
         @see setCurrentRangeStart, getCurrentRangeStart, getCurrentRangeSize
     */
-    void setCurrentRange (double newStart, double newSize);
+    void setCurrentRange (double newStart, double newSize,
+                          NotificationType notification = sendNotificationAsync);
 
     /** Moves the bar's thumb position.
 
@@ -174,12 +179,13 @@ public:
 
         @see setCurrentRange
     */
-    void setCurrentRangeStart (double newStart);
+    void setCurrentRangeStart (double newStart,
+                               NotificationType notification = sendNotificationAsync);
 
     /** Returns the current thumb range.
         @see getCurrentRange, setCurrentRange
     */
-    const Range<double> getCurrentRange() const noexcept            { return visibleRange; }
+    Range<double> getCurrentRange() const noexcept                  { return visibleRange; }
 
     /** Returns the position of the top of the thumb.
         @see getCurrentRange, setCurrentRangeStart
@@ -197,7 +203,7 @@ public:
         The value here is in terms of the total range, and is added or subtracted
         from the thumb position when the user clicks an up/down (or left/right) button.
     */
-    void setSingleStepSize (double newSingleStepSize);
+    void setSingleStepSize (double newSingleStepSize) noexcept;
 
     /** Moves the scrollbar by a number of single-steps.
 
@@ -206,8 +212,10 @@ public:
 
         A positive value here will move the bar down or to the right, a negative
         value moves it up or to the left.
+        @returns true if the scrollbar's position actually changed.
     */
-    void moveScrollbarInSteps (int howManySteps);
+    bool moveScrollbarInSteps (int howManySteps,
+                               NotificationType notification = sendNotificationAsync);
 
     /** Moves the scroll bar up or down in pages.
 
@@ -216,20 +224,22 @@ public:
 
         A positive value here will move the bar down or to the right, a negative
         value moves it up or to the left.
+        @returns true if the scrollbar's position actually changed.
     */
-    void moveScrollbarInPages (int howManyPages);
+    bool moveScrollbarInPages (int howManyPages,
+                               NotificationType notification = sendNotificationAsync);
 
     /** Scrolls to the top (or left).
-
         This is the same as calling setCurrentRangeStart (getMinimumRangeLimit());
+        @returns true if the scrollbar's position actually changed.
     */
-    void scrollToTop();
+    bool scrollToTop (NotificationType notification = sendNotificationAsync);
 
     /** Scrolls to the bottom (or right).
-
         This is the same as calling setCurrentRangeStart (getMaximumRangeLimit() - getCurrentRangeSize());
+        @returns true if the scrollbar's position actually changed.
     */
-    void scrollToBottom();
+    bool scrollToBottom (NotificationType notification = sendNotificationAsync);
 
     /** Changes the delay before the up and down buttons autorepeat when they are held
         down.
@@ -289,21 +299,19 @@ public:
 
     //==============================================================================
     /** @internal */
-    bool keyPressed (const KeyPress& key);
+    bool keyPressed (const KeyPress&);
     /** @internal */
-    void mouseWheelMove (const MouseEvent& e, float wheelIncrementX, float wheelIncrementY);
+    void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
     /** @internal */
     void lookAndFeelChanged();
     /** @internal */
-    void handleAsyncUpdate();
+    void mouseDown (const MouseEvent&);
     /** @internal */
-    void mouseDown (const MouseEvent& e);
+    void mouseDrag (const MouseEvent&);
     /** @internal */
-    void mouseDrag (const MouseEvent& e);
+    void mouseUp   (const MouseEvent&);
     /** @internal */
-    void mouseUp   (const MouseEvent& e);
-    /** @internal */
-    void paint (Graphics& g);
+    void paint (Graphics&);
     /** @internal */
     void resized();
 
@@ -320,10 +328,11 @@ private:
     ScopedPointer<ScrollbarButton> upButton, downButton;
     ListenerList <Listener> listeners;
 
+    void handleAsyncUpdate();
     void updateThumbPosition();
     void timerCallback();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScrollBar);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScrollBar)
 };
 
 /** This typedef is just for compatibility with old code - newer code should use the ScrollBar::Listener class directly. */

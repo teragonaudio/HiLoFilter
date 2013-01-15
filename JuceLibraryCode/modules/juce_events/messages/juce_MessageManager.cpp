@@ -30,12 +30,11 @@ public:
 
     void messageCallback()
     {
-        MessageManager* const mm = MessageManager::instance;
-        if (mm != nullptr)
+        if (MessageManager* const mm = MessageManager::instance)
             mm->quitMessageReceived = true;
     }
 
-    JUCE_DECLARE_NON_COPYABLE (QuitMessage);
+    JUCE_DECLARE_NON_COPYABLE (QuitMessage)
 };
 
 //==============================================================================
@@ -154,7 +153,7 @@ private:
     MessageCallbackFunction* const func;
     void* const parameter;
 
-    JUCE_DECLARE_NON_COPYABLE (AsyncFunctionCallback);
+    JUCE_DECLARE_NON_COPYABLE (AsyncFunctionCallback)
 };
 
 void* MessageManager::callFunctionOnMessageThread (MessageCallbackFunction* const func, void* const parameter)
@@ -242,7 +241,7 @@ public:
 
     WaitableEvent lockedEvent, releaseEvent;
 
-    JUCE_DECLARE_NON_COPYABLE (BlockingMessage);
+    JUCE_DECLARE_NON_COPYABLE (BlockingMessage)
 };
 
 //==============================================================================

@@ -33,7 +33,7 @@
 /**
 */
 class JUCE_API  CaretComponent   : public Component,
-                                   public Timer
+                                   private Timer
 {
 public:
     //==============================================================================
@@ -69,14 +69,14 @@ public:
     //==============================================================================
     /** @internal */
     void paint (Graphics& g);
-    /** @internal */
-    void timerCallback();
 
 private:
     Component* owner;
-    bool shouldBeShown() const;
 
-    JUCE_DECLARE_NON_COPYABLE (CaretComponent);
+    bool shouldBeShown() const;
+    void timerCallback();
+
+    JUCE_DECLARE_NON_COPYABLE (CaretComponent)
 };
 
 

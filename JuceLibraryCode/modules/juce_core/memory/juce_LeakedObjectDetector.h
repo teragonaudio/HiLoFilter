@@ -127,8 +127,9 @@ private:
           void blahBlah();
 
       private:
-          JUCE_LEAK_DETECTOR (MyClass);
-      };@endcode
+          JUCE_LEAK_DETECTOR (MyClass)
+      };
+      @endcode
 
       @see JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR, LeakedObjectDetector
   */

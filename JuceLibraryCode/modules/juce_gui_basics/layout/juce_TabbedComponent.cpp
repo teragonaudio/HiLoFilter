@@ -82,7 +82,7 @@ public:
 private:
     TabbedComponent& owner;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonBar);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonBar)
 };
 
 
@@ -262,29 +262,30 @@ void TabbedComponent::resized()
     content = BorderSize<int> (edgeIndent).subtractedFrom (outline.subtractedFrom (content));
 
     for (int i = contentComponents.size(); --i >= 0;)
-        if (contentComponents.getReference (i) != nullptr)
-            contentComponents.getReference (i)->setBounds (content);
+        if (Component* c = contentComponents.getReference(i))
+            c->setBounds (content);
 }
 
 void TabbedComponent::lookAndFeelChanged()
 {
     for (int i = contentComponents.size(); --i >= 0;)
-        if (contentComponents.getReference (i) != nullptr)
-            contentComponents.getReference (i)->lookAndFeelChanged();
+        if (Component* c = contentComponents.getReference(i))
+            c->lookAndFeelChanged();
 }
 
 void TabbedComponent::changeCallback (const int newCurrentTabIndex, const String& newTabName)
 {
-    if (panelComponent != nullptr)
-    {
-        panelComponent->setVisible (false);
-        removeChildComponent (panelComponent);
-        panelComponent = nullptr;
-    }
+    Component* const newPanelComp = getTabContentComponent (getCurrentTabIndex());
 
-    if (getCurrentTabIndex() >= 0)
+    if (newPanelComp != panelComponent)
     {
-        panelComponent = getTabContentComponent (getCurrentTabIndex());
+        if (panelComponent != nullptr)
+        {
+            panelComponent->setVisible (false);
+            removeChildComponent (panelComponent);
+        }
+
+        panelComponent = newPanelComp;
 
         if (panelComponent != nullptr)
         {

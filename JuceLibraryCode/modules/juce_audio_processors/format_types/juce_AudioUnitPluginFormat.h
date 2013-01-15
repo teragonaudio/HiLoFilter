@@ -43,17 +43,18 @@ public:
 
     //==============================================================================
     String getName() const                { return "AudioUnit"; }
-    void findAllTypesForFile (OwnedArray <PluginDescription>& results, const String& fileOrIdentifier);
+    void findAllTypesForFile (OwnedArray <PluginDescription>&, const String& fileOrIdentifier);
     AudioPluginInstance* createInstanceFromDescription (const PluginDescription& desc);
     bool fileMightContainThisPluginType (const String& fileOrIdentifier);
     String getNameOfPluginFromIdentifier (const String& fileOrIdentifier);
-    StringArray searchPathsForPlugins (const FileSearchPath& directoriesToSearch, bool recursive);
-    bool doesPluginStillExist (const PluginDescription& desc);
+    StringArray searchPathsForPlugins (const FileSearchPath&, bool recursive);
+    bool doesPluginStillExist (const PluginDescription&);
     FileSearchPath getDefaultLocationsToSearch();
+    bool canScanForPlugins() const        { return true; }
 
 private:
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioUnitPluginFormat);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioUnitPluginFormat)
 };
 
 #endif

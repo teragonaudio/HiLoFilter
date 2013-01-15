@@ -29,7 +29,6 @@
 #include "juce_TabbedComponent.h"
 #include "../windows/juce_DocumentWindow.h"
 class MultiDocumentPanel;
-class MDITabbedComponentInternal;
 
 
 //==============================================================================
@@ -68,7 +67,7 @@ private:
     void updateOrder();
     MultiDocumentPanel* getOwner() const noexcept;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiDocumentPanelWindow);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiDocumentPanelWindow)
 };
 
 
@@ -293,15 +292,16 @@ private:
     Colour backgroundColour;
     int maximumNumDocuments, numDocsBeforeTabsUsed;
 
+    class TabbedComponentInternal;
     friend class MultiDocumentPanelWindow;
-    friend class MDITabbedComponentInternal;
+    friend class TabbedComponentInternal;
 
     Component* getContainerComp (Component* c) const;
     void updateOrder();
 
     void addWindow (Component* component);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiDocumentPanel);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiDocumentPanel)
 };
 
 

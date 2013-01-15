@@ -406,7 +406,7 @@ private:
         return true;
     }
 
-    JUCE_DECLARE_NON_COPYABLE (GIFLoader);
+    JUCE_DECLARE_NON_COPYABLE (GIFLoader)
 };
 
 #endif
@@ -415,7 +415,8 @@ private:
 GIFImageFormat::GIFImageFormat() {}
 GIFImageFormat::~GIFImageFormat() {}
 
-String GIFImageFormat::getFormatName()    { return "GIF"; }
+String GIFImageFormat::getFormatName()                  { return "GIF"; }
+bool GIFImageFormat::usesFileExtension (const File& f)  { return f.hasFileExtension ("gif"); }
 
 bool GIFImageFormat::canUnderstand (InputStream& in)
 {
