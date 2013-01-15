@@ -61,7 +61,7 @@ public:
   //==============================================================================
   AudioProcessorEditor *createEditor();
 
-  bool hasEditor() const;
+  bool hasEditor() const { return false; }
 
   //==============================================================================
   const String getName() const;
@@ -82,13 +82,15 @@ public:
 
   const String getOutputChannelName(int channelIndex) const;
 
-  bool isInputChannelStereoPair(int index) const;
+  bool isInputChannelStereoPair(int index) const { return true; }
 
-  bool isOutputChannelStereoPair(int index) const;
+  bool isOutputChannelStereoPair(int index) const { return true; }
 
-  bool acceptsMidi() const;
+  bool acceptsMidi() const { return false; }
 
-  bool producesMidi() const;
+  bool producesMidi() const { return false; }
+
+  bool silenceInProducesSilenceOut() const { return true; }
 
   //==============================================================================
   int getNumPrograms();

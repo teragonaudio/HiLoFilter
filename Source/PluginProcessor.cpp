@@ -243,30 +243,6 @@ const String HiLoFilterAudioProcessor::getOutputChannelName(int channelIndex) co
   return String(channelIndex + 1);
 }
 
-bool HiLoFilterAudioProcessor::isInputChannelStereoPair(int index) const {
-  return true;
-}
-
-bool HiLoFilterAudioProcessor::isOutputChannelStereoPair(int index) const {
-  return true;
-}
-
-bool HiLoFilterAudioProcessor::acceptsMidi() const {
-#if JucePlugin_WantsMidiInput
-    return true;
-#else
-  return false;
-#endif
-}
-
-bool HiLoFilterAudioProcessor::producesMidi() const {
-#if JucePlugin_ProducesMidiOutput
-    return true;
-#else
-  return false;
-#endif
-}
-
 int HiLoFilterAudioProcessor::getNumPrograms() {
   return 0;
 }
@@ -362,10 +338,6 @@ void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int cha
 }
 
 //==============================================================================
-bool HiLoFilterAudioProcessor::hasEditor() const {
-  return false; // (change this to false if you choose to not supply an editor)
-}
-
 AudioProcessorEditor *HiLoFilterAudioProcessor::createEditor() {
   return new HiLoFilterAudioProcessorEditor (this);
 }
