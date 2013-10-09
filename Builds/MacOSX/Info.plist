@@ -27,7 +27,7 @@
     <array>
       <dict>
         <key>name</key>
-        <string>HiLoFilter</string>
+        <string>Teragon Audio: HiLoFilter</string>
         <key>description</key>
         <string>HiLoFilter</string>
         <key>factoryFunction</key>
