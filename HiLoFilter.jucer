@@ -76,15 +76,35 @@
     </LINUX_MAKE>
   </EXPORTFORMATS>
   <MAINGROUP id="UWL1Z9" name="HiLoFilter">
-    <GROUP id="{CEFBB1CB-37EB-3C8C-1AE3-49950F90EBE5}" name="Components"/>
+    <GROUP id="{CEFBB1CB-37EB-3C8C-1AE3-49950F90EBE5}" name="Components">
+      <FILE id="A41mEJ" name="ImageKnob.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.cpp"/>
+      <FILE id="DilCMe" name="ImageKnob.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.h"/>
+      <FILE id="l3bnhc" name="ImageSlider.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.cpp"/>
+      <FILE id="wTxlDr" name="ImageSlider.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.h"/>
+      <FILE id="Xd3Jhe" name="IndicatorLight.cpp" compile="1" resource="0"
+            file="Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.cpp"/>
+      <FILE id="Gmzp5E" name="IndicatorLight.h" compile="0" resource="0"
+            file="Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.h"/>
+      <FILE id="tSCnUX" name="PushButton.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/PushButton.h"/>
+      <FILE id="Bxq2Pz" name="ResourceCache.cpp" compile="1" resource="0"
+            file="Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.cpp"/>
+      <FILE id="Tv8whz" name="ResourceCache.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.h"/>
+      <FILE id="Lym9FZ" name="Resources.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/Resources.cpp"/>
+      <FILE id="bUW2dv" name="Resources.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/Resources.h"/>
+      <FILE id="iJ2mmH" name="TeragonGuiComponents.h" compile="0" resource="0"
+            file="Third-Party/TeragonGuiComponents/Components/Source/TeragonGuiComponents.h"/>
+      <FILE id="VbQkIM" name="ThinButton.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ThinButton.cpp"/>
+      <FILE id="mVRKI3" name="ThinButton.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ThinButton.h"/>
+      <FILE id="r5pvEl" name="ToggleButton.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Source/ToggleButton.h"/>
+    </GROUP>
     <GROUP id="{24E92D4F-5394-0825-51D8-FC29C1134CE9}" name="Source">
+      <FILE id="Vo1U84" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="HJ74r8" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="HjrkD1" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="clhrAU" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="dHi45n" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="cYG4QS" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

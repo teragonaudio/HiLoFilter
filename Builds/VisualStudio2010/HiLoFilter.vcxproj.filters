@@ -259,10 +259,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
-      <Filter>HiLoFilter\Source</Filter>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.cpp">
+      <Filter>HiLoFilter\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
+      <Filter>HiLoFilter\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>HiLoFilter\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
@@ -1266,10 +1284,37 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\PluginProcessor.h">
-      <Filter>HiLoFilter\Source</Filter>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\TeragonGuiComponents.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ToggleButton.h">
+      <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">
+      <Filter>HiLoFilter\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>HiLoFilter\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h">

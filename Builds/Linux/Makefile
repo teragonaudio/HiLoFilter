@@ -49,8 +49,14 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/PluginProcessor_a059e380.o \
+  $(OBJDIR)/ImageKnob_234e9ab6.o \
+  $(OBJDIR)/ImageSlider_5ceaa0e1.o \
+  $(OBJDIR)/IndicatorLight_81b8276c.o \
+  $(OBJDIR)/ResourceCache_4d3196d9.o \
+  $(OBJDIR)/Resources_244c186a.o \
+  $(OBJDIR)/ThinButton_20dde050.o \
   $(OBJDIR)/PluginEditor_94d4fb09.o \
+  $(OBJDIR)/PluginProcessor_a059e380.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_core_aff681cc.o \
@@ -81,14 +87,44 @@ strip:
 	@echo Stripping HiLoFilter
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
-$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+$(OBJDIR)/ImageKnob_234e9ab6.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginProcessor.cpp"
+	@echo "Compiling ImageKnob.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ImageSlider_5ceaa0e1.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ImageSlider.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/IndicatorLight_81b8276c.o: ../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling IndicatorLight.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ResourceCache_4d3196d9.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ResourceCache.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Resources_244c186a.o: ../../Third-Party/TeragonGuiComponents/Components/Source/Resources.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Resources.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ThinButton_20dde050.o: ../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ThinButton.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling PluginEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PluginProcessor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp

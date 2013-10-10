@@ -10,6 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Resources.h"
 
 #if WIN32
 #define _USE_MATH_DEFINES
@@ -268,7 +269,7 @@ void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int cha
 
 //==============================================================================
 AudioProcessorEditor *HiLoFilterAudioProcessor::createEditor() {
-  return new HiLoFilterAudioProcessorEditor (this);
+  return new HiLoFilterAudioProcessorEditor (this, parameters, Resources::getCache());
 }
 
 //==============================================================================

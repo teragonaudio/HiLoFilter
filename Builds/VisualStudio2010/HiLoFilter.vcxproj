@@ -127,8 +127,14 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.cpp"/>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.cpp"/>
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1033,8 +1039,17 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\PluginProcessor.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\TeragonGuiComponents.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.h"/>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ToggleButton.h"/>
     <ClInclude Include="..\..\Source\PluginEditor.h"/>
+    <ClInclude Include="..\..\Source\PluginProcessor.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioSampleBuffer.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.h"/>
