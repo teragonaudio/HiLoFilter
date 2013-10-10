@@ -18,13 +18,16 @@
 
 
 //==============================================================================
-HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() {
+HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : PluginParameterObserver() {
+  parameters.add(new FloatParameter("Filter Position", 0, kHiLoFilterPositionMax, kHiLoFilterPositionMax / 2.0f));
+  parameters.add(new FloatParameter("Resonance", kHiLoFilterResonanceMin, kHiLoFilterResonanceMax, kHiLoFilterResonanceDefault));
+  parameters.add(new FrequencyParameter("Hi Filter Limit", kHiLoFilterRangeMin, kHiLoFilterRangeMax, kHiLoFilterRangeMax));
+  parameters.add(new FrequencyParameter("Lo Filter Limit", kHiLoFilterRangeMin, kHiLoFilterRangeMax, kHiLoFilterRangeMin));
+  parameters.add(new FloatParameter("Dead Zone Size", kHiLoFilterDeadZoneMin, kHiLoFilterDeadZoneMax, kHiLoFilterDeadZoneDefault));
+  for(int i = 0; i < parameters.size(); i++) {
+    parameters.get(i)->addObserver(this);
+  }
   filterState = kHiLoFilterStatePassthru;
-  filterPosition = kHiLoFilterPositionMax / 2.0f;
-  filterResonance = kHiLoFilterResonanceDefault;
-  hiFilterLimit = kHiLoFilterRangeMax;
-  loFilterLimit = kHiLoFilterRangeMin;
-  deadZoneSize = kHiLoFilterDeadZoneDefault;
 }
 
 HiLoFilterAudioProcessor::~HiLoFilterAudioProcessor() {
@@ -49,51 +52,21 @@ int HiLoFilterAudioProcessor::getNumParameters() {
   return kHiLoFilterNumParams;
 }
 
-static float scaleFrequencyToParameterRange(float value, float max, float min) {
-  return (logf(value) - logf(min)) / (logf(max) - logf(min));
-}
-
 float HiLoFilterAudioProcessor::getParameter(int index) {
-  switch(index) {
-    case kHiLoFilterParamFilterPosition:
-      return (filterPosition / kHiLoFilterPositionMax);
-    case kHiLoFilterParamFilterResonance:
-      return (filterResonance - kHiLoFilterResonanceMin) / (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin);
-    case kHiLoFilterParamHiFilterRange:
-      return scaleFrequencyToParameterRange(hiFilterLimit, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
-    case kHiLoFilterParamLoFilterRange:
-      return scaleFrequencyToParameterRange(loFilterLimit, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
-    case kHiLoFilterParamDeadZoneSize:
-      return (deadZoneSize - kHiLoFilterDeadZoneMin) / (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin);
-    default:
-      return 0.0f;
-  }
-}
-
-static float scaleParameterRangeToFrequency(float value, float max, float min) {
-  float frequency = expf(value * (logf(max) - logf(min)) + logf(min));
-  if(frequency > max) {
-    return max;
-  }
-  else if(frequency < min) {
-    return min;
-  }
-  else {
-    return frequency;
-  }
+  return parameters.get(index)->getScaledValue();
 }
 
 float HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
-  return (kHiLoFilterPositionMax + deadZoneSize) / 2.0f;
+  return (kHiLoFilterPositionMax + parameters["Dead Zone Size"]->getValue()) / 2.0f;
 }
 
 float HiLoFilterAudioProcessor::getLoFilterCutoffPosition() {
-  return (kHiLoFilterPositionMax - deadZoneSize) / 2.0f;
+  return (kHiLoFilterPositionMax - parameters["Dead Zone Size"]->getValue()) / 2.0f;
 }
 
 void HiLoFilterAudioProcessor::setFilterState(float currentFilterPosition) {
-  float loCutoff = (kHiLoFilterPositionMax - deadZoneSize) / 2.0f;
-  float hiCutoff = (kHiLoFilterPositionMax + deadZoneSize) / 2.0f;
+  float loCutoff = (kHiLoFilterPositionMax - parameters["Dead Zone Size"]->getValue()) / 2.0f;
+  float hiCutoff = (kHiLoFilterPositionMax + parameters["Dead Zone Size"]->getValue()) / 2.0f;
   HiLoFilterState newFilterState;
   if(currentFilterPosition > hiCutoff) {
     newFilterState = kHiLoFilterStateHi;
@@ -112,16 +85,30 @@ void HiLoFilterAudioProcessor::setFilterState(float currentFilterPosition) {
   }
 }
 
+// TODO: This can be eliminated by making parameters for the relativeFilterPosition in getFilterFrequency()
+static float scaleParameterRangeToFrequency(float value, float max, float min) {
+  float frequency = expf(value * (logf(max) - logf(min)) + logf(min));
+  if(frequency > max) {
+    return max;
+  }
+  else if(frequency < min) {
+    return min;
+  }
+  else {
+    return frequency;
+  }
+}
+
 float HiLoFilterAudioProcessor::getFilterFrequency() {
   switch(filterState) {
     case kHiLoFilterStateHi: {
-      float relativeFilterPosition = (filterPosition - (kHiLoFilterPositionMax / 2.0f)) / getLoFilterCutoffPosition();
-      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, hiFilterLimit, kHiLoFilterRangeMin);
+      float relativeFilterPosition = (parameters["Filter Position"]->getValue() - (kHiLoFilterPositionMax / 2.0f)) / getLoFilterCutoffPosition();
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, parameters["Hi Filter Limit"]->getValue(), kHiLoFilterRangeMin);
       return newFrequency;
     }
     case kHiLoFilterStateLo: {
-      float relativeFilterPosition = filterPosition / getLoFilterCutoffPosition();
-      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, loFilterLimit);
+      float relativeFilterPosition = parameters["Filter Position"]->getValue() / getLoFilterCutoffPosition();
+      float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition, kHiLoFilterRangeMax, parameters["Lo Filter Limit"]->getValue());
       return newFrequency;
     }
     default:
@@ -148,91 +135,33 @@ void HiLoFilterAudioProcessor::recalculateLoCoefficients(const double sampleRate
 void HiLoFilterAudioProcessor::recalculateCoefficients() {
   switch(filterState) {
     case kHiLoFilterStateHi:
-      recalculateHiCoefficients(getSampleRate(), getFilterFrequency(), filterResonance);
+      recalculateHiCoefficients(getSampleRate(), getFilterFrequency(), parameters["Resonance"]->getValue());
     case kHiLoFilterStateLo:
-      recalculateLoCoefficients(getSampleRate(), getFilterFrequency(), filterResonance);
+      recalculateLoCoefficients(getSampleRate(), getFilterFrequency(), parameters["Resonance"]->getValue());
     default:
       break;
   }
 }
 
-void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
-  switch(index) {
-    case kHiLoFilterParamFilterPosition:
-      filterPosition = kHiLoFilterPositionMax * newValue;
-      setFilterState(filterPosition);
-      break;
-   case kHiLoFilterParamFilterResonance:
-      filterResonance = newValue * (kHiLoFilterResonanceMax - kHiLoFilterResonanceMin) + kHiLoFilterResonanceMin;
-      break;
-    case kHiLoFilterParamHiFilterRange:
-      hiFilterLimit = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
-      break;
-    case kHiLoFilterParamLoFilterRange:
-      loFilterLimit = scaleParameterRangeToFrequency(newValue, kHiLoFilterRangeMax, kHiLoFilterRangeMin);
-      break;
-    case kHiLoFilterParamDeadZoneSize:
-      deadZoneSize = newValue * (kHiLoFilterDeadZoneMax - kHiLoFilterDeadZoneMin) + kHiLoFilterDeadZoneMin;
-      break;
-    default: break;
-  }
-
-  if(filterState != kHiLoFilterStatePassthru) {
+void HiLoFilterAudioProcessor::onParameterUpdated(const PluginParameter* parameter) {
+  recalculateCoefficients();
+  setFilterState(parameters["Filter Position"]->getValue());
+  // TODO: There is probably a better way to check to see if this must be called
+  if(parameters["Filter Position"]->getValue() != kHiLoFilterStatePassthru) {
     recalculateCoefficients();
   }
 }
 
+void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
+  parameters.get(index)->setScaledValue(newValue);
+}
+
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
-  switch(index) {
-    case kHiLoFilterParamFilterPosition: return String("Position");
-    case kHiLoFilterParamFilterResonance: return String("Resonance");
-    case kHiLoFilterParamHiFilterRange: return String("Hi Filter Limit");
-    case kHiLoFilterParamLoFilterRange: return String("Lo Filter Limit");
-    case kHiLoFilterParamDeadZoneSize: return String("Dead Zone Size");
-    default: return String::empty;
-  }
+  return parameters.get(index)->getName().c_str();
 }
-
-const String HiLoFilterAudioProcessor::getParameterNameForStorage(int index) {
-  switch(index) {
-    case kHiLoFilterParamFilterPosition: return String("Position");
-    case kHiLoFilterParamFilterResonance: return String("Resonance");
-    case kHiLoFilterParamHiFilterRange: return String("HiFilterLimit");
-    case kHiLoFilterParamLoFilterRange: return String("LoFilterLimit");
-    case kHiLoFilterParamDeadZoneSize: return String("DeadZoneSize");
-    default: return String::empty;
-  }
-}
-
-static const String getParameterTextForFrequency(const float frequency) {
-  String outText;
-  if(frequency > 1000) {
-    outText = String(frequency / 1000.0f, PARAM_TEXT_NUM_DECIMAL_PLACES);
-    outText.append(String(" kHz"), 4);
-  }
-  else {
-    outText = String(frequency, PARAM_TEXT_NUM_DECIMAL_PLACES);
-    outText.append(String(" Hz"), 3);
-  }
-  return outText;
-}
-
 
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
-  switch(index) {
-    case kHiLoFilterParamFilterPosition:
-      return String((int)filterPosition);
-    case kHiLoFilterParamFilterResonance:
-      return String(filterResonance, PARAM_TEXT_NUM_DECIMAL_PLACES);
-    case kHiLoFilterParamHiFilterRange:
-      return getParameterTextForFrequency(hiFilterLimit);
-    case kHiLoFilterParamLoFilterRange:
-      return getParameterTextForFrequency(loFilterLimit);
-    case kHiLoFilterParamDeadZoneSize:
-      return String((int)deadZoneSize);
-    default:
-      return String::empty;
-  }
+  return parameters.get(index)->getDisplayText().c_str();
 }
 
 const String HiLoFilterAudioProcessor::getInputChannelName(int channelIndex) const {
@@ -348,8 +277,9 @@ void HiLoFilterAudioProcessor::getStateInformation(MemoryBlock& destData) {
   // You could do that either as raw data, or use the XML or ValueTree classes
   // as intermediaries to make it easy to save and load complex data.
   XmlElement xml("HiLoFilterStorage");
-  for(int i = 0; i < kHiLoFilterNumParams; i++) {
-    xml.setAttribute(getParameterNameForStorage(i), getParameter(i));
+  for(int i = 0; i < parameters.size(); i++) {
+    PluginParameter* parameter = parameters[i];
+    xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
   }
   copyXmlToBinary(xml, destData);
 }
@@ -359,8 +289,9 @@ void HiLoFilterAudioProcessor::setStateInformation(const void *data, int sizeInB
   // whose contents will have been created by the getStateInformation() call.
   ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
   if(xmlState != 0 && xmlState->hasTagName("HiLoFilterStorage")) {
-    for(int i = 0; i < kHiLoFilterNumParams; i++) {
-      setParameter(i, xmlState->getDoubleAttribute(getParameterNameForStorage(i)));
+    for(int i = 0; i < parameters.size(); i++) {
+      PluginParameter* parameter = parameters[i];
+      parameter->setValue(xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
     }
   }
 }

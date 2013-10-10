@@ -12,6 +12,7 @@
 #define __PLUGINPROCESSOR_H_81C4A062__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "PluginParameters.h"
 
 typedef enum {
   kHiLoFilterParamFilterPosition,
@@ -41,10 +42,12 @@ static const float kHiLoFilterDeadZoneMax = 11.0f;
 
 #define PARAM_TEXT_NUM_DECIMAL_PLACES 2
 
+using namespace teragon;
+
 //==============================================================================
 /**
 */
-class HiLoFilterAudioProcessor  : public AudioProcessor {
+class HiLoFilterAudioProcessor  : public AudioProcessor, public PluginParameterObserver {
 public:
   //==============================================================================
   HiLoFilterAudioProcessor();
@@ -90,6 +93,8 @@ public:
 
   bool producesMidi() const { return false; }
 
+  double getTailLengthSeconds() const { return 0.0; }
+
   bool silenceInProducesSilenceOut() const { return true; }
 
   //==============================================================================
@@ -113,6 +118,7 @@ private:
   void recalculateCoefficients();
   void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
   void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
+  void onParameterUpdated(const PluginParameter* parameter);
 
   void processHiFilter(float *channelData, const int channel, const int numSamples);
   void processLoFilter(float *channelData, const int channel, const int numSamples);
@@ -122,12 +128,7 @@ private:
   float getLoFilterCutoffPosition();
   void setFilterState(float currentFilterPosition);
 
-
-  float filterPosition;
-  float filterResonance;
-  float hiFilterLimit;
-  float loFilterLimit;
-  float deadZoneSize;
+  PluginParameterSet parameters;
 
   float lastInput1[2], lastInput2[2], lastInput3[2];
   float lastOutput1[2], lastOutput2[2];

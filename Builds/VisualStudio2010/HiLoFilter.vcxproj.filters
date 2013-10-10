@@ -5,6 +5,9 @@
     <Filter Include="HiLoFilter">
       <UniqueIdentifier>{37A5048E-D0D4-9753-414C-A19C01C602DA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HiLoFilter\Components">
+      <UniqueIdentifier>{CF3AB3E6-0F87-D03C-5D3B-707AF3DF594D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="HiLoFilter\Source">
       <UniqueIdentifier>{0B51BDA0-0D0F-9687-0CA3-96C218353B14}</UniqueIdentifier>
     </Filter>
