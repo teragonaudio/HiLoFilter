@@ -50,6 +50,9 @@ public:
     void paint (Graphics& g);
     void resized();
 
+    // Binary resources:
+    static const char* background_png;
+    static const int background_pngSize;
 
 
 private:
@@ -59,6 +62,12 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    ScopedPointer<teragon::ImageKnob> filterPositionKnob;
+    ScopedPointer<teragon::ImageKnob> hiFilterLimitKnob;
+    ScopedPointer<teragon::ImageKnob> loFilterLimitKnob;
+    ScopedPointer<teragon::ImageKnob> deadZoneSizeKnob;
+    ScopedPointer<teragon::ImageKnob> resonanceKnob;
+    Image cachedImage_background_png;
 
 
     //==============================================================================

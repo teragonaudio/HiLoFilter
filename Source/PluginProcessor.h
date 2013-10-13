@@ -64,7 +64,7 @@ public:
   //==============================================================================
   AudioProcessorEditor *createEditor();
 
-  bool hasEditor() const { return false; }
+  bool hasEditor() const { return true; }
 
   //==============================================================================
   const String getName() const;
