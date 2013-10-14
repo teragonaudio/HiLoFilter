@@ -54,7 +54,7 @@
       </MODULEPATHS>
     </VS2010>
     <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="./Third-Party/vstsdk2.4"
-                extraCompilerFlags="-I../../Third-Party/PluginParameters/include">
+                extraCompilerFlags="-I../../Third-Party/PluginParameters/include -I../../Third-Party/TeragonGuiComponents/Components/Source">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
                        targetName="HiLoFilter"/>
