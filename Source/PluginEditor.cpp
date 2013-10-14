@@ -86,7 +86,7 @@ void HiLoFilterAudioProcessorEditor::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colours::red);
+    g.fillAll (Colours::black);
 
     g.setColour (Colours::black);
     g.drawImage (cachedImage_background_png,
@@ -129,7 +129,7 @@ BEGIN_JUCER_METADATA
                  variableInitialisers="AudioProcessorEditor(owner), &#10;parameters(p),&#10;resources(r)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="660" initialHeight="174">
-  <BACKGROUND backgroundColour="ffff0000">
+  <BACKGROUND backgroundColour="ff000000">
     <IMAGE pos="0 0 660 174" resource="background_png" opacity="1" mode="0"/>
   </BACKGROUND>
   <GENERICCOMPONENT name="filter position knob" id="2287a070b2db8f8d" memberName="filterPositionKnob"
