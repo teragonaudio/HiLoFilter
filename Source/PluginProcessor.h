@@ -36,11 +36,9 @@ static const float kHiLoFilterResonanceDefault = 1.0f;
 static const float kHiLoFilterResonanceMax = sqrtf(2.0f);
 static const float kHiLoFilterRangeMin = 20.0f;
 static const float kHiLoFilterRangeMax = 20000.0f;
-static const float kHiLoFilterDeadZoneMin = 1.0f;
-static const float kHiLoFilterDeadZoneDefault = 1.0f;
-static const float kHiLoFilterDeadZoneMax = 11.0f;
-
-#define PARAM_TEXT_NUM_DECIMAL_PLACES 2
+static const int kHiLoFilterDeadZoneMin = 1;
+static const int kHiLoFilterDeadZoneDefault = 1;
+static const int kHiLoFilterDeadZoneMax = 11; // Yes, this one goes to 11...
 
 using namespace teragon;
 

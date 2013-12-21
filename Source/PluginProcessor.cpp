@@ -24,7 +24,7 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : PluginParameterObserver()
   parameters.add(new FloatParameter("Resonance", kHiLoFilterResonanceMin, kHiLoFilterResonanceMax, kHiLoFilterResonanceDefault));
   parameters.add(new FrequencyParameter("Hi Filter Limit", kHiLoFilterRangeMin, kHiLoFilterRangeMax, kHiLoFilterRangeMax));
   parameters.add(new FrequencyParameter("Lo Filter Limit", kHiLoFilterRangeMin, kHiLoFilterRangeMax, kHiLoFilterRangeMin));
-  parameters.add(new FloatParameter("Dead Zone Size", kHiLoFilterDeadZoneMin, kHiLoFilterDeadZoneMax, kHiLoFilterDeadZoneDefault));
+  parameters.add(new IntegerParameter("Dead Zone Size", kHiLoFilterDeadZoneMin, kHiLoFilterDeadZoneMax, kHiLoFilterDeadZoneDefault));
   for(int i = 0; i < parameters.size(); i++) {
     parameters.get(i)->addObserver(this);
   }
