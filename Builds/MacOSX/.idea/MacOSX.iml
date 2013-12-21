@@ -1,6 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="CIDR_MODULE" version="4">
   <component name="NewModuleRootManager">
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUDispatch.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUDispatch.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUDispatch.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUDispatch.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUInputElement.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUInputElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUInputElement.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUInputElement.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUOutputElement.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUOutputElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUOutputElement.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUOutputElement.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUScopeElement.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUScopeElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUScopeElement.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/AUScopeElement.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/ComponentBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/ComponentBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/ComponentBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUBase/ComponentBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewControl.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewControl.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewControl.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewControl.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewDispatch.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/AUCarbonViewDispatch.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/CarbonEventHandler.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/CarbonEventHandler.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/CarbonEventHandler.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUCarbonViewBase/CarbonEventHandler.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUViewBase/AUViewLocalizedStringKeys.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/AUViewBase/AUViewLocalizedStringKeys.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUEffectBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUEffectBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUEffectBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUEffectBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIEffectBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIEffectBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIEffectBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUMIDIEffectBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUOutputBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUOutputBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUOutputBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/AUOutputBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/MusicDeviceBase.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/MusicDeviceBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/MusicDeviceBase.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/OtherBases/MusicDeviceBase.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUBuffer.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUBuffer.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUBuffer.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUBuffer.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUInputFormatConverter.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUInputFormatConverter.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUSilentTimeout.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUSilentTimeout.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUTimestampGenerator.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/AudioUnits/AUPublic/Utility/AUTimestampGenerator.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAUParameter.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAUParameter.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAUParameter.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAUParameter.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAudioChannelLayout.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAudioChannelLayout.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAudioChannelLayout.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAAudioChannelLayout.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CADebugMacros.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CADebugMacros.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAMutex.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAMutex.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAMutex.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAMutex.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAStreamBasicDescription.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAStreamBasicDescription.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAStreamBasicDescription.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAStreamBasicDescription.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnit.cpp">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnit.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnit.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnit.h" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnitTypes.h">
+      <sourceFolder url="file:///Applications/Xcode.app/Contents/Developer/Extras/CoreAudio/PublicUtility/CAVectorUnitTypes.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
@@ -22,6 +163,12 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_FloatVectorOperations.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_FloatVectorOperations.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_FloatVectorOperations.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_FloatVectorOperations.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_Decibels.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_Decibels.h" isTestSource="false" />
     </content>
@@ -30,6 +177,12 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_IIRFilter.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_IIRFilter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_LagrangeInterpolator.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_Reverb.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/effects/juce_Reverb.h" isTestSource="false" />
@@ -127,6 +280,12 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/synthesisers/juce_Synthesiser.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_basics/synthesisers/juce_Synthesiser.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AAX/juce_AAX_Wrapper.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AAX/juce_AAX_Wrapper.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AAX/juce_AAX_Wrapper.mm">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AAX/juce_AAX_Wrapper.mm" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AU/juce_AU_Wrapper.mm">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/AU/juce_AU_Wrapper.mm" isTestSource="false" />
     </content>
@@ -181,6 +340,9 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginHostType.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginHostType.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format/juce_AudioPluginFormat.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format/juce_AudioPluginFormat.cpp" isTestSource="false" />
     </content>
@@ -201,6 +363,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_DirectXPluginFormat.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_DirectXPluginFormat.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.cpp" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_LADSPAPluginFormat.h" isTestSource="false" />
@@ -379,6 +544,18 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/files/juce_TemporaryFile.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/files/juce_TemporaryFile.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_JSON.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_JSON.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_JSON.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_JSON.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_Javascript.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_Javascript.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_Javascript.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/javascript/juce_Javascript.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/json/juce_JSON.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/json/juce_JSON.cpp" isTestSource="false" />
     </content>
@@ -435,6 +612,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_ByteOrder.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_ByteOrder.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_ContainerDeletePolicy.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_ContainerDeletePolicy.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_HeapBlock.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/memory/juce_HeapBlock.h" isTestSource="false" />
@@ -502,6 +682,9 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_android_Threads.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_android_Threads.cpp" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_linux_CommonFile.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_linux_CommonFile.cpp" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_linux_Files.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_linux_Files.cpp" isTestSource="false" />
     </content>
@@ -558,6 +741,12 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_win32_Threads.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/native/juce_win32_Threads.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_IPAddress.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_IPAddress.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_IPAddress.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_IPAddress.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_MACAddress.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/network/juce_MACAddress.cpp" isTestSource="false" />
@@ -700,6 +889,15 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_StringPool.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_StringPool.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_StringRef.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_StringRef.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_TextDiff.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_TextDiff.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_TextDiff.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/text/juce_TextDiff.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_ChildProcess.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_ChildProcess.cpp" isTestSource="false" />
     </content>
@@ -711,6 +909,12 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_DynamicLibrary.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_DynamicLibrary.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_HighResolutionTimer.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_HighResolutionTimer.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_HighResolutionTimer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_HighResolutionTimer.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_InterProcessLock.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_core/threads/juce_InterProcessLock.h" isTestSource="false" />
@@ -919,6 +1123,9 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_DeletedAtShutdown.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_DeletedAtShutdown.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_Initialisation.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_Initialisation.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_Message.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_Message.h" isTestSource="false" />
     </content>
@@ -933,6 +1140,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_MessageManager.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_MessageManager.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_NotificationType.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/messages/juce_NotificationType.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/native/juce_ScopedXLock.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_events/native/juce_ScopedXLock.h" isTestSource="false" />
@@ -1167,6 +1377,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_android_GraphicsContext.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_android_GraphicsContext.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_freetype_Fonts.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_freetype_Fonts.cpp" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_linux_Fonts.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_graphics/native/juce_linux_Fonts.cpp" isTestSource="false" />
@@ -1495,6 +1708,12 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_TextInputTarget.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_TextInputTarget.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_AnimatedPosition.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_AnimatedPosition.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_AnimatedPositionBehaviours.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_AnimatedPositionBehaviours.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ComponentAnimator.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ComponentAnimator.cpp" isTestSource="false" />
     </content>
@@ -1518,6 +1737,12 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ComponentMovementWatcher.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ComponentMovementWatcher.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ConcertinaPanel.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ConcertinaPanel.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ConcertinaPanel.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ConcertinaPanel.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_GroupComponent.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_GroupComponent.cpp" isTestSource="false" />
@@ -1597,6 +1822,24 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V1.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V2.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V2.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V2.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V2.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V3.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V3.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V3.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V3.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/menus/juce_MenuBarComponent.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/menus/juce_MenuBarComponent.cpp" isTestSource="false" />
     </content>
@@ -1660,6 +1903,12 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseEvent.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseEvent.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInactivityDetector.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInactivityDetector.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInactivityDetector.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInactivityDetector.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInputSource.cpp" isTestSource="false" />
     </content>
@@ -1674,6 +1923,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_SelectedItemSet.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_SelectedItemSet.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_TextDragAndDropTarget.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_TextDragAndDropTarget.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_TooltipClient.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_TooltipClient.h" isTestSource="false" />
@@ -1954,6 +2206,9 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniser.h">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniser.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniserFunctions.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniserFunctions.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CodeDocument.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CodeDocument.cpp" isTestSource="false" />
     </content>
@@ -2068,6 +2323,9 @@
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_NSViewComponent.mm">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_NSViewComponent.mm" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_SystemTrayIcon.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_SystemTrayIcon.cpp" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_WebBrowserComponent.mm">
       <sourceFolder url="file://$MODULE_DIR$/../../JuceLibraryCode/modules/juce_gui_extra/native/juce_mac_WebBrowserComponent.mm" isTestSource="false" />
     </content>
@@ -2091,6 +2349,129 @@
     </content>
     <content url="file://$MODULE_DIR$/../../Source/PluginProcessor.h">
       <sourceFolder url="file://$MODULE_DIR$/../../Source/PluginProcessor.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/BooleanParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/BooleanParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/DecibelParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/DecibelParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/Event.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/Event.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/EventDispatcher.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/EventDispatcher.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FloatParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FloatParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FrequencyParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/FrequencyParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/IntegerParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/IntegerParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameterSet.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameterSet.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameters.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/PluginParameters.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/StringParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/StringParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/ThreadsafePluginParameterSet.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/ThreadsafePluginParameterSet.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/VoidParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/VoidParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/atomicops.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/atomicops.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/readerwriterqueue.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/readerwriterqueue/readerwriterqueue.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/fast_mutex.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/fast_mutex.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/AnimationConstants.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/AnimationConstants.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/EllipsizedLabel.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/EllipsizedLabel.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnob.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnobLarge.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnobLarge.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnobSmall.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageKnobSmall.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ImageSlider.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/IndicatorLight.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PluginParameterComponent.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PluginParameterComponent.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PushButton.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PushButton.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PushButton.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/PushButton.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ResourceCache.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/Resources.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/Resources.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/Resources.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/Resources.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/StatusBar.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/StatusBar.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/StatusBar.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/StatusBar.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/TeragonGuiComponents.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/TeragonGuiComponents.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ThinButton.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ToggleButton.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../Third-Party/TeragonGuiComponents/Components/Source/ToggleButton.h" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

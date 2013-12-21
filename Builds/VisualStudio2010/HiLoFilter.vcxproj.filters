@@ -5,6 +5,18 @@
     <Filter Include="HiLoFilter">
       <UniqueIdentifier>{37A5048E-D0D4-9753-414C-A19C01C602DA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HiLoFilter\PluginParameters">
+      <UniqueIdentifier>{1BF1F32C-391A-67FD-986B-72B4E13013EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HiLoFilter\PluginParameters\readerwriterqueue">
+      <UniqueIdentifier>{04B0F986-1CC5-C8DC-5C9A-6D98ECA7A933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HiLoFilter\PluginParameters\tinythread">
+      <UniqueIdentifier>{71294297-3F57-2149-9CC0-C43973B2AED4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HiLoFilter\PluginParameters\tinythread\source">
+      <UniqueIdentifier>{9A90C789-A802-6371-99D9-A5EC93FC69E0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="HiLoFilter\Components">
       <UniqueIdentifier>{CF3AB3E6-0F87-D03C-5D3B-707AF3DF594D}</UniqueIdentifier>
     </Filter>
@@ -104,8 +116,8 @@
     <Filter Include="Juce Modules\juce_core\xml">
       <UniqueIdentifier>{F2B2F310-F30F-7166-42A9-9BF9C230DA78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Juce Modules\juce_core\json">
-      <UniqueIdentifier>{5B662103-FB59-7229-1076-6A6665724ED0}</UniqueIdentifier>
+    <Filter Include="Juce Modules\juce_core\javascript">
+      <UniqueIdentifier>{1B67A7C0-86E0-53F6-6AE3-7AD93B8DC95B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Juce Modules\juce_core\zip">
       <UniqueIdentifier>{F03654BC-34D8-F975-BEA3-750CC2783D23}</UniqueIdentifier>
@@ -245,9 +257,6 @@
     <Filter Include="Juce Modules\juce_gui_extra\embedding">
       <UniqueIdentifier>{61B2920C-494D-D8CB-C0C7-5DBF3D76D164}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Juce Modules\juce_gui_extra\lookandfeel">
-      <UniqueIdentifier>{4980B18D-FEDE-B773-F254-E3B5207D81F0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Juce Modules\juce_gui_extra\misc">
       <UniqueIdentifier>{66C9B809-8739-A217-C78D-A15D6089B8E3}</UniqueIdentifier>
     </Filter>
@@ -259,6 +268,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\tinythread.cpp">
+      <Filter>HiLoFilter\PluginParameters\tinythread\source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.cpp">
       <Filter>HiLoFilter\Components</Filter>
     </ClCompile>
@@ -268,10 +280,16 @@
     <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.cpp">
       <Filter>HiLoFilter\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ResourceCache.cpp">
       <Filter>HiLoFilter\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.cpp">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\StatusBar.cpp">
       <Filter>HiLoFilter\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ThinButton.cpp">
@@ -535,8 +553,11 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\xml\juce_XmlElement.cpp">
       <Filter>Juce Modules\juce_core\xml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\json\juce_JSON.cpp">
-      <Filter>Juce Modules\juce_core\json</Filter>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_Javascript.cpp">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_JSON.cpp">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\zip\juce_GZIPCompressorOutputStream.cpp">
       <Filter>Juce Modules\juce_core\zip</Filter>
@@ -569,6 +590,9 @@
       <Filter>Juce Modules\juce_core\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_android_Threads.cpp">
+      <Filter>Juce Modules\juce_core\native</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_linux_CommonFile.cpp">
       <Filter>Juce Modules\juce_core\native</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\native\juce_linux_Files.cpp">
@@ -1063,6 +1087,15 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel.cpp">
       <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V1.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V2.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V3.cpp">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\filebrowser\juce_DirectoryContentsDisplayComponent.cpp">
       <Filter>Juce Modules\juce_gui_basics\filebrowser</Filter>
     </ClCompile>
@@ -1177,9 +1210,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\documents\juce_FileBasedDocument.cpp">
       <Filter>Juce Modules\juce_gui_extra\documents</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\lookandfeel\juce_OldSchoolLookAndFeel.cpp">
-      <Filter>Juce Modules\juce_gui_extra\lookandfeel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\misc\juce_BubbleMessageComponent.cpp">
       <Filter>Juce Modules\juce_gui_extra\misc</Filter>
     </ClCompile>
@@ -1284,13 +1314,79 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\readerwriterqueue\atomicops.h">
+      <Filter>HiLoFilter\PluginParameters\readerwriterqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\readerwriterqueue\readerwriterqueue.h">
+      <Filter>HiLoFilter\PluginParameters\readerwriterqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\fast_mutex.h">
+      <Filter>HiLoFilter\PluginParameters\tinythread\source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\tinythread.h">
+      <Filter>HiLoFilter\PluginParameters\tinythread\source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\BooleanParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\DecibelParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\Event.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\EventDispatcher.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\FloatParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\FrequencyParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\IntegerParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameters.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\PluginParameterSet.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\StringParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\ThreadsafePluginParameterSet.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\PluginParameters\include\VoidParameter.h">
+      <Filter>HiLoFilter\PluginParameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\AnimationConstants.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\EllipsizedLabel.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnob.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnobLarge.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageKnobSmall.h">
       <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\ImageSlider.h">
       <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\IndicatorLight.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PluginParameterComponent.h">
       <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\PushButton.h">
@@ -1300,6 +1396,9 @@
       <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\Resources.h">
+      <Filter>HiLoFilter\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\StatusBar.h">
       <Filter>HiLoFilter\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Third-Party\TeragonGuiComponents\Components\Source\TeragonGuiComponents.h">
@@ -1743,8 +1842,11 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\xml\juce_XmlElement.h">
       <Filter>Juce Modules\juce_core\xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\json\juce_JSON.h">
-      <Filter>Juce Modules\juce_core\json</Filter>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_Javascript.h">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\javascript\juce_JSON.h">
+      <Filter>Juce Modules\juce_core\javascript</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\zip\juce_GZIPCompressorOutputStream.h">
       <Filter>Juce Modules\juce_core\zip</Filter>
@@ -2295,6 +2397,15 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel.h">
       <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V1.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V2.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\lookandfeel\juce_LookAndFeel_V3.h">
+      <Filter>Juce Modules\juce_gui_basics\lookandfeel</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\filebrowser\juce_DirectoryContentsDisplayComponent.h">
       <Filter>Juce Modules\juce_gui_basics\filebrowser</Filter>
     </ClInclude>
@@ -2393,9 +2504,6 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\embedding\juce_UIViewComponent.h">
       <Filter>Juce Modules\juce_gui_extra\embedding</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\lookandfeel\juce_OldSchoolLookAndFeel.h">
-      <Filter>Juce Modules\juce_gui_extra\lookandfeel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_extra\misc\juce_AppleRemote.h">
       <Filter>Juce Modules\juce_gui_extra\misc</Filter>
