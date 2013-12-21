@@ -40,7 +40,7 @@ class HiLoFilterAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::PluginParameterSet &p, teragon::ResourceCache *r);
+    HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache *r);
     ~HiLoFilterAudioProcessorEditor();
 
     //==============================================================================
@@ -57,16 +57,17 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    teragon::PluginParameterSet &parameters;
+    teragon::ThreadsafePluginParameterSet &parameters;
     teragon::ResourceCache *resources;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<teragon::ImageKnob> filterPositionKnob;
-    ScopedPointer<teragon::ImageKnob> hiFilterLimitKnob;
-    ScopedPointer<teragon::ImageKnob> loFilterLimitKnob;
-    ScopedPointer<teragon::ImageKnob> deadZoneSizeKnob;
-    ScopedPointer<teragon::ImageKnob> resonanceKnob;
+    ScopedPointer<teragon::ImageKnobLarge> filterPositionKnob;
+    ScopedPointer<teragon::ImageKnobSmall> hiFilterLimitKnob;
+    ScopedPointer<teragon::ImageKnobSmall> loFilterLimitKnob;
+    ScopedPointer<teragon::ImageKnobLarge> deadZoneSizeKnob;
+    ScopedPointer<teragon::ImageKnobLarge> resonanceKnob;
+    ScopedPointer<teragon::StatusBar> statusBar;
     Image cachedImage_background_png;
 
 

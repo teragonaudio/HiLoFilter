@@ -154,15 +154,15 @@ void HiLoFilterAudioProcessor::onParameterUpdated(const PluginParameter* paramet
 }
 
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
-  parameters.get(index)->setScaledValue(newValue);
+  parameters.setScaled(index, newValue);
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
-  return parameters.get(index)->getName().c_str();
+  return parameters[index]->getName().c_str();
 }
 
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
-  return parameters.get(index)->getDisplayText().c_str();
+  return parameters[index]->getDisplayText().c_str();
 }
 
 const String HiLoFilterAudioProcessor::getInputChannelName(int channelIndex) const {
@@ -211,6 +211,7 @@ void HiLoFilterAudioProcessor::releaseResources() {
 }
 
 void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
+  parameters.processRealtimeEvents();
   for(int channel = 0; channel < getNumInputChannels(); ++channel) {
     switch(filterState) {
       case kHiLoFilterStateHi:
@@ -292,7 +293,7 @@ void HiLoFilterAudioProcessor::setStateInformation(const void *data, int sizeInB
   if(xmlState != 0 && xmlState->hasTagName("HiLoFilterStorage")) {
     for(int i = 0; i < parameters.size(); i++) {
       PluginParameter* parameter = parameters[i];
-      parameter->setValue(xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
+      parameters.set(parameter, xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
     }
   }
 }

@@ -113,12 +113,16 @@ public:
 
   void setStateInformation(const void *data, int sizeInBytes);
 
+  // PluginParameterObserver methods
+  void onParameterUpdated(const PluginParameter* parameter);
+
+  bool isRealtimePriority() const { return true; }
+
 private:
   float getFilterFrequency();
   void recalculateCoefficients();
   void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
   void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
-  void onParameterUpdated(const PluginParameter* parameter);
 
   void processHiFilter(float *channelData, const int channel, const int numSamples);
   void processLoFilter(float *channelData, const int channel, const int numSamples);
@@ -128,7 +132,7 @@ private:
   float getLoFilterCutoffPosition();
   void setFilterState(float currentFilterPosition);
 
-  PluginParameterSet parameters;
+  ThreadsafePluginParameterSet parameters;
 
   float lastInput1[2], lastInput2[2], lastInput3[2];
   float lastOutput1[2], lastOutput2[2];
