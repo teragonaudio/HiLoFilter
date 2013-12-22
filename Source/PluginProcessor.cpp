@@ -158,11 +158,11 @@ void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
-  return parameters[index]->getName().c_str();
+  return parameters[index]->getName();
 }
 
 const String HiLoFilterAudioProcessor::getParameterText(int index) {
-  return parameters[index]->getDisplayText().c_str();
+  return parameters[index]->getDisplayText();
 }
 
 const String HiLoFilterAudioProcessor::getInputChannelName(int channelIndex) const {
