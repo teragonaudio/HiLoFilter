@@ -20,7 +20,9 @@ typedef enum {
     kHiLoFilterStateHi,
 } HiLoFilterState;
 
-static const float kHiLoFilterPositionMax = 127.0f;
+static const int kHiLoFilterPositionMin = 0;
+static const int kHiLoFilterPositionMax = 127;
+static const int kHiLoFilterPositionDefault = kHiLoFilterPositionMax / 2;
 static const float kHiLoFilterResonanceMin = 0.1f;
 static const float kHiLoFilterResonanceDefault = 1.0f;
 static const float kHiLoFilterResonanceMax = sqrtf(2.0f);
@@ -82,8 +84,12 @@ public:
 private:
     float getFilterFrequency();
     void recalculateCoefficients();
-    void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
-    void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
+    void recalculateHiCoefficients(const double sampleRate,
+                                   const float frequency,
+                                   const float resonance);
+    void recalculateLoCoefficients(const double sampleRate,
+                                   const float frequency,
+                                   const float resonance);
 
     void processHiFilter(float *channelData, const int channel, const int numSamples);
     void processLoFilter(float *channelData, const int channel, const int numSamples);
@@ -91,11 +97,16 @@ private:
     void resetLastIOData();
     float getHiFilterCutoffPosition();
     float getLoFilterCutoffPosition();
-    void setFilterState(float currentFilterPosition);
+    void setFilterState(int currentFilterPosition);
 
 private:
     // Parameter storage and caches
     ThreadsafePluginParameterSet parameters;
+    IntegerParameter *filterPosition;
+    FloatParameter *resonance;
+    FrequencyParameter *hiFilterLimit;
+    FrequencyParameter *loFilterLimit;
+    IntegerParameter *deadZoneSize;
 
     float lastInput1[2], lastInput2[2], lastInput3[2];
     float lastOutput1[2], lastOutput2[2];
