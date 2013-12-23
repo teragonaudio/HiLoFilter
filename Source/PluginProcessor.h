@@ -15,19 +15,9 @@
 #include "PluginParameters.h"
 
 typedef enum {
-  kHiLoFilterParamFilterPosition,
-  kHiLoFilterParamFilterResonance,
-  kHiLoFilterParamHiFilterRange,
-  kHiLoFilterParamLoFilterRange,
-  kHiLoFilterParamDeadZoneSize,
-  kHiLoFilterNumParams
-} HiLoFilterParams;
-
-typedef enum {
   kHiLoFilterStatePassthru,
   kHiLoFilterStateLo,
   kHiLoFilterStateHi,
-  kHiLoFilterStateNumStates,
 } HiLoFilterState;
 
 static const float kHiLoFilterPositionMax = 127.0f;
@@ -49,62 +39,37 @@ class HiLoFilterAudioProcessor  : public AudioProcessor, public PluginParameterO
 public:
   //==============================================================================
   HiLoFilterAudioProcessor();
+  ~HiLoFilterAudioProcessor() {}
 
-  ~HiLoFilterAudioProcessor();
-
-  //==============================================================================
   void prepareToPlay(double sampleRate, int samplesPerBlock);
-
-  void releaseResources();
-
+  void releaseResources() {}
   void processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
-  //==============================================================================
   AudioProcessorEditor *createEditor();
-
   bool hasEditor() const { return true; }
+  const String getName() const { return JucePlugin_Name; }
 
-  //==============================================================================
-  const String getName() const;
-
-  int getNumParameters();
-
+  int getNumParameters() { return parameters.size(); }
   float getParameter(int index);
-
   void setParameter(int index, float newValue);
-
   const String getParameterName(int index);
-
-  const String getParameterNameForStorage(int index);
-
   const String getParameterText(int index);
 
   const String getInputChannelName(int channelIndex) const;
-
   const String getOutputChannelName(int channelIndex) const;
 
   bool isInputChannelStereoPair(int index) const { return true; }
-
   bool isOutputChannelStereoPair(int index) const { return true; }
-
   bool acceptsMidi() const { return false; }
-
   bool producesMidi() const { return false; }
-
   double getTailLengthSeconds() const { return 0.0; }
-
   bool silenceInProducesSilenceOut() const { return true; }
 
-  //==============================================================================
-  int getNumPrograms();
-
-  int getCurrentProgram();
-
-  void setCurrentProgram(int index);
-
-  const String getProgramName(int index);
-
-  void changeProgramName(int index, const String& newName);
+  int getNumPrograms() { return 0; }
+  int getCurrentProgram() { return 0; }
+  void setCurrentProgram(int index) {}
+  const String getProgramName(int index) { return String::empty; }
+  void changeProgramName(int index, const String& newName) {}
 
   //==============================================================================
   void getStateInformation(MemoryBlock& destData);
@@ -130,6 +95,8 @@ private:
   float getLoFilterCutoffPosition();
   void setFilterState(float currentFilterPosition);
 
+private:
+  // Parameter storage and caches
   ThreadsafePluginParameterSet parameters;
 
   float lastInput1[2], lastInput2[2], lastInput3[2];

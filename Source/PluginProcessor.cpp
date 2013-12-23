@@ -31,14 +31,6 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : PluginParameterObserver()
   filterState = kHiLoFilterStatePassthru;
 }
 
-HiLoFilterAudioProcessor::~HiLoFilterAudioProcessor() {
-}
-
-//==============================================================================
-const String HiLoFilterAudioProcessor::getName() const {
-  return JucePlugin_Name;
-}
-
 void HiLoFilterAudioProcessor::resetLastIOData() {
   for(int i = 0; i < 2; i++) {
     lastInput1[i] = 0.0f;
@@ -47,14 +39,6 @@ void HiLoFilterAudioProcessor::resetLastIOData() {
     lastOutput1[i] = 0.0f;
     lastOutput2[i] = 0.0f;
   }
-}
-
-int HiLoFilterAudioProcessor::getNumParameters() {
-  return kHiLoFilterNumParams;
-}
-
-float HiLoFilterAudioProcessor::getParameter(int index) {
-  return parameters.get(index)->getScaledValue();
 }
 
 float HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
@@ -153,6 +137,10 @@ void HiLoFilterAudioProcessor::onParameterUpdated(const PluginParameter* paramet
   }
 }
 
+float HiLoFilterAudioProcessor::getParameter(int index) {
+  return parameters.get(index)->getScaledValue();
+}
+
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
   parameters.setScaled(index, newValue);
 }
@@ -173,25 +161,6 @@ const String HiLoFilterAudioProcessor::getOutputChannelName(int channelIndex) co
   return String(channelIndex + 1);
 }
 
-int HiLoFilterAudioProcessor::getNumPrograms() {
-  return 0;
-}
-
-int HiLoFilterAudioProcessor::getCurrentProgram() {
-  return 0;
-}
-
-void HiLoFilterAudioProcessor::setCurrentProgram(int index) {
-}
-
-const String HiLoFilterAudioProcessor::getProgramName(int index) {
-  return String::empty;
-}
-
-void HiLoFilterAudioProcessor::changeProgramName(int index, const String& newName) {
-}
-
-//==============================================================================
 void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   for(int i = 0; i < 2; i++) {
     lastInput1[i] = 0.0f;
@@ -205,13 +174,9 @@ void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
   recalculateCoefficients();
 }
 
-void HiLoFilterAudioProcessor::releaseResources() {
-  // When playback stops, you can use this as an opportunity to free up any
-  // spare memory, etc.
-}
-
 void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
   parameters.processRealtimeEvents();
+
   for(int channel = 0; channel < getNumInputChannels(); ++channel) {
     switch(filterState) {
       case kHiLoFilterStateHi:
@@ -270,7 +235,7 @@ void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int cha
 
 //==============================================================================
 AudioProcessorEditor *HiLoFilterAudioProcessor::createEditor() {
-  return new HiLoFilterAudioProcessorEditor (this, parameters, Resources::getCache());
+  return new HiLoFilterAudioProcessorEditor(this, parameters, Resources::getCache());
 }
 
 //==============================================================================
