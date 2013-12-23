@@ -68,6 +68,7 @@ private:
     ScopedPointer<teragon::ImageKnobLarge> deadZoneSizeKnob;
     ScopedPointer<teragon::ImageKnobLarge> resonanceKnob;
     ScopedPointer<teragon::StatusBar> statusBar;
+    ScopedPointer<teragon::ParameterLabel> versionLabel;
     Image cachedImage_background_png;
 
 

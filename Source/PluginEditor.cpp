@@ -55,8 +55,13 @@ HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor (AudioProcessor *
                                                                     resources));
     resonanceKnob->setName ("resonance knob");
 
-    addAndMakeVisible (statusBar = new teragon::StatusBar (parameters, resources));
+    addAndMakeVisible (statusBar = new teragon::StatusBar (parameters,
+                                                           resources));
     statusBar->setName ("status bar");
+
+    addAndMakeVisible (versionLabel = new teragon::ParameterLabel (parameters,
+                                                                   "Version"));
+    versionLabel->setName ("version label");
 
     cachedImage_background_png = ImageCache::getFromMemory (background_png, background_pngSize);
 
@@ -68,6 +73,8 @@ HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor (AudioProcessor *
 
     //[Constructor] You can add your own custom stuff here..
     statusBar->subscribeToParameters();
+    versionLabel->setFont(StatusBar::getFont());
+    versionLabel->setJustificationType(Justification::centredRight);
     //[/Constructor]
 }
 
@@ -82,6 +89,7 @@ HiLoFilterAudioProcessorEditor::~HiLoFilterAudioProcessorEditor()
     deadZoneSizeKnob = nullptr;
     resonanceKnob = nullptr;
     statusBar = nullptr;
+    versionLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -114,6 +122,7 @@ void HiLoFilterAudioProcessorEditor::resized()
     deadZoneSizeKnob->setBounds (443, 17, 113, 113);
     resonanceKnob->setBounds (317, 17, 113, 113);
     statusBar->setBounds (24, 168, 280, 30);
+    versionLabel->setBounds (355, 182, 200, 16);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -159,7 +168,10 @@ BEGIN_JUCER_METADATA
                     pos="317 17 113 113" class="Component" params="parameters,&#10;&quot;Resonance&quot;,&#10;resources"/>
   <GENERICCOMPONENT name="status bar" id="1a65d6c2f377fe1d" memberName="statusBar"
                     virtualName="teragon::StatusBar" explicitFocusOrder="0" pos="24 168 280 30"
-                    class="Component" params="parameters, resources"/>
+                    class="Component" params="parameters,&#10;resources"/>
+  <GENERICCOMPONENT name="version label" id="de825522be9909cb" memberName="versionLabel"
+                    virtualName="teragon::ParameterLabel" explicitFocusOrder="0"
+                    pos="355 182 200 16" class="Component" params="parameters,&#10;&quot;Version&quot;"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
