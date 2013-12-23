@@ -15,9 +15,9 @@
 #include "PluginParameters.h"
 
 typedef enum {
-  kHiLoFilterStatePassthru,
-  kHiLoFilterStateLo,
-  kHiLoFilterStateHi,
+    kHiLoFilterStatePassthru,
+    kHiLoFilterStateLo,
+    kHiLoFilterStateHi,
 } HiLoFilterState;
 
 static const float kHiLoFilterPositionMax = 127.0f;
@@ -32,86 +32,83 @@ static const int kHiLoFilterDeadZoneMax = 11; // Yes, this one goes to 11...
 
 using namespace teragon;
 
-//==============================================================================
-/**
-*/
 class HiLoFilterAudioProcessor  : public AudioProcessor, public PluginParameterObserver {
 public:
-  //==============================================================================
-  HiLoFilterAudioProcessor();
-  ~HiLoFilterAudioProcessor() {}
+    HiLoFilterAudioProcessor();
+    ~HiLoFilterAudioProcessor() {}
 
-  void prepareToPlay(double sampleRate, int samplesPerBlock);
-  void releaseResources() {}
-  void processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    // Playback
+    void prepareToPlay(double sampleRate, int samplesPerBlock);
+    void releaseResources() {}
+    void processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
-  AudioProcessorEditor *createEditor();
-  bool hasEditor() const { return true; }
-  const String getName() const { return JucePlugin_Name; }
+    // Editor
+    AudioProcessorEditor *createEditor();
+    bool hasEditor() const { return true; }
 
-  int getNumParameters() { return parameters.size(); }
-  float getParameter(int index);
-  void setParameter(int index, float newValue);
-  const String getParameterName(int index);
-  const String getParameterText(int index);
+    // Parameter handling
+    int getNumParameters() { return parameters.size(); }
+    float getParameter(int index);
+    void setParameter(int index, float newValue);
+    const String getParameterName(int index);
+    const String getParameterText(int index);
 
-  const String getInputChannelName(int channelIndex) const;
-  const String getOutputChannelName(int channelIndex) const;
+    // Plugin configuration and basic properties
+    const String getName() const { return JucePlugin_Name; }
+    const String getInputChannelName(int channelIndex) const;
+    const String getOutputChannelName(int channelIndex) const;
+    bool isInputChannelStereoPair(int index) const { return true; }
+    bool isOutputChannelStereoPair(int index) const { return true; }
+    bool acceptsMidi() const { return false; }
+    bool producesMidi() const { return false; }
+    double getTailLengthSeconds() const { return 0.0; }
+    bool silenceInProducesSilenceOut() const { return true; }
 
-  bool isInputChannelStereoPair(int index) const { return true; }
-  bool isOutputChannelStereoPair(int index) const { return true; }
-  bool acceptsMidi() const { return false; }
-  bool producesMidi() const { return false; }
-  double getTailLengthSeconds() const { return 0.0; }
-  bool silenceInProducesSilenceOut() const { return true; }
+    // Program support (not needed by this plugin)
+    int getNumPrograms() { return 0; }
+    int getCurrentProgram() { return 0; }
+    void setCurrentProgram(int index) {}
+    const String getProgramName(int index) { return String::empty; }
+    void changeProgramName(int index, const String& newName) {}
 
-  int getNumPrograms() { return 0; }
-  int getCurrentProgram() { return 0; }
-  void setCurrentProgram(int index) {}
-  const String getProgramName(int index) { return String::empty; }
-  void changeProgramName(int index, const String& newName) {}
+    // State restore
+    void getStateInformation(MemoryBlock& destData);
+    void setStateInformation(const void *data, int sizeInBytes);
 
-  //==============================================================================
-  void getStateInformation(MemoryBlock& destData);
-
-  void setStateInformation(const void *data, int sizeInBytes);
-
-  // PluginParameterObserver methods
-  void onParameterUpdated(const PluginParameter* parameter);
-
-  bool isRealtimePriority() const { return true; }
-
-private:
-  float getFilterFrequency();
-  void recalculateCoefficients();
-  void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
-  void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
-
-  void processHiFilter(float *channelData, const int channel, const int numSamples);
-  void processLoFilter(float *channelData, const int channel, const int numSamples);
-
-  void resetLastIOData();
-  float getHiFilterCutoffPosition();
-  float getLoFilterCutoffPosition();
-  void setFilterState(float currentFilterPosition);
+    // PluginParameterObserver methods
+    void onParameterUpdated(const PluginParameter* parameter);
+    bool isRealtimePriority() const { return true; }
 
 private:
-  // Parameter storage and caches
-  ThreadsafePluginParameterSet parameters;
+    float getFilterFrequency();
+    void recalculateCoefficients();
+    void recalculateHiCoefficients(const double sampleRate, const float frequency, const float resonance);
+    void recalculateLoCoefficients(const double sampleRate, const float frequency, const float resonance);
 
-  float lastInput1[2], lastInput2[2], lastInput3[2];
-  float lastOutput1[2], lastOutput2[2];
+    void processHiFilter(float *channelData, const int channel, const int numSamples);
+    void processLoFilter(float *channelData, const int channel, const int numSamples);
 
-  float loCoeffA1, loCoeffA2;
-  float loCoeffB1, loCoeffB2;
-  float hiCoeffA1, hiCoeffA2;
-  float hiCoeffB1, hiCoeffB2;
+    void resetLastIOData();
+    float getHiFilterCutoffPosition();
+    float getLoFilterCutoffPosition();
+    void setFilterState(float currentFilterPosition);
 
-  HiLoFilterState filterState;
+private:
+    // Parameter storage and caches
+    ThreadsafePluginParameterSet parameters;
 
-  //==============================================================================
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
+    float lastInput1[2], lastInput2[2], lastInput3[2];
+    float lastOutput1[2], lastOutput2[2];
 
+    float loCoeffA1, loCoeffA2;
+    float loCoeffB1, loCoeffB2;
+    float hiCoeffA1, hiCoeffA2;
+    float hiCoeffB1, hiCoeffB2;
+
+    HiLoFilterState filterState;
+
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
 };
 
 #endif  // __PLUGINPROCESSOR_H_81C4A062__
