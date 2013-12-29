@@ -173,11 +173,11 @@ void HiLoFilterAudioProcessor::onParameterUpdated(const Parameter *) {
 }
 
 float HiLoFilterAudioProcessor::getParameter(int index) {
-    return parameters.get(index)->getScaledValue();
+    return (float)parameters.get(index)->getScaledValue();
 }
 
 void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
-    parameters.setScaled(index, newValue);
+    parameters.setScaled((const size_t)index, newValue);
 }
 
 const String HiLoFilterAudioProcessor::getParameterName(int index) {
@@ -196,7 +196,7 @@ const String HiLoFilterAudioProcessor::getOutputChannelName(int channelIndex) co
     return String(channelIndex + 1);
 }
 
-void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void HiLoFilterAudioProcessor::prepareToPlay(double, int) {
     for(int i = 0; i < 2; i++) {
         lastInput1[i] = 0.0f;
         lastInput2[i] = 0.0f;
