@@ -34,7 +34,7 @@ static const int kHiLoFilterDeadZoneMax = 11; // Yes, this one goes to 11...
 
 using namespace teragon;
 
-class HiLoFilterAudioProcessor  : public AudioProcessor, public PluginParameterObserver {
+class HiLoFilterAudioProcessor  : public AudioProcessor, public ParameterObserver {
 public:
     HiLoFilterAudioProcessor();
     ~HiLoFilterAudioProcessor() {}
@@ -77,8 +77,8 @@ public:
     void getStateInformation(MemoryBlock& destData);
     void setStateInformation(const void *data, int sizeInBytes);
 
-    // PluginParameterObserver methods
-    void onParameterUpdated(const PluginParameter* parameter);
+    // ParameterObserver methods
+    void onParameterUpdated(const Parameter* parameter);
     bool isRealtimePriority() const { return true; }
 
 private:
@@ -101,7 +101,7 @@ private:
 
 private:
     // Parameter storage and caches
-    ThreadsafePluginParameterSet parameters;
+    ConcurrentParameterSet parameters;
     IntegerParameter *filterPosition;
     FloatParameter *resonance;
     FrequencyParameter *hiFilterLimit;

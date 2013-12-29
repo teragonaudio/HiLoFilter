@@ -27,7 +27,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache *r)
+HiLoFilterAudioProcessorEditor::HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::ConcurrentParameterSet &p, teragon::ResourceCache *r)
     : AudioProcessorEditor(owner),
       parameters(p),
       resources(r)
@@ -144,7 +144,7 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="HiLoFilterAudioProcessorEditor"
                  componentName="" parentClasses="public AudioProcessorEditor"
-                 constructorParams="AudioProcessor *owner, teragon::ThreadsafePluginParameterSet &amp;p, teragon::ResourceCache *r"
+                 constructorParams="AudioProcessor *owner, teragon::ConcurrentParameterSet &amp;p, teragon::ResourceCache *r"
                  variableInitialisers="AudioProcessorEditor(owner), &#10;parameters(p),&#10;resources(r)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="581" initialHeight="219">

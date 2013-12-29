@@ -40,7 +40,7 @@ class HiLoFilterAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     //==============================================================================
-    HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::ThreadsafePluginParameterSet &p, teragon::ResourceCache *r);
+    HiLoFilterAudioProcessorEditor (AudioProcessor *owner, teragon::ConcurrentParameterSet &p, teragon::ResourceCache *r);
     ~HiLoFilterAudioProcessorEditor();
 
     //==============================================================================
@@ -57,7 +57,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    teragon::ThreadsafePluginParameterSet &parameters;
+    teragon::ConcurrentParameterSet &parameters;
     teragon::ResourceCache *resources;
     //[/UserVariables]
 

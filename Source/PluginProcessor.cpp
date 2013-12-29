@@ -17,7 +17,7 @@
 #include <math.h>
 #endif
 
-HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : PluginParameterObserver() {
+HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : ParameterObserver() {
     filterPosition = new IntegerParameter("Filter Position",
                                           kHiLoFilterPositionMin,
                                           kHiLoFilterPositionMax,
@@ -168,7 +168,7 @@ void HiLoFilterAudioProcessor::recalculateCoefficients() {
     }
 }
 
-void HiLoFilterAudioProcessor::onParameterUpdated(const PluginParameter *parameter) {
+void HiLoFilterAudioProcessor::onParameterUpdated(const Parameter *) {
     recalculateCoefficients();
 }
 
@@ -279,8 +279,8 @@ void HiLoFilterAudioProcessor::getStateInformation(MemoryBlock &destData) {
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
     XmlElement xml("HiLoFilterStorage");
-    for(int i = 0; i < parameters.size(); i++) {
-        PluginParameter *parameter = parameters[i];
+    for(size_t i = 0; i < parameters.size(); i++) {
+        Parameter *parameter = parameters[i];
         xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
     }
     copyXmlToBinary(xml, destData);
@@ -291,8 +291,8 @@ void HiLoFilterAudioProcessor::setStateInformation(const void *data, int sizeInB
     // whose contents will have been created by the getStateInformation() call.
     ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
     if(xmlState != 0 && xmlState->hasTagName("HiLoFilterStorage")) {
-        for(int i = 0; i < parameters.size(); i++) {
-            PluginParameter *parameter = parameters[i];
+        for(size_t i = 0; i < parameters.size(); i++) {
+            Parameter *parameter = parameters[i];
             parameters.set(parameter, xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
         }
         parameters.processRealtimeEvents();
