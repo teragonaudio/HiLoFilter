@@ -110,11 +110,42 @@ static float scaleParameterRangeToFrequency(float value, float max, float min) {
     }
 }
 
+void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+    TeragonPluginBase::prepareToPlay(sampleRate, samplesPerBlock);
+
+    for(int i = 0; i < 2; i++) {
+        lastInput1[i] = 0.0f;
+        lastInput2[i] = 0.0f;
+        lastInput3[i] = 0.0f;
+        lastOutput1[i] = 0.0f;
+        lastOutput2[i] = 0.0f;
+    }
+
+    resetLastIOData();
+    recalculateCoefficients();
+}
+
+void HiLoFilterAudioProcessor::recalculateCoefficients() {
+    setFilterState((int)filterPosition->getValue());
+    switch(filterState) {
+        case kHiLoFilterStateHi:
+            recalculateHiCoefficients(getSampleRate(), getFilterFrequency(),
+                                      (float)resonance->getValue());
+            break;
+        case kHiLoFilterStateLo:
+            recalculateLoCoefficients(getSampleRate(), getFilterFrequency(),
+                                      (float)resonance->getValue());
+            break;
+        default:
+            break;
+    }
+}
+
 float HiLoFilterAudioProcessor::getFilterFrequency() {
     switch(filterState) {
         case kHiLoFilterStateHi: {
             const float relativeFilterPosition = (float)((filterPosition->getValue() - (kHiLoFilterPositionMax / 2.0f)) /
-                                                 getLoFilterCutoffPosition());
+                getLoFilterCutoffPosition());
             float newFrequency = scaleParameterRangeToFrequency(relativeFilterPosition,
                                                                 (float)hiFilterLimit->getValue(),
                                                                 kHiLoFilterRangeMin);
@@ -152,65 +183,8 @@ void HiLoFilterAudioProcessor::recalculateLoCoefficients(const double sampleRate
     loCoeffB2 = loCoeffA1 * (1.0f - (resonance * coeffConstant) + (coeffConstant * coeffConstant));
 }
 
-void HiLoFilterAudioProcessor::recalculateCoefficients() {
-    setFilterState((int)filterPosition->getValue());
-    switch(filterState) {
-        case kHiLoFilterStateHi:
-            recalculateHiCoefficients(getSampleRate(), getFilterFrequency(),
-                                      (float)resonance->getValue());
-            break;
-        case kHiLoFilterStateLo:
-            recalculateLoCoefficients(getSampleRate(), getFilterFrequency(),
-                                      (float)resonance->getValue());
-            break;
-        default:
-            break;
-    }
-}
-
-void HiLoFilterAudioProcessor::onParameterUpdated(const Parameter *) {
-    recalculateCoefficients();
-}
-
-float HiLoFilterAudioProcessor::getParameter(int index) {
-    return (float)parameters.get(index)->getScaledValue();
-}
-
-void HiLoFilterAudioProcessor::setParameter(int index, float newValue) {
-    parameters.setScaled((const size_t)index, newValue);
-}
-
-const String HiLoFilterAudioProcessor::getParameterName(int index) {
-    return parameters[index]->getName();
-}
-
-const String HiLoFilterAudioProcessor::getParameterText(int index) {
-    return parameters[index]->getDisplayText();
-}
-
-const String HiLoFilterAudioProcessor::getInputChannelName(int channelIndex) const {
-    return String(channelIndex + 1);
-}
-
-const String HiLoFilterAudioProcessor::getOutputChannelName(int channelIndex) const {
-    return String(channelIndex + 1);
-}
-
-void HiLoFilterAudioProcessor::prepareToPlay(double, int) {
-    for(int i = 0; i < 2; i++) {
-        lastInput1[i] = 0.0f;
-        lastInput2[i] = 0.0f;
-        lastInput3[i] = 0.0f;
-        lastOutput1[i] = 0.0f;
-        lastOutput2[i] = 0.0f;
-    }
-
-    resetLastIOData();
-    recalculateCoefficients();
-}
-
 void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffer &midiMessages) {
-    parameters.processRealtimeEvents();
+    TeragonPluginBase::processBlock(buffer, midiMessages);
 
     for(int channel = 0; channel < getNumInputChannels(); ++channel) {
         switch(filterState) {
@@ -268,40 +242,18 @@ void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int cha
     }
 }
 
-//==============================================================================
+void HiLoFilterAudioProcessor::releaseResources() {
+    TeragonPluginBase::releaseResources();
+}
+
+void HiLoFilterAudioProcessor::onParameterUpdated(const Parameter *) {
+    recalculateCoefficients();
+}
+
 AudioProcessorEditor *HiLoFilterAudioProcessor::createEditor() {
     return new HiLoFilterAudioProcessorEditor(this, parameters, Resources::getCache());
 }
 
-//==============================================================================
-void HiLoFilterAudioProcessor::getStateInformation(MemoryBlock &destData) {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-    XmlElement xml("HiLoFilterStorage");
-    for(size_t i = 0; i < parameters.size(); i++) {
-        Parameter *parameter = parameters[i];
-        xml.setAttribute(parameter->getSafeName().c_str(), parameter->getValue());
-    }
-    copyXmlToBinary(xml, destData);
-}
-
-void HiLoFilterAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    if(xmlState != 0 && xmlState->hasTagName("HiLoFilterStorage")) {
-        for(size_t i = 0; i < parameters.size(); i++) {
-            Parameter *parameter = parameters[i];
-            parameters.set(parameter, xmlState->getDoubleAttribute(parameter->getSafeName().c_str()));
-        }
-        parameters.processRealtimeEvents();
-        recalculateCoefficients();
-    }
-}
-
-//==============================================================================
-// This creates new instances of the plugin..
 AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
     return new HiLoFilterAudioProcessor();
 }
