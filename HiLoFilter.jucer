@@ -89,6 +89,16 @@
   </EXPORTFORMATS>
   <MAINGROUP id="UWL1Z9" name="HiLoFilter">
     <GROUP id="{E392556E-54C7-D61F-7779-CF519919BC81}" name="Components">
+      <GROUP id="{80DD162B-3AB4-55E5-1F9B-F7363C5CB375}" name="Plugin">
+        <GROUP id="{FE4F4703-353F-2F51-F7E2-9DCA318E5435}" name="arduino-base64">
+          <FILE id="JibusI" name="Base64.cpp" compile="1" resource="0" file="Third-Party/TeragonGuiComponents/Components/Plugin/arduino-base64/Base64.cpp"/>
+          <FILE id="TmjEmF" name="Base64.h" compile="0" resource="0" file="Third-Party/TeragonGuiComponents/Components/Plugin/arduino-base64/Base64.h"/>
+        </GROUP>
+        <FILE id="XDk1HY" name="TeragonPluginBase.cpp" compile="1" resource="0"
+              file="Third-Party/TeragonGuiComponents/Components/Plugin/TeragonPluginBase.cpp"/>
+        <FILE id="qJBRm3" name="TeragonPluginBase.h" compile="0" resource="0"
+              file="Third-Party/TeragonGuiComponents/Components/Plugin/TeragonPluginBase.h"/>
+      </GROUP>
       <GROUP id="{41C0B8F9-6731-47CE-1855-A9F605242C01}" name="PluginParameters">
         <GROUP id="{E9C11721-649B-6392-42A5-FA554A88171F}" name="include">
           <GROUP id="{8DF95BFC-0284-FA32-14C7-81BA0210AA98}" name="readerwriterqueue">
