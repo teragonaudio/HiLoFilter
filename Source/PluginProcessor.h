@@ -15,24 +15,6 @@
 #include "TeragonPluginBase.h"
 #include "PluginParameters.h"
 
-typedef enum {
-    kHiLoFilterStatePassthru,
-    kHiLoFilterStateLo,
-    kHiLoFilterStateHi,
-} HiLoFilterState;
-
-static const int kHiLoFilterPositionMin = 0;
-static const int kHiLoFilterPositionMax = 127;
-static const int kHiLoFilterPositionDefault = kHiLoFilterPositionMax / 2;
-static const float kHiLoFilterResonanceMin = 0.1f;
-static const float kHiLoFilterResonanceDefault = 1.0f;
-static const float kHiLoFilterResonanceMax = sqrtf(2.0f);
-static const float kHiLoFilterRangeMin = 20.0f;
-static const float kHiLoFilterRangeMax = 20000.0f;
-static const int kHiLoFilterDeadZoneMin = 1;
-static const int kHiLoFilterDeadZoneDefault = 1;
-static const int kHiLoFilterDeadZoneMax = 11; // Yes, this one goes to 11 \m/
-
 using namespace teragon;
 
 class HiLoFilterAudioProcessor : public TeragonPluginBase, public ParameterObserver {
@@ -53,22 +35,33 @@ public:
     bool isRealtimePriority() const { return true; }
 
 private:
-    float getFilterFrequency();
+    double getFilterFrequency();
+    double getHiFrequencyFromPosition(const double relativePosition);
+    double getLoFrequencyFromPosition(const double relativePosition);
     void recalculateCoefficients();
     void recalculateHiCoefficients(const double sampleRate,
-                                   const float frequency,
-                                   const float resonance);
+                                   const double frequency,
+                                   const double resonance);
     void recalculateLoCoefficients(const double sampleRate,
-                                   const float frequency,
-                                   const float resonance);
+                                   const double frequency,
+                                   const double resonance);
 
     void processHiFilter(float *channelData, const int channel, const int numSamples);
     void processLoFilter(float *channelData, const int channel, const int numSamples);
 
     void resetLastIOData();
-    float getHiFilterCutoffPosition();
-    float getLoFilterCutoffPosition();
+    double getHiFilterCutoffPosition();
+    double getLoFilterCutoffPosition();
     void setFilterState(int currentFilterPosition);
+
+private:
+    const double kMaxFilterFrequency = 20000.0;
+    const double kHiK0 = 7.0953e-4;
+    const double kHiK1 = -317.5514;
+    const double kHiK2 = 9257.8428;
+    const double kHiK3 = -2.1476e4;
+    const double kHiK4 = 3585.1226;
+    const double kHiK5 = 2.895e4;
 
 private:
     // Parameter caches
@@ -81,12 +74,17 @@ private:
     float lastInput1[2], lastInput2[2], lastInput3[2];
     float lastOutput1[2], lastOutput2[2];
 
-    float loCoeffA1, loCoeffA2;
-    float loCoeffB1, loCoeffB2;
-    float hiCoeffA1, hiCoeffA2;
-    float hiCoeffB1, hiCoeffB2;
+    double loCoeffA1, loCoeffA2;
+    double loCoeffB1, loCoeffB2;
+    double hiCoeffA1, hiCoeffA2;
+    double hiCoeffB1, hiCoeffB2;
 
-    HiLoFilterState filterState;
+    typedef enum {
+        kHiLoFilterStatePassthru,
+        kHiLoFilterStateLo,
+        kHiLoFilterStateHi,
+    } FilterState;
+    FilterState filterState;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
