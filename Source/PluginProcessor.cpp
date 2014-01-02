@@ -23,10 +23,10 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : ParameterObserver() {
     resonance = new FloatParameter("Resonance", 0.1, sqrt(2.0), 1.0);
     parameters.add(resonance);
 
-    hiFilterLimit = new FrequencyParameter("Hi Filter Limit", 0.0, kMaxFilterFrequency, kMaxFilterFrequency);
+    hiFilterLimit = new FrequencyParameter("Hi Filter Limit", 20.0, kMaxFilterFrequency, kMaxFilterFrequency);
     parameters.add(hiFilterLimit);
 
-    loFilterLimit = new FrequencyParameter("Lo Filter Limit", 0.0, kMaxFilterFrequency, 0.0);
+    loFilterLimit = new FrequencyParameter("Lo Filter Limit", 20.0, kMaxFilterFrequency, 20.0);
     parameters.add(loFilterLimit);
 
     deadZoneSize = new IntegerParameter("Dead Zone Size", 1, 11, 1); // This one goes to 11 \m/
@@ -155,7 +155,12 @@ double HiLoFilterAudioProcessor::getHiFrequencyFromPosition(const double relativ
 }
 
 double HiLoFilterAudioProcessor::getLoFrequencyFromPosition(const double relativePosition) {
-    return 666.0;
+    return kLoK0 +
+        (relativePosition * kLoK1) +
+        (pow(relativePosition, 2) * kLoK2) +
+        (pow(relativePosition, 3) * kLoK3) +
+        (pow(relativePosition, 4) * kLoK4) +
+        (pow(relativePosition, 5) * kLoK5);
 }
 
 void HiLoFilterAudioProcessor::recalculateHiCoefficients(const double sampleRate,

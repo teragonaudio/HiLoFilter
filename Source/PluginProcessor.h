@@ -55,13 +55,21 @@ private:
     void setFilterState(int currentFilterPosition);
 
 private:
-    const double kMaxFilterFrequency = 20000.0;
+    const double kMaxFilterFrequency = 22000.0;
+
     const double kHiK0 = 7.0953e-4;
     const double kHiK1 = -317.5514;
     const double kHiK2 = 9257.8428;
     const double kHiK3 = -2.1476e4;
     const double kHiK4 = 3585.1226;
     const double kHiK5 = 2.895e4;
+
+    const double kLoK0 = 20.0;
+    const double kLoK1 = 1.1316e4;
+    const double kLoK2 = 6880.9585;
+    const double kLoK3 = 3554.5339;
+    const double kLoK4 = 1059.7163;
+    const double kLoK5 = -811.3955;
 
 private:
     // Parameter caches
