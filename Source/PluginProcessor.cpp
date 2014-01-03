@@ -46,16 +46,6 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : ParameterObserver() {
     recalculateCoefficients();
 }
 
-void HiLoFilterAudioProcessor::resetLastIOData() {
-    for(int i = 0; i < 2; i++) {
-        lastInput1[i] = 0.0f;
-        lastInput2[i] = 0.0f;
-        lastInput3[i] = 0.0f;
-        lastOutput1[i] = 0.0f;
-        lastOutput2[i] = 0.0f;
-    }
-}
-
 double HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
     return (filterPosition->getMaxValue() + deadZoneSize->getValue()) / 2.0;
 }
@@ -65,6 +55,7 @@ double HiLoFilterAudioProcessor::getLoFilterCutoffPosition() {
 }
 
 void HiLoFilterAudioProcessor::setFilterState(int currentFilterPosition) {
+/*
     FilterState newFilterState = kHiLoFilterStatePassthru;
     if(currentFilterPosition > getHiFilterCutoffPosition()) {
         newFilterState = kHiLoFilterStateHi;
@@ -78,24 +69,34 @@ void HiLoFilterAudioProcessor::setFilterState(int currentFilterPosition) {
         resetLastIOData();
         recalculateCoefficients();
     }
+*/
 }
 
 void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     TeragonPluginBase::prepareToPlay(sampleRate, samplesPerBlock);
-
-    for(int i = 0; i < 2; i++) {
-        lastInput1[i] = 0.0f;
-        lastInput2[i] = 0.0f;
-        lastInput3[i] = 0.0f;
-        lastOutput1[i] = 0.0f;
-        lastOutput2[i] = 0.0f;
-    }
-
     resetLastIOData();
     recalculateCoefficients();
 }
 
+void HiLoFilterAudioProcessor::resetLastIOData() {
+    for(int i = 0; i < 2; i++) {
+        lastHiInput1[i] = 0.0f;
+        lastHiInput2[i] = 0.0f;
+        lastHiInput3[i] = 0.0f;
+        lastHiOutput1[i] = 0.0f;
+        lastHiOutput2[i] = 0.0f;
+        lastLoInput1[i] = 0.0f;
+        lastLoInput2[i] = 0.0f;
+        lastLoInput3[i] = 0.0f;
+        lastLoOutput1[i] = 0.0f;
+        lastLoOutput2[i] = 0.0f;
+    }
+}
+
 void HiLoFilterAudioProcessor::recalculateCoefficients() {
+    recalculateHiCoefficients(getSampleRate(), getHiFilterFrequency(), resonance->getValue());
+    recalculateLoCoefficients(getSampleRate(), getLoFilterFrequency(), resonance->getValue());
+/*
     setFilterState((int)filterPosition->getValue());
     switch(filterState) {
         case kHiLoFilterStateHi:
@@ -108,6 +109,7 @@ void HiLoFilterAudioProcessor::recalculateCoefficients() {
         default:
             break;
     }
+*/
 }
 
 double HiLoFilterAudioProcessor::getFilterFrequency() {
@@ -119,6 +121,7 @@ double HiLoFilterAudioProcessor::getFilterFrequency() {
     // between 0.0-1.0 which would correspond to a separate knob for the given filter.
     double relativePosition;
 
+/*
     switch(filterState) {
         case kHiLoFilterStateHi: {
             relativePosition = (position - loCutoff - deadZoneSize->getValue()) / loCutoff;
@@ -134,6 +137,7 @@ double HiLoFilterAudioProcessor::getFilterFrequency() {
         default:
             break;
     }
+*/
 
     printf("Filter position: %g, frequency: %g\n", position, newFrequency);
     if(newFrequency < 0.0) {
@@ -142,6 +146,50 @@ double HiLoFilterAudioProcessor::getFilterFrequency() {
     else if(newFrequency > kMaxFilterFrequency) {
         newFrequency = kMaxFilterFrequency;
     }
+    return newFrequency;
+}
+
+double HiLoFilterAudioProcessor::getHiFilterFrequency() {
+    double newFrequency = 0.0;
+    const double position = filterPosition->getValue();
+    const double loCutoff = getLoFilterCutoffPosition();
+    // Will represent how much of the filter should be applied, after considering which half
+    // of the filter we are in and subtracting the dead zone size. The result will be a value
+    // between 0.0-1.0 which would correspond to a separate knob for the given filter.
+    double relativePosition;
+
+            relativePosition = (position - loCutoff - deadZoneSize->getValue()) / loCutoff;
+            newFrequency = getHiFrequencyFromPosition(relativePosition);
+
+    if(newFrequency < 0.0) {
+        newFrequency = 0.0;
+    }
+    else if(newFrequency > kMaxFilterFrequency) {
+        newFrequency = kMaxFilterFrequency;
+    }
+    printf("Hi Filter position: %g, frequency: %g\n", position, newFrequency);
+    return newFrequency;
+}
+
+double HiLoFilterAudioProcessor::getLoFilterFrequency() {
+    double newFrequency = 0.0;
+    const double position = filterPosition->getValue();
+    const double loCutoff = getLoFilterCutoffPosition();
+    // Will represent how much of the filter should be applied, after considering which half
+    // of the filter we are in and subtracting the dead zone size. The result will be a value
+    // between 0.0-1.0 which would correspond to a separate knob for the given filter.
+    double relativePosition;
+
+            relativePosition = position / loCutoff;
+            newFrequency = getLoFrequencyFromPosition(relativePosition);
+
+    if(newFrequency < 0.0) {
+        newFrequency = 0.0;
+    }
+    else if(newFrequency > kMaxFilterFrequency) {
+        newFrequency = kMaxFilterFrequency;
+    }
+    printf("Lo Filter position: %g, frequency: %g\n", position, newFrequency);
     return newFrequency;
 }
 
@@ -187,6 +235,10 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
     TeragonPluginBase::processBlock(buffer, midiMessages);
 
     for(int channel = 0; channel < getNumInputChannels(); ++channel) {
+        float *channelData = buffer.getSampleData(channel);
+        processHiFilter(channelData, channel, buffer.getNumSamples());
+        processLoFilter(channelData, channel, buffer.getNumSamples());
+/*
         switch(filterState) {
             case kHiLoFilterStateHi:
                 processHiFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
@@ -198,47 +250,41 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
             default:
                 break;
         }
-    }
-
-    // In case we have more outputs than inputs, we'll clear any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
-        buffer.clear(i, 0, buffer.getNumSamples());
+*/
     }
 }
 
 void HiLoFilterAudioProcessor::processHiFilter(float *channelData, const int channel, const int numFrames) {
     for(int i = 0; i < numFrames; ++i) {
-        lastInput3[channel] = lastInput2[channel];
-        lastInput2[channel] = lastInput1[channel];
-        lastInput1[channel] = channelData[i];
+        lastHiInput3[channel] = lastHiInput2[channel];
+        lastHiInput2[channel] = lastHiInput1[channel];
+        lastHiInput1[channel] = channelData[i];
 
-        channelData[i] = (float)((hiCoeffA1 * lastInput1[channel]) +
-                                 (hiCoeffA2 * lastInput2[channel]) +
-                                 (hiCoeffA1 * lastInput3[channel]) -
-                                 (hiCoeffB1 * lastOutput1[channel]) -
-                                 (hiCoeffB2 * lastOutput2[channel]));
+        channelData[i] = (float)((hiCoeffA1 * lastHiInput1[channel]) +
+                                 (hiCoeffA2 * lastHiInput2[channel]) +
+                                 (hiCoeffA1 * lastHiInput3[channel]) -
+                                 (hiCoeffB1 * lastHiOutput1[channel]) -
+                                 (hiCoeffB2 * lastHiOutput2[channel]));
 
-        lastOutput2[channel] = lastOutput1[channel];
-        lastOutput1[channel] = channelData[i];
+        lastHiOutput2[channel] = lastHiOutput1[channel];
+        lastHiOutput1[channel] = channelData[i];
     }
 }
 
 void HiLoFilterAudioProcessor::processLoFilter(float *channelData, const int channel, const int numFrames) {
     for(int i = 0; i < numFrames; ++i) {
-        lastInput3[channel] = lastInput2[channel];
-        lastInput2[channel] = lastInput1[channel];
-        lastInput1[channel] = channelData[i];
+        lastLoInput3[channel] = lastLoInput2[channel];
+        lastLoInput2[channel] = lastLoInput1[channel];
+        lastLoInput1[channel] = channelData[i];
 
-        channelData[i] = (float)((loCoeffA1 * lastInput1[channel]) +
-                                 (loCoeffA2 * lastInput2[channel]) +
-                                 (loCoeffA1 * lastInput3[channel]) -
-                                 (loCoeffB1 * lastOutput1[channel]) -
-                                 (loCoeffB2 * lastOutput2[channel]));
+        channelData[i] = (float)((loCoeffA1 * lastLoInput1[channel]) +
+                                 (loCoeffA2 * lastLoInput2[channel]) +
+                                 (loCoeffA1 * lastLoInput3[channel]) -
+                                 (loCoeffB1 * lastLoOutput1[channel]) -
+                                 (loCoeffB2 * lastLoOutput2[channel]));
 
-        lastOutput2[channel] = lastOutput1[channel];
-        lastOutput1[channel] = channelData[i];
+        lastLoOutput2[channel] = lastLoOutput1[channel];
+        lastLoOutput1[channel] = channelData[i];
     }
 }
 

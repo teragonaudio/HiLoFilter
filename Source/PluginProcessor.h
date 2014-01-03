@@ -36,6 +36,8 @@ public:
 
 private:
     double getFilterFrequency();
+    double getHiFilterFrequency();
+    double getLoFilterFrequency();
     double getHiFrequencyFromPosition(const double relativePosition);
     double getLoFrequencyFromPosition(const double relativePosition);
     void recalculateCoefficients();
@@ -79,8 +81,10 @@ private:
     FrequencyParameter *loFilterLimit;
     IntegerParameter *deadZoneSize;
 
-    float lastInput1[2], lastInput2[2], lastInput3[2];
-    float lastOutput1[2], lastOutput2[2];
+    float lastHiInput1[2], lastHiInput2[2], lastHiInput3[2];
+    float lastLoInput1[2], lastLoInput2[2], lastLoInput3[2];
+    float lastHiOutput1[2], lastHiOutput2[2];
+    float lastLoOutput1[2], lastLoOutput2[2];
 
     double loCoeffA1, loCoeffA2;
     double loCoeffB1, loCoeffB2;
@@ -92,7 +96,7 @@ private:
         kHiLoFilterStateLo,
         kHiLoFilterStateHi,
     } FilterState;
-    FilterState filterState;
+    //FilterState filterState;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HiLoFilterAudioProcessor);
