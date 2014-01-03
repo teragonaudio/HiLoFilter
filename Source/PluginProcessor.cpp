@@ -65,7 +65,7 @@ void HiLoFilterAudioProcessor::setFilterState(int currentFilterPosition) {
 
     if(newFilterState != filterState) {
         filterState = newFilterState;
-        resetLastIOData();
+        // resetLastIOData();
         recalculateCoefficients();
     }
 }
@@ -178,16 +178,34 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
     TeragonPluginBase::processBlock(buffer, midiMessages);
 
     for(int channel = 0; channel < getNumInputChannels(); ++channel) {
-        switch(filterState) {
-            case kHiLoFilterStateHi:
-                processHiFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
-                break;
-            case kHiLoFilterStateLo:
-                processLoFilter(buffer.getSampleData(channel), channel, buffer.getNumSamples());
-                break;
-            case kHiLoFilterStatePassthru:
-            default:
-                break;
+        float *channelData = buffer.getSampleData(channel);
+        const int numFrames = buffer.getNumSamples();
+        for(int i = 0; i < numFrames; ++i) {
+            lastInput3[channel] = lastInput2[channel];
+            lastInput2[channel] = lastInput1[channel];
+            lastInput1[channel] = channelData[i];
+
+            switch(filterState) {
+                case kHiLoFilterStateHi:
+                    channelData[i] = (float)((hiCoeffA1 * lastInput1[channel]) +
+                        (hiCoeffA2 * lastInput2[channel]) +
+                        (hiCoeffA1 * lastInput3[channel]) -
+                        (hiCoeffB1 * lastOutput1[channel]) -
+                        (hiCoeffB2 * lastOutput2[channel]));
+                    break;
+                case kHiLoFilterStateLo:
+                    channelData[i] = (float)((loCoeffA1 * lastInput1[channel]) +
+                        (loCoeffA2 * lastInput2[channel]) +
+                        (loCoeffA1 * lastInput3[channel]) -
+                        (loCoeffB1 * lastOutput1[channel]) -
+                        (loCoeffB2 * lastOutput2[channel]));
+                    break;
+                default:
+                    break;
+            }
+
+            lastOutput2[channel] = lastOutput1[channel];
+            lastOutput1[channel] = channelData[i];
         }
     }
 }
