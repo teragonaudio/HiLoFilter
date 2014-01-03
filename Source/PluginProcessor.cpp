@@ -46,16 +46,6 @@ HiLoFilterAudioProcessor::HiLoFilterAudioProcessor() : ParameterObserver() {
     recalculateCoefficients();
 }
 
-void HiLoFilterAudioProcessor::resetLastIOData() {
-    for(int i = 0; i < 2; i++) {
-        lastInput1[i] = 0.0f;
-        lastInput2[i] = 0.0f;
-        lastInput3[i] = 0.0f;
-        lastOutput1[i] = 0.0f;
-        lastOutput2[i] = 0.0f;
-    }
-}
-
 double HiLoFilterAudioProcessor::getHiFilterCutoffPosition() {
     return (filterPosition->getMaxValue() + deadZoneSize->getValue()) / 2.0;
 }
@@ -82,7 +72,11 @@ void HiLoFilterAudioProcessor::setFilterState(int currentFilterPosition) {
 
 void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     TeragonPluginBase::prepareToPlay(sampleRate, samplesPerBlock);
+    resetLastIOData();
+    recalculateCoefficients();
+}
 
+void HiLoFilterAudioProcessor::resetLastIOData() {
     for(int i = 0; i < 2; i++) {
         lastInput1[i] = 0.0f;
         lastInput2[i] = 0.0f;
@@ -90,9 +84,6 @@ void HiLoFilterAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
         lastOutput1[i] = 0.0f;
         lastOutput2[i] = 0.0f;
     }
-
-    resetLastIOData();
-    recalculateCoefficients();
 }
 
 void HiLoFilterAudioProcessor::recalculateCoefficients() {
@@ -198,13 +189,6 @@ void HiLoFilterAudioProcessor::processBlock(AudioSampleBuffer &buffer, MidiBuffe
             default:
                 break;
         }
-    }
-
-    // In case we have more outputs than inputs, we'll clear any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
-        buffer.clear(i, 0, buffer.getNumSamples());
     }
 }
 
